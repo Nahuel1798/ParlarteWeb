@@ -1,0 +1,8 @@
+/home/nahuel/Documentos/Programacion/ParlarteWeb/Backend/src/main/java/com/parlarte/parlarte/ParlarteApplication.java
+/home/nahuel/Documentos/Programacion/ParlarteWeb/Backend/src/main/java/com/parlarte/parlarte/controller/UsuarioController.java
+/home/nahuel/Documentos/Programacion/ParlarteWeb/Backend/src/main/java/com/parlarte/parlarte/dto/UsuarioRequest.java
+/home/nahuel/Documentos/Programacion/ParlarteWeb/Backend/src/main/java/com/parlarte/parlarte/dto/UsuarioResponse.java
+/home/nahuel/Documentos/Programacion/ParlarteWeb/Backend/src/main/java/com/parlarte/parlarte/entity/Cursos.java
+/home/nahuel/Documentos/Programacion/ParlarteWeb/Backend/src/main/java/com/parlarte/parlarte/entity/Usuario.java
+/home/nahuel/Documentos/Programacion/ParlarteWeb/Backend/src/main/java/com/parlarte/parlarte/repository/UsuarioRepository.java
+/home/nahuel/Documentos/Programacion/ParlarteWeb/Backend/src/main/java/com/parlarte/parlarte/service/UsuarioService.java
