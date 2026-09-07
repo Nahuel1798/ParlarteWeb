@@ -3,6 +3,7 @@ package com.parlarte.parlarte.controller;
 import com.parlarte.parlarte.dto.UsuarioRequest;
 import com.parlarte.parlarte.dto.UsuarioResponse;
 import com.parlarte.parlarte.service.UsuarioService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,19 +29,19 @@ public class UsuarioController {
         return usuarioService.buscarPorId(id);
     }
 
-    @GetMapping("/email/{email}")
-    public UsuarioResponse buscarPorEmail(@PathVariable String email) {
+    @GetMapping("/email")
+    public UsuarioResponse buscarPorEmail(@RequestParam String email) {
         return usuarioService.buscarPorEmail(email);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UsuarioResponse crear(@RequestBody UsuarioRequest request) {
+    public UsuarioResponse crear(@Valid @RequestBody UsuarioRequest request) {
         return usuarioService.crear(request);
     }
 
     @PutMapping("/{id}")
-    public UsuarioResponse actualizar(@PathVariable Long id, @RequestBody UsuarioRequest request) {
+    public UsuarioResponse actualizar(@PathVariable Long id, @Valid @RequestBody UsuarioRequest request) {
         return usuarioService.actualizar(id, request);
     }
 

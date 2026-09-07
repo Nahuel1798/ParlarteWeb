@@ -11,7 +11,6 @@ public class UsuarioResponse {
     private String email;
     private Usuario.Rol rol;
     private LocalDateTime fechaCreacion;
-    private LocalDateTime fechaActualizacion;
 
     public static UsuarioResponse fromEntity(Usuario usuario) {
         UsuarioResponse response = new UsuarioResponse();
@@ -20,7 +19,6 @@ public class UsuarioResponse {
         response.email = usuario.getEmail();
         response.rol = usuario.getRol();
         response.fechaCreacion = usuario.getFechaCreacion();
-        response.fechaActualizacion = usuario.getFechaActualizacion();
         return response;
     }
 
@@ -62,13 +60,5 @@ public class UsuarioResponse {
 
     public void setFechaCreacion(LocalDateTime fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
-    }
-
-    public LocalDateTime getFechaActualizacion() {
-        return fechaActualizacion;
-    }
-
-    public void setFechaActualizacion(LocalDateTime fechaActualizacion) {
-        this.fechaActualizacion = fechaActualizacion;
     }
 }
