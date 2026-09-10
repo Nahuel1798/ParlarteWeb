@@ -1,26 +1,87 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fcf9f2;
+  --foreground: #1c1c18;
 }
 
 @theme inline {
+  /* Colores */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+
+  --color-primary: #154212;
+  --color-primary-container: #2d5a27;
+
+  --color-secondary: #9d422b;
+  --color-secondary-container: #fd8c6f;
+
+  --color-tertiary: #735c00;
+  --color-tertiary-container: #cca730;
+
+  --color-surface: #fcf9f2;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f6f3ec;
+  --color-surface-container: #f0eee7;
+  --color-surface-container-high: #ebe8e1;
+  --color-surface-container-highest: #e5e2db;
+  --color-surface-variant: #e5e2db;
+
+  --color-on-surface: #1c1c18;
+  --color-on-surface-variant: #42493e;
+
+  --color-on-primary: #ffffff;
+  --color-on-secondary: #ffffff;
+  --color-on-tertiary-container: #4f3d00;
+
+  --color-outline: #72796e;
+  --color-outline-variant: #c2c9bb;
+
+  /* Fuentes */
+  --font-sans: var(--font-montserrat);
+  --font-body-md: var(--font-montserrat);
+  --font-body-lg: var(--font-montserrat);
+  --font-label-md: var(--font-montserrat);
+
+  --font-headline-md: var(--font-playfair);
+  --font-headline-lg: var(--font-playfair);
+  --font-display-lg: var(--font-playfair);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Base */
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-montserrat), Arial, Helvetica, sans-serif;
+}
+
+/* Material Symbols */
+
+.material-symbols-outlined {
+  font-family: "Material Symbols Outlined";
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: "liga";
+  -webkit-font-smoothing: antialiased;
+}
+
+.material-symbols-outlined[data-weight="fill"] {
+  font-variation-settings:
+    "FILL" 1,
+    "wght" 400,
+    "GRAD" 0,
+    "opsz" 24;
 }

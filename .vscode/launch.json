@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-ParlarteApplication<parlarte>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.parlarte.parlarte.ParlarteApplication",
+            "projectName": "parlarte",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
