@@ -1,6 +1,8 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import Courses from "@/components/Courses";
+import Methodology from "@/components/Methodology";
+import About from "@/components/About";
 import Footer from "@/components/Footer";
 
 export default function Home() {
@@ -9,6 +11,8 @@ export default function Home() {
       <Navbar />
       <Hero />
       <Courses />
+      <Methodology />
+      <About />
       <Footer />
     </main>
   );

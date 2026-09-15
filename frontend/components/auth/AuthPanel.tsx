@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import Image from "next/image";
 
 interface AuthPanelProps {
   badge: string;
@@ -25,18 +26,26 @@ export default function AuthPanel({
       <div className="absolute inset-0 bg-gradient-to-t from-[#154212] via-[#154212]/80 to-transparent pointer-events-none" />
 
       <div className="relative z-10 flex items-center gap-3">
-        <div className="w-8 h-8 rounded-full bg-[#cca730]/30 flex items-center justify-center backdrop-blur-sm text-lg">
-          📖
-        </div>
-        <div className="flex flex-col">
-          <span className="text-xs tracking-widest uppercase font-semibold">
-            Parlarte
-          </span>
-          <span className="text-[10px] text-[#a1d494] tracking-wider uppercase">
-            Accademia di Lingua 
-          </span>
-        </div>
+      <div className="w-8 h-8 rounded-full bg-[#cca730]/30 flex items-center justify-center overflow-hidden backdrop-blur-sm">
+        <Image
+          src="/imagen/parlarte.png"
+          alt="Logo de Parlarte"
+          width={32}
+          height={32}
+          className="w-full h-full object-cover"
+        />
       </div>
+
+      <div className="flex flex-col">
+        <span className="text-xs tracking-widest uppercase font-semibold">
+          Parlarte
+        </span>
+
+        <span className="text-[10px] text-[#a1d494] tracking-wider uppercase">
+          Accademia di Lingua
+        </span>
+      </div>
+    </div>
 
       <div className="relative z-10 my-auto pt-12">
         <div className="inline-flex items-center gap-2 mb-4 px-2 py-1 rounded bg-white/15 backdrop-blur-sm">

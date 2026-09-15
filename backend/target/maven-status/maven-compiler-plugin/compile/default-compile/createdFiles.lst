@@ -1,1 +1,3 @@
+com/parlarte/parlarte/entity/Usuario$Nivel.class
 com/parlarte/parlarte/config/OpenApiConfig.class
+com/parlarte/parlarte/config/CorsConfig.class

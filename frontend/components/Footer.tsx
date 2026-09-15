@@ -12,12 +12,12 @@ export default function Footer() {
             href="/"
             className="font-headline-md text-2xl text-primary block mb-4"
           >
-            Scuola d'Italiano
+            Parlarte
           </Link>
 
           <p className="font-body-md text-base text-on-surface-variant mb-6">
-            La Dolce Vita through academic excellence. Experience the
-            definitive path to mastering the Italian language.
+            La Dolce Vita a través de la excelencia académica. Experimenta el
+            camino definitivo para dominar el idioma italiano.
           </p>
 
           <div className="flex gap-4">
@@ -44,31 +44,31 @@ export default function Footer() {
         {/* Programs */}
         <div>
           <h4 className="font-semibold text-sm text-primary mb-4 uppercase tracking-wider">
-            Programs
+            Programas
           </h4>
 
           <ul className="space-y-3 text-base text-on-surface-variant">
             <li>
               <Link href="#" className="hover:text-secondary">
-                Beginner Intensive
+                Intensivo Principiante
               </Link>
             </li>
 
             <li>
               <Link href="#" className="hover:text-secondary">
-                Conversational Fluency
+                Conversacional Intermedio
               </Link>
             </li>
 
             <li>
               <Link href="#" className="hover:text-secondary">
-                Business Italian
+                Avanzado de Negocios
               </Link>
             </li>
 
             <li>
               <Link href="#" className="hover:text-secondary">
-                Exam Preparation (CILS)
+                Preparación para Exámenes
               </Link>
             </li>
           </ul>
@@ -77,7 +77,7 @@ export default function Footer() {
         {/* School */}
         <div>
           <h4 className="font-semibold text-sm text-primary mb-4 uppercase tracking-wider">
-            School
+            Escuela
           </h4>
 
           <ul className="space-y-3 text-base text-on-surface-variant">
@@ -89,19 +89,13 @@ export default function Footer() {
 
             <li>
               <Link href="#methodology" className="hover:text-secondary">
-                Our Methodology
+                Nuestra Metodología
               </Link>
             </li>
 
             <li>
               <Link href="#" className="hover:text-secondary">
-                Faculty
-              </Link>
-            </li>
-
-            <li>
-              <Link href="#" className="hover:text-secondary">
-                Careers
+                Testimonios
               </Link>
             </li>
           </ul>
@@ -116,19 +110,19 @@ export default function Footer() {
           <ul className="space-y-3 text-base text-on-surface-variant">
             <li>
               <Link href="#" className="hover:text-secondary">
-                Privacy Policy
+                Política de Privacidad
               </Link>
             </li>
 
             <li>
               <Link href="#" className="hover:text-secondary">
-                Terms of Service
+                Terminos y Condiciones
               </Link>
             </li>
 
             <li>
               <Link href="#" className="hover:text-secondary">
-                Contact Us
+                Contactos
               </Link>
             </li>
           </ul>
@@ -139,8 +133,7 @@ export default function Footer() {
       {/* Copyright */}
       <div className="w-full px-4 md:px-6 max-w-[1280px] mx-auto border-t border-primary/10 pt-6">
         <p className="text-xs text-on-surface-variant text-center md:text-left">
-          © 2026 Scuola d'Italiano. All rights reserved.
-          La Dolce Vita through academic excellence.
+          © 2026 Parlarte. All rights reserved.
         </p>
       </div>
 

@@ -1,12 +1,17 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
+import { login } from "../../lib/api";
 
 export default function LoginForm() {
+  const router = useRouter();
+
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -17,25 +22,30 @@ export default function LoginForm() {
 
     setLoading(true);
     setSuccess(false);
+    setError(null);
 
     try {
-      // Acá posteriormente conectamos con Spring Boot
-      console.log({
-        email,
-        password,
-        rememberMe,
-      });
+      const data = await login(email, password);
 
-      // Simulación temporal
-      await new Promise((resolve) => setTimeout(resolve, 1200));
+      const storage = rememberMe ? localStorage : sessionStorage;
+      storage.setItem("parlarte_token", data.token);
+      storage.setItem("parlarte_user", JSON.stringify(data));
 
       setSuccess(true);
 
       setTimeout(() => {
-        setSuccess(false);
-      }, 1800);
-    } catch (error) {
-      console.error("Error al iniciar sesión:", error);
+        if (data.rol === "ADMINISTRADOR") {
+          router.push("/admin");
+        } else if (data.rol === "ALUMNO") {
+          router.push("/estudiante");
+        } else {
+          router.push("/");
+        }
+      }, 800);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Error al iniciar sesión"
+      );
     } finally {
       setLoading(false);
     }
@@ -131,7 +141,7 @@ export default function LoginForm() {
               type="button"
               aria-label="Mostrar u ocultar contraseña"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute inset-y-0 right-0 pr-3 flex items-center text-[#72796e] hover:text-[#1c1c18]"
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-[#72796e] hover:text-[#1c1c18] cursor-pointer"
             >
               {showPassword ? "🙈" : "👁️"}
             </button>
@@ -152,6 +162,13 @@ export default function LoginForm() {
             </span>
           </label>
         </div>
+
+        {/* Error */}
+        {error && (
+          <div className="px-4 py-3 rounded bg-red-50 border border-red-200 text-sm text-red-700">
+            {error}
+          </div>
+        )}
 
         {/* Botón */}
         <button
@@ -212,23 +229,14 @@ export default function LoginForm() {
         </div>
       </div>
 
-      {/* Google / Apple */}
-      <div className="grid grid-cols-2 gap-2">
-        <button
-          type="button"
-          className="flex items-center justify-center gap-2 py-2 px-3 rounded bg-[#f6f3ec] hover:bg-[#f0eee7] text-[#1c1c18] text-xs font-semibold transition-colors"
-        >
-          <span className="text-sm font-bold">G</span>
-          Google
-        </button>
-
-        <button
-          type="button"
-          className="flex items-center justify-center gap-2 py-2 px-3 rounded bg-[#f6f3ec] hover:bg-[#f0eee7] text-[#1c1c18] text-xs font-semibold transition-colors"
-        >
-          <span className="text-sm"> Apple ID</span>
-        </button>
-      </div>
+      {/* Google */}
+      <button
+        type="button"
+        className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded bg-[#f6f3ec] hover:bg-[#f0eee7] text-[#1c1c18] text-xs font-semibold transition-colors cursor-pointer"
+      >
+        <span className="text-sm font-bold">G</span>
+        Google
+      </button>
 
       {/* Footer */}
       <div className="mt-6 pt-4 border-t border-[#e5e2db] text-center">

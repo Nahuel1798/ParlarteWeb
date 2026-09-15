@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -13,9 +14,19 @@ export default function Navbar() {
         {/* Logo */}
         <Link
           href="/"
-          className="font-headline-md text-2xl md:text-[32px] font-semibold text-primary flex items-center gap-2 hover:opacity-80 transition-opacity"
+          className="flex items-center gap-2 hover:opacity-80 transition-opacity"
         >
-          Parlarte
+          <Image
+            src="/imagen/parlarte.png"
+            alt="Parlarte"
+            width={40}
+            height={40}
+            className="w-10 h-10 object-cover rounded-full"
+          />
+
+          <span className="font-headline-md text-2xl md:text-[32px] font-semibold text-primary">
+            Parlarte
+          </span>
         </Link>
 
         {/* Desktop */}

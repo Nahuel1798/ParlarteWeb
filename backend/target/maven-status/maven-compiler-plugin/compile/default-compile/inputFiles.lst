@@ -1,4 +1,5 @@
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/ParlarteApplication.java
+/home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/config/CorsConfig.java
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/config/OpenApiConfig.java
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/config/SecurityConfig.java
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/controller/AuthController.java

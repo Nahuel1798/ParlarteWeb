@@ -1,10 +1,22 @@
-
 "use client";
 
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { FormEvent, useState } from "react";
 import SocialSignup from "./SocialSignup";
+import { registrar } from "../../lib/api";
+
+const NIVEL_MAP: Record<string, string> = {
+  none: "NINGUNO",
+  "a1-a2": "A1_A2",
+  "b1-b2": "B1_B2",
+  "c1-c2": "C1_C2",
+};
 
 export default function RegistrationForm() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
 
   const [formData, setFormData] = useState({
     nombre: "",
@@ -18,16 +30,12 @@ export default function RegistrationForm() {
   });
 
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-
     const { name, value, type } = e.target;
 
     setFormData((prev) => ({
       ...prev,
-
       [name]:
         type === "checkbox"
           ? (e.target as HTMLInputElement).checked
@@ -35,24 +43,37 @@ export default function RegistrationForm() {
     }));
   };
 
-  const handleSubmit = (
-    e: React.FormEvent<HTMLFormElement>
-  ) => {
-
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (
-      formData.password !==
-      formData.confirmPassword
-    ) {
-      alert("Las contraseñas no coinciden.");
+    if (formData.password !== formData.confirmPassword) {
+      setError("Las contraseñas no coinciden.");
       return;
     }
 
-    console.log(formData);
+    setLoading(true);
+    setError(null);
+    setSuccess(false);
 
-    // Próximo paso:
-    // enviar estos datos al backend Spring Boot.
+    try {
+      await registrar({
+        nombre: formData.nombre,
+        apellidos: formData.apellidos,
+        email: formData.email,
+        password: formData.password,
+        rol: "ALUMNO",
+        nivel: NIVEL_MAP[formData.nivel] ?? "NINGUNO",
+      });
+
+      setSuccess(true);
+      setTimeout(() => router.push("/login"), 1500);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Error al crear la cuenta"
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -75,7 +96,7 @@ export default function RegistrationForm() {
         tu ingreso al estudio del idioma.
       </p>
 
-      {/* Google / Apple */}
+      {/* Google */}
       <SocialSignup />
 
       {/* Separador */}
@@ -89,11 +110,22 @@ export default function RegistrationForm() {
 
       </div>
 
+      {/* Error */}
+      {error && (
+        <div className="px-4 py-3 rounded bg-red-50 border border-red-200 text-sm text-red-700 mb-4">
+          {error}
+        </div>
+      )}
+
+      {/* Éxito */}
+      {success && (
+        <div className="px-4 py-3 rounded bg-green-50 border border-green-200 text-sm text-green-700 mb-4">
+          ✓ Cuenta creada correctamente. Redirigiendo al login...
+        </div>
+      )}
+
       {/* Formulario */}
-      <form
-        onSubmit={handleSubmit}
-        className="space-y-4"
-      >
+      <form onSubmit={handleSubmit} className="space-y-4">
 
         {/* Nombre y apellido */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -316,17 +348,44 @@ export default function RegistrationForm() {
         {/* Botón */}
         <button
           type="submit"
-          className="w-full mt-4 py-3 px-6 bg-[#154212] hover:bg-[#2d5a27] text-white rounded font-semibold text-sm tracking-wider uppercase flex items-center justify-center gap-2 shadow-md transition"
+          disabled={loading || success}
+          className={`w-full mt-4 py-3 px-6 rounded text-white font-semibold text-sm tracking-wider uppercase flex items-center justify-center gap-2 shadow-md transition-all ${
+            success
+              ? "bg-[#2d5a27] cursor-default"
+              : "bg-[#154212] hover:bg-[#2d5a27] cursor-pointer"
+          } ${loading ? "opacity-90 cursor-wait" : ""}`}
         >
-
-          <span>
-            Crear Mi Cuenta Académica
-          </span>
-
-          <span>
-            →
-          </span>
-
+          {loading ? (
+            <>
+              <svg
+                className="animate-spin h-4 w-4"
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                />
+              </svg>
+              Creando cuenta...
+            </>
+          ) : success ? (
+            <>✓ Cuenta creada</>
+          ) : (
+            <>
+              Crear Mi Cuenta Académica
+              →
+            </>
+          )}
         </button>
 
       </form>
@@ -334,4 +393,3 @@ export default function RegistrationForm() {
     </div>
   );
 }
-

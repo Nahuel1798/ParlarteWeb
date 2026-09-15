@@ -49,9 +49,11 @@ public class UsuarioService {
         }
         Usuario usuario = new Usuario();
         usuario.setNombre(request.getNombre().trim());
+        usuario.setApellidos(request.getApellidos() == null ? null : request.getApellidos().trim());
         usuario.setEmail(email);
         usuario.setPassword(passwordEncoder.encode(request.getPassword()));
         usuario.setRol(request.getRol());
+        usuario.setNivel(request.getNivel());
         return UsuarioResponse.fromEntity(usuarioRepository.save(usuario));
     }
 
@@ -63,9 +65,11 @@ public class UsuarioService {
             throw new ConflictException("Ya existe un usuario con el email: " + email);
         }
         usuario.setNombre(request.getNombre().trim());
+        usuario.setApellidos(request.getApellidos() == null ? null : request.getApellidos().trim());
         usuario.setEmail(email);
         usuario.setPassword(passwordEncoder.encode(request.getPassword()));
         usuario.setRol(request.getRol());
+        usuario.setNivel(request.getNivel());
         return UsuarioResponse.fromEntity(usuarioRepository.save(usuario));
     }
 

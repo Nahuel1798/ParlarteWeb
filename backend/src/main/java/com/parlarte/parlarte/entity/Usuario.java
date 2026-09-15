@@ -21,12 +21,22 @@ public class Usuario {
         ALUMNO
     }
 
+    public enum Nivel {
+        NINGUNO,
+        A1_A2,
+        B1_B2,
+        C1_C2
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, length = 100)
     private String nombre;
+
+    @Column(length = 100)
+    private String apellidos;
 
     @Column(nullable = false, unique = true, length = 150)
     private String email;
@@ -37,6 +47,10 @@ public class Usuario {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private Rol rol;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
+    private Nivel nivel;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime fechaCreacion;
@@ -62,6 +76,14 @@ public class Usuario {
         this.nombre = nombre;
     }
 
+    public String getApellidos() {
+        return apellidos;
+    }
+
+    public void setApellidos(String apellidos) {
+        this.apellidos = apellidos;
+    }
+
     public String getEmail() {
         return email;
     }
@@ -84,6 +106,14 @@ public class Usuario {
 
     public void setRol(Rol rol) {
         this.rol = rol;
+    }
+
+    public Nivel getNivel() {
+        return nivel;
+    }
+
+    public void setNivel(Nivel nivel) {
+        this.nivel = nivel;
     }
 
     public LocalDateTime getFechaCreacion() {

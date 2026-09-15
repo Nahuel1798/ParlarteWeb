@@ -12,6 +12,9 @@ public class UsuarioRequest {
     @Size(max = 100, message = "El nombre no puede superar 100 caracteres")
     private String nombre;
 
+    @Size(max = 100, message = "Los apellidos no pueden superar 100 caracteres")
+    private String apellidos;
+
     @NotBlank(message = "El email es obligatorio")
     @Email(message = "El email no es válido")
     @Size(max = 150, message = "El email no puede superar 150 caracteres")
@@ -24,12 +27,22 @@ public class UsuarioRequest {
     @NotNull(message = "El rol es obligatorio")
     private Usuario.Rol rol;
 
+    private Usuario.Nivel nivel;
+
     public String getNombre() {
         return nombre;
     }
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+
+    public String getApellidos() {
+        return apellidos;
+    }
+
+    public void setApellidos(String apellidos) {
+        this.apellidos = apellidos;
     }
 
     public String getEmail() {
@@ -54,5 +67,13 @@ public class UsuarioRequest {
 
     public void setRol(Usuario.Rol rol) {
         this.rol = rol;
+    }
+
+    public Usuario.Nivel getNivel() {
+        return nivel;
+    }
+
+    public void setNivel(Usuario.Nivel nivel) {
+        this.nivel = nivel;
     }
 }
