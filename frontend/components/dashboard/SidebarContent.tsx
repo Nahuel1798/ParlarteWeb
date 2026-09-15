@@ -2,62 +2,27 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import type { DashboardConfig } from "./config";
 
-const menuItems = [
-  {
-    name: "Panoramica",
-    href: "/dashboard",
-    icon: "space_dashboard",
-  },
-  {
-    name: "I Miei Corsi",
-    href: "/dashboard/cursos",
-    icon: "menu_book",
-  },
-  {
-    name: "Calendario",
-    href: "/dashboard/calendario",
-    icon: "calendar_month",
-  },
-  {
-    name: "Esercizi e Voti",
-    href: "/dashboard/ejercicios",
-    icon: "assignment",
-  },
-  {
-    name: "Biblioteca Risorse",
-    href: "/dashboard/recursos",
-    icon: "local_library",
-  },
-  {
-    name: "Club di Conversazione",
-    href: "/dashboard/comunidad",
-    icon: "forum",
-  },
-  {
-    name: "Docenza & Aule",
-    href: "/dashboard/docencia",
-    icon: "cast_for_education",
-  },
-  {
-    name: "Amministrazione",
-    href: "/dashboard/admin",
-    icon: "admin_panel_settings",
-  },
-];
+interface SidebarContentProps {
+  config: DashboardConfig;
+  onNavigate?: () => void;
+}
 
-export default function Sidebar() {
+export default function SidebarContent({
+  config,
+  onNavigate,
+}: SidebarContentProps) {
   const pathname = usePathname();
 
   return (
-    <aside className="fixed left-0 top-0 z-50 hidden lg:flex h-screen w-72 flex-col justify-between bg-surface-container-low shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
-      
+    <div className="flex h-full flex-col justify-between">
       <div>
         {/* Logo */}
         <div className="flex h-20 items-center px-6">
           <div className="flex flex-col">
             <span className="font-headline-md text-xl font-semibold leading-tight text-primary">
-              Scuola d&apos;Italiano
+              Parlarte
             </span>
 
             <span className="mt-1 text-[10px] font-semibold uppercase tracking-widest text-secondary">
@@ -70,24 +35,26 @@ export default function Sidebar() {
         <div className="mb-6 px-6">
           <div className="flex items-center justify-between rounded-xl bg-surface-container-high p-1">
             <span className="pl-2 text-[11px] font-medium uppercase tracking-wider text-on-surface-variant">
-              Ruolo Attivo
+              Rol
             </span>
 
-            <span className="rounded bg-primary-container px-2 py-1 text-xs font-semibold text-on-primary">
-              Studente
+            <span className="rounded bg-primary px-2 py-1 text-xs font-semibold text-on-primary">
+              {config.roleLabel}
             </span>
           </div>
         </div>
 
         {/* Navegación */}
         <nav className="flex flex-col gap-1 px-3">
-          {menuItems.map((item) => {
+          {config.menuItems.map((item) => {
             const active = pathname === item.href;
 
             return (
               <Link
                 key={item.href}
                 href={item.href}
+                onClick={onNavigate}
+                aria-current={active ? "page" : undefined}
                 className={`flex items-center gap-3 rounded-xl px-6 py-3 text-sm font-semibold transition-all ${
                   active
                     ? "bg-primary text-on-primary"
@@ -116,12 +83,10 @@ export default function Sidebar() {
             </div>
 
             <div className="flex flex-col">
-              <span className="text-xs font-semibold">
-                Marco Bellini
-              </span>
+              <span className="text-xs font-semibold">{config.userName}</span>
 
               <span className="text-[11px] text-on-surface-variant">
-                Livello B2 Avanzato
+                {config.userTitle}
               </span>
             </div>
           </div>
@@ -136,6 +101,6 @@ export default function Sidebar() {
           </button>
         </div>
       </div>
-    </aside>
+    </div>
   );
 }

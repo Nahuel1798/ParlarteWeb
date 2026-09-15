@@ -1,61 +1,79 @@
+import Card from "@/components/ui/Card";
+import ToneBadge from "@/components/ui/ToneBadge";
+
 const alerts = [
   {
     title: "3 certificati MCER in attesa di revisione",
     detail: "Richiesta docenze — scadenza oggi",
     icon: "certificate",
-    tone: "text-[#9d422b]",
-    bg: "bg-[#f7e5e1]",
+    tone: "secondary",
+    badge: "error",
   },
   {
     title: "Aula 3 richiede manutenzione",
     detail: "Contratto manutenzione in scadenza",
     icon: "building",
-    tone: "text-[#735c00]",
-    bg: "bg-[#f6f0d8]",
+    tone: "tertiary",
+    badge: "warning",
   },
   {
     title: "Nuove iscrizioni in attesa",
     detail: "+24 richieste nell'ultima settimana",
     icon: "how_to_reg",
-    tone: "text-[#2d5a27]",
-    bg: "bg-[#e7f0e6]",
+    tone: "primary",
+    badge: "success",
   },
 ];
 
+const iconText = {
+  primary: "text-primary",
+  secondary: "text-secondary",
+  tertiary: "text-tertiary",
+};
+
+const iconBg = {
+  primary: "bg-primary/10",
+  secondary: "bg-secondary/10",
+  tertiary: "bg-tertiary/10",
+};
+
 export default function OperationalAlerts() {
   return (
-    <section className="bg-white rounded-xl shadow-sm px-6 py-5">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="font-playfair text-lg font-semibold">
-          Allerte Operative
-        </h2>
-
-        <span className="bg-[#9d422b] text-white text-xs px-2 py-1 rounded-full font-semibold">
+    <Card
+      title="Allerte Operative"
+      action={
+        <ToneBadge tone="neutral">
+          <span className="material-symbols-outlined text-[14px]">warning</span>
           {alerts.length}
-        </span>
-      </div>
-
-      <div className="flex flex-col divide-y divide-[#f0eee7]">
+        </ToneBadge>
+      }
+    >
+      <div className="flex flex-col divide-y divide-surface-container">
         {alerts.map((alert) => (
-          <div
-            key={alert.title}
-            className="flex items-start gap-3 py-3"
-          >
+          <div key={alert.title} className="flex items-start gap-3 py-3">
             <div
-              className={`w-8 h-8 rounded-lg flex items-center justify-center ${alert.bg}`}
+              className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg ${
+                iconBg[alert.tone as keyof typeof iconBg]
+              }`}
             >
-              <span className={`material-symbols-outlined text-lg ${alert.tone}`}>
+              <span
+                className={`material-symbols-outlined text-lg ${
+                  iconText[alert.tone as keyof typeof iconText]
+                }`}
+              >
                 {alert.icon}
               </span>
             </div>
 
-            <div className="flex flex-col">
+            <div className="flex min-w-0 flex-col">
               <span className="text-sm font-semibold">{alert.title}</span>
-              <span className="text-xs text-[#42493e]">{alert.detail}</span>
+              <span className="text-xs text-on-surface-variant">
+                {alert.detail}
+              </span>
             </div>
           </div>
         ))}
       </div>
-    </section>
+    </Card>
   );
 }

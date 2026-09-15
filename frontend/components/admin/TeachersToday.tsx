@@ -1,55 +1,51 @@
+import Card from "@/components/ui/Card";
+import Avatar from "@/components/ui/Avatar";
+
 const teachers = [
   {
     name: "Anna Berti",
     course: "Italiano A2 — 09:00",
     initials: "AB",
-    tone: "bg-[#154212]",
+    tone: "primary",
   },
   {
     name: "Giovanni Ferri",
     course: "Italiano B1 — 11:30",
     initials: "GF",
-    tone: "bg-[#9d422b]",
+    tone: "secondary",
   },
   {
     name: "Elena Marchetti",
     course: "Conversazione — 15:00",
     initials: "EM",
-    tone: "bg-[#735c00]",
+    tone: "tertiary",
   },
-];
+] as const;
 
 export default function TeachersToday() {
   return (
-    <section className="bg-white rounded-xl shadow-sm px-6 py-5">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="font-playfair text-lg font-semibold">
-          Docenti Oggi
-        </h2>
-
-        <span className="material-symbols-outlined text-[#9d422b]">
+    <Card
+      title="Docenti Oggi"
+      action={
+        <span className="material-symbols-outlined text-secondary">
           cast_for_education
         </span>
-      </div>
-
+      }
+    >
       <div className="flex flex-col gap-3">
         {teachers.map((teacher) => (
           <div key={teacher.name} className="flex items-center gap-3">
-            <div
-              className={`w-9 h-9 rounded-full ${teacher.tone} flex items-center justify-center`}
-            >
-              <span className="text-white text-xs font-semibold">
-                {teacher.initials}
-              </span>
-            </div>
+            <Avatar initials={teacher.initials} tone={teacher.tone} />
 
             <div className="flex flex-col">
               <span className="text-sm font-semibold">{teacher.name}</span>
-              <span className="text-xs text-[#42493e]">{teacher.course}</span>
+              <span className="text-xs text-on-surface-variant">
+                {teacher.course}
+              </span>
             </div>
           </div>
         ))}
       </div>
-    </section>
+    </Card>
   );
 }

@@ -1,3 +1,6 @@
+import Card from "@/components/ui/Card";
+import Progress from "@/components/ui/Progress";
+
 const courses = [
   {
     name: "Italiano A2",
@@ -18,39 +21,29 @@ const courses = [
 
 export default function CourseCapacity() {
   return (
-    <section className="bg-white rounded-xl shadow-sm px-6 py-5">
-      <h2 className="font-playfair text-lg font-semibold mb-1">
-        Capacità Corsi
-      </h2>
-
-      <p className="text-xs text-[#42493e] mb-4">
-        Occupazione delle aule questo semestre
-      </p>
-
+    <Card
+      title="Capacità Corsi"
+      subtitle="Occupazione delle aule questo semestre"
+    >
       <div className="flex flex-col gap-4">
         {courses.map((course) => {
           const pct = Math.round((course.used / course.total) * 100);
 
           return (
             <div key={course.name}>
-              <div className="flex items-center justify-between mb-1.5">
+              <div className="mb-1.5 flex items-center justify-between">
                 <span className="text-sm font-semibold">{course.name}</span>
 
-                <span className="text-xs text-[#42493e]">
+                <span className="text-xs text-on-surface-variant">
                   {course.used}/{course.total}
                 </span>
               </div>
 
-              <div className="w-full bg-[#ebe8e1] h-2 rounded-full">
-                <div
-                  className="bg-[#154212] h-2 rounded-full"
-                  style={{ width: `${pct}%` }}
-                />
-              </div>
+              <Progress value={pct} />
             </div>
           );
         })}
       </div>
-    </section>
+    </Card>
   );
 }

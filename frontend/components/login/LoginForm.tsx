@@ -36,6 +36,8 @@ export default function LoginForm() {
       setTimeout(() => {
         if (data.rol === "ADMINISTRADOR") {
           router.push("/admin");
+        } else if (data.rol === "PROFESOR") {
+          router.push("/docente");
         } else if (data.rol === "ALUMNO") {
           router.push("/estudiante");
         } else {

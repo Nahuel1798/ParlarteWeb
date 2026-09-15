@@ -3,7 +3,11 @@
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/config/OpenApiConfig.java
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/config/SecurityConfig.java
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/controller/AuthController.java
+/home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/controller/CursoController.java
+/home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/controller/InscripcionController.java
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/controller/UsuarioController.java
+/home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/dto/InscripcionRequest.java
+/home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/dto/InscripcionResponse.java
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/dto/LoginRequest.java
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/dto/LoginResponse.java
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/dto/UsuarioRequest.java
@@ -25,9 +29,12 @@
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/exception/ConflictException.java
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/exception/GlobalExceptionHandler.java
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/exception/ResourceNotFoundException.java
+/home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/repository/CursoRepository.java
+/home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/repository/InscripcionRepository.java
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/repository/UsuarioRepository.java
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/security/CustomUserDetailsService.java
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/security/JwtAuthenticationFilter.java
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/security/JwtService.java
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/service/AuthService.java
+/home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/service/InscripcionService.java
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/service/UsuarioService.java

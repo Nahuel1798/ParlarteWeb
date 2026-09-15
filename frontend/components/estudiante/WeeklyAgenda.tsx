@@ -1,3 +1,5 @@
+import Card from "@/components/ui/Card";
+
 const events = [
   {
     day: "Lun",
@@ -32,26 +34,16 @@ const events = [
 
 export default function WeeklyAgenda() {
   return (
-    <section className="rounded-xl bg-surface-container-lowest p-6 shadow-sm">
-
-      <div className="flex items-center justify-between border-b border-outline-variant/20 pb-3">
-        <div className="flex items-center gap-2">
-          <span className="material-symbols-outlined text-[20px] text-primary">
-            event_upcoming
-          </span>
-
-          <h3 className="font-headline-md text-lg font-semibold text-primary">
-            Agenda Settimanale
-          </h3>
-        </div>
-
+    <Card
+      title="Agenda Settimanale"
+      icon="event_upcoming"
+      action={
         <span className="text-xs font-semibold text-secondary">
           Maggio 2025
         </span>
-      </div>
-
-      <div className="mt-3 flex flex-col gap-2">
-
+      }
+    >
+      <div className="flex flex-col gap-2">
         {events.map((event) => (
           <div
             key={`${event.day}-${event.date}`}
@@ -68,13 +60,9 @@ export default function WeeklyAgenda() {
                   : "bg-surface-container-high text-on-surface"
               }`}
             >
-              <span className="text-[10px] uppercase">
-                {event.day}
-              </span>
+              <span className="text-[10px] uppercase">{event.day}</span>
 
-              <span className="font-headline-md text-sm">
-                {event.date}
-              </span>
+              <span className="font-headline-md text-sm">{event.date}</span>
             </div>
 
             <div className="min-w-0 flex-1">
@@ -94,17 +82,15 @@ export default function WeeklyAgenda() {
             </div>
           </div>
         ))}
-
       </div>
 
-      <button className="mt-4 flex w-full items-center justify-center gap-1 rounded bg-surface-container py-2 text-xs font-semibold text-primary hover:bg-surface-container-high">
+      <button className="mt-4 flex w-full items-center justify-center gap-1 rounded bg-surface-container py-2 text-xs font-semibold text-primary transition hover:bg-surface-container-high">
         <span className="material-symbols-outlined text-[16px]">
           calendar_month
         </span>
 
         Sincronizzare con Google / iCal
       </button>
-
-    </section>
+    </Card>
   );
 }

@@ -12,14 +12,23 @@
 
   --color-primary: #154212;
   --color-primary-container: #2d5a27;
+  --color-primary-fixed: #c9e8c3;
+  --color-on-primary-fixed: #102f0e;
+  --color-on-primary-container: #e9f5e6;
 
   --color-secondary: #9d422b;
   --color-secondary-container: #fd8c6f;
+  --color-secondary-fixed: #fdd9c9;
+  --color-on-secondary-fixed: #4a2818;
+  --color-on-secondary-container: #5d2c1b;
 
   --color-tertiary: #735c00;
   --color-tertiary-container: #cca730;
+  --color-tertiary-fixed: #f0d88f;
+  --color-on-tertiary-fixed: #4f3d00;
 
   --color-surface: #fcf9f2;
+  --color-surface-bright: #fff9f1;
   --color-surface-container-lowest: #ffffff;
   --color-surface-container-low: #f6f3ec;
   --color-surface-container: #f0eee7;
@@ -29,10 +38,16 @@
 
   --color-on-surface: #1c1c18;
   --color-on-surface-variant: #42493e;
+  --color-inverse-on-surface: #f2efe8;
 
   --color-on-primary: #ffffff;
   --color-on-secondary: #ffffff;
   --color-on-tertiary-container: #4f3d00;
+
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #410002;
 
   --color-outline: #72796e;
   --color-outline-variant: #c2c9bb;
@@ -42,6 +57,7 @@
   --font-body-md: var(--font-montserrat);
   --font-body-lg: var(--font-montserrat);
   --font-label-md: var(--font-montserrat);
+  --font-caption: var(--font-montserrat);
 
   --font-headline-md: var(--font-playfair);
   --font-headline-lg: var(--font-playfair);

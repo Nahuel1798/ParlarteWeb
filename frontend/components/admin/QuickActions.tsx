@@ -19,14 +19,11 @@ const actions = [
 
 export default function QuickActions() {
   return (
-    <section className="mt-6 bg-[#f6f3ec] rounded-xl p-3 flex flex-wrap items-center justify-between gap-4">
-
+    <section className="mt-6 flex flex-wrap items-center justify-between gap-4 rounded-xl bg-surface-container-low p-3">
       <div className="flex items-center gap-2 px-3">
-        <span className="material-symbols-outlined text-[#154212]">
-          bolt
-        </span>
+        <span className="material-symbols-outlined text-primary">bolt</span>
 
-        <span className="text-xs uppercase tracking-wider text-[#154212] font-semibold">
+        <span className="text-xs font-semibold uppercase tracking-wider text-primary">
           Azioni Rapide di Direzione:
         </span>
       </div>
@@ -35,9 +32,9 @@ export default function QuickActions() {
         {actions.map((action) => (
           <button
             key={action.label}
-            className="flex items-center gap-2 bg-white hover:bg-[#ebe8e1] px-3 py-2 rounded text-xs font-semibold transition"
+            className="flex items-center gap-2 rounded bg-surface-container-lowest px-3 py-2 text-xs font-semibold text-on-surface shadow-sm transition hover:bg-surface-container-high"
           >
-            <span className="material-symbols-outlined text-base text-[#154212]">
+            <span className="material-symbols-outlined text-base text-primary">
               {action.icon}
             </span>
 
