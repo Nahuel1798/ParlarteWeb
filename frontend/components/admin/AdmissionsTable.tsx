@@ -1,77 +1,131 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Card from "@/components/ui/Card";
 import ToneBadge from "@/components/ui/ToneBadge";
+import { listarUsuariosPorRol, UsuarioResponse } from "../../lib/api";
 
-const admissions = [
-  {
-    student: "Giulia Rossi",
-    course: "Italiano B2 Intensivo",
-    fecha: "12 Ago 2024",
-    estado: "Approvata",
-    badge: "success",
-  },
-  {
-    student: "Marco Bellini",
-    course: "Italiano C1 Avanzato",
-    fecha: "10 Ago 2024",
-    estado: "In attesa",
-    badge: "warning",
-  },
-  {
-    student: "Sofia Conti",
-    course: "Italiano A2 Base",
-    fecha: "08 Ago 2024",
-    estado: "Approvata",
-    badge: "success",
-  },
-  {
-    student: "Luca Bianchi",
-    course: "Conversazione B1",
-    fecha: "07 Ago 2024",
-    estado: "Respinta",
-    badge: "error",
-  },
-] as const;
+function nivelTone(nivel: string | null) {
+  switch (nivel) {
+    case "A1_A2":
+      return "warning" as const;
+    case "B1_B2":
+    case "C1_C2":
+      return "success" as const;
+    default:
+      return "neutral" as const;
+  }
+}
+
+function nivelLabel(nivel: string | null) {
+  switch (nivel) {
+    case "A1_A2":
+      return "A1–A2";
+    case "B1_B2":
+      return "B1–B2";
+    case "C1_C2":
+      return "C1–C2";
+    default:
+      return "Nessuno";
+  }
+}
+
+function formatearFecha(fecha: string) {
+  const date = new Date(fecha);
+  if (Number.isNaN(date.getTime())) return fecha;
+  return date.toLocaleDateString("it-IT", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+}
 
 export default function AdmissionsTable() {
+  const [alumnos, setAlumnos] = useState<UsuarioResponse[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let active = true;
+
+    listarUsuariosPorRol("ALUMNO")
+      .then((data) => {
+        if (active) setAlumnos(data);
+      })
+      .catch((err) => {
+        if (active) {
+          setError(
+            err instanceof Error ? err.message : "Error al cargar alumnos"
+          );
+        }
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
   return (
     <Card
-      title="Ammissioni Recenti"
-      subtitle="Stato delle richieste di ammissione"
+      title="Studenti Iscritti"
+      subtitle="Alunni registrati nella piattaforma"
       action={
         <button className="text-xs font-semibold text-primary transition hover:text-secondary">
           Ver tutte →
         </button>
       }
     >
-      <div className="overflow-x-auto">
-        <table className="w-full text-left">
-          <thead>
-            <tr className="text-[10px] uppercase tracking-widest text-on-surface-variant">
-              <th className="py-3 pr-6 font-semibold">Studente</th>
-              <th className="px-6 py-3 font-semibold">Corso</th>
-              <th className="px-6 py-3 font-semibold">Data</th>
-              <th className="py-3 pl-6 font-semibold">Stato</th>
-            </tr>
-          </thead>
-
-          <tbody className="divide-y divide-surface-container">
-            {admissions.map((row) => (
-              <tr key={row.student} className="text-sm">
-                <td className="py-3 pr-6 font-semibold">{row.student}</td>
-                <td className="px-6 py-3 text-on-surface-variant">
-                  {row.course}
-                </td>
-                <td className="px-6 py-3 text-on-surface-variant">
-                  {row.fecha}
-                </td>
-                <td className="py-3 pl-6">
-                  <ToneBadge tone={row.badge}>{row.estado}</ToneBadge>
-                </td>
+      {loading ? (
+        <div className="flex items-center justify-center py-10 text-sm text-on-surface-variant">
+          Caricamento studenti…
+        </div>
+      ) : error ? (
+        <div className="rounded-lg bg-secondary/10 px-4 py-6 text-sm text-secondary">
+          {error}
+        </div>
+      ) : alumnos.length === 0 ? (
+        <div className="py-10 text-center text-sm text-on-surface-variant">
+          Nessun alunno registrato.
+        </div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full text-left">
+            <thead>
+              <tr className="text-[10px] uppercase tracking-widest text-on-surface-variant">
+                <th className="py-3 pr-6 font-semibold">Studente</th>
+                <th className="px-6 py-3 font-semibold">Email</th>
+                <th className="px-6 py-3 font-semibold">Livello</th>
+                <th className="py-3 pl-6 font-semibold">Data Iscrizione</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+
+            <tbody className="divide-y divide-surface-container">
+              {alumnos.map((alumno) => (
+                <tr key={alumno.id} className="text-sm">
+                  <td className="py-3 pr-6 font-semibold">
+                    {alumno.nombre}
+                    {alumno.apellidos ? ` ${alumno.apellidos}` : ""}
+                  </td>
+                  <td className="px-6 py-3 text-on-surface-variant">
+                    {alumno.email}
+                  </td>
+                  <td className="px-6 py-3">
+                    <ToneBadge tone={nivelTone(alumno.nivel)}>
+                      {nivelLabel(alumno.nivel)}
+                    </ToneBadge>
+                  </td>
+                  <td className="py-3 pl-6 text-on-surface-variant">
+                    {formatearFecha(alumno.fechaCreacion)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </Card>
   );
 }

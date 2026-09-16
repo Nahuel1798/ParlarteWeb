@@ -1,7 +1,10 @@
+import Link from "next/link";
+
 const actions = [
   {
     label: "Nuovo Corso",
     icon: "add_circle",
+    href: "/curso/nuevo",
   },
   {
     label: "Invita Docente",
@@ -29,18 +32,32 @@ export default function QuickActions() {
       </div>
 
       <div className="flex flex-wrap gap-2">
-        {actions.map((action) => (
-          <button
-            key={action.label}
-            className="flex items-center gap-2 rounded bg-surface-container-lowest px-3 py-2 text-xs font-semibold text-on-surface shadow-sm transition hover:bg-surface-container-high"
-          >
-            <span className="material-symbols-outlined text-base text-primary">
-              {action.icon}
-            </span>
+        {actions.map((action) => {
+          const className =
+            "flex items-center gap-2 rounded bg-surface-container-lowest px-3 py-2 text-xs font-semibold text-on-surface shadow-sm transition hover:bg-surface-container-high";
 
-            {action.label}
-          </button>
-        ))}
+          if (action.href) {
+            return (
+              <Link key={action.label} href={action.href} className={className}>
+                <span className="material-symbols-outlined text-base text-primary">
+                  {action.icon}
+                </span>
+
+                {action.label}
+              </Link>
+            );
+          }
+
+          return (
+            <button key={action.label} className={className}>
+              <span className="material-symbols-outlined text-base text-primary">
+                {action.icon}
+              </span>
+
+              {action.label}
+            </button>
+          );
+        })}
       </div>
     </section>
   );

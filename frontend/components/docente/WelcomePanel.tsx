@@ -1,3 +1,4 @@
+import Link from "next/link";
 import PageHeader from "@/components/ui/PageHeader";
 
 export default function WelcomePanel() {
@@ -12,6 +13,17 @@ export default function WelcomePanel() {
           description="Benvenuta alla tua postazione pedagogica. Organizza il materiale per le lezioni di oggi, monitora il rendimento degli allievi e valuta gli elaborati sottomessi."
           actions={
             <div className="flex flex-col items-start gap-2 md:items-end">
+              <Link
+                href="/curso"
+                className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-3 text-xs font-semibold text-on-primary shadow-sm transition hover:bg-primary-container"
+              >
+                <span className="material-symbols-outlined text-base">
+                  menu_book
+                </span>
+
+                Catálogo de Cursos
+              </Link>
+
               <div className="inline-flex items-center gap-2 rounded-xl bg-primary-fixed px-4 py-3 text-on-primary-fixed shadow-sm">
                 <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-primary" />
 

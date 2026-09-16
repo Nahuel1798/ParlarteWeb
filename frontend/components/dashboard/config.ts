@@ -24,7 +24,7 @@ export const adminConfig: DashboardConfig = {
   userTitle: "Direttrice Accademica",
   menuItems: [
     { name: "Panoramica", href: "/admin", icon: "space_dashboard" },
-    { name: "I Corsi", href: "/admin/corsi", icon: "menu_book" },
+    { name: "I Corsi", href: "/curso", icon: "menu_book" },
     { name: "Calendario", href: "/admin/calendario", icon: "calendar_month" },
     { name: "Esercizi e Voti", href: "/admin/esercizi", icon: "assignment" },
     { name: "Biblioteca Risorse", href: "/admin/risorse", icon: "local_library" },
@@ -43,7 +43,7 @@ export const docenteConfig: DashboardConfig = {
   userTitle: "Docente",
   menuItems: [
     { name: "Panoramica", href: "/docente", icon: "space_dashboard" },
-    { name: "I Miei Corsi", href: "/docente/corsi", icon: "menu_book" },
+    { name: "I Miei Corsi", href: "/curso", icon: "menu_book" },
     { name: "Calendario", href: "/docente/calendario", icon: "calendar_month" },
     { name: "Esercizi e Voti", href: "/docente/esercizi", icon: "assignment" },
     { name: "Biblioteca Risorse", href: "/docente/biblioteca", icon: "local_library" },
@@ -62,7 +62,7 @@ export const estudianteConfig: DashboardConfig = {
   userTitle: "Livello B2 Avanzato",
   menuItems: [
     { name: "Panoramica", href: "/estudiante", icon: "space_dashboard" },
-    { name: "I Miei Corsi", href: "/estudiante/corsi", icon: "menu_book" },
+    { name: "I Miei Corsi", href: "/curso", icon: "menu_book" },
     { name: "Calendario", href: "/estudiante/calendario", icon: "calendar_month" },
     { name: "Esercizi e Voti", href: "/estudiante/esercizi", icon: "assignment" },
     { name: "Biblioteca Risorse", href: "/estudiante/risorse", icon: "local_library" },

@@ -4,9 +4,9 @@ import PageHeader from "@/components/ui/PageHeader";
 import StatCard from "@/components/ui/StatCard";
 import QuickActions from "./QuickActions";
 import AdmissionsTable from "./AdmissionsTable";
-import OperationalAlerts from "./OperationalAlerts";
 import CourseCapacity from "./CourseCapacity";
 import TeachersToday from "./TeachersToday";
+import CoursesTable from "./CoursesTable";
 
 export default function AdminDashboard() {
   return (
@@ -89,7 +89,7 @@ export default function AdminDashboard() {
       <section className="mt-6 grid grid-cols-1 gap-6 xl:grid-cols-12">
         <div className="flex flex-col gap-6 xl:col-span-8">
           <AdmissionsTable />
-          <OperationalAlerts />
+          <CoursesTable />
         </div>
 
         <div className="flex flex-col gap-6 xl:col-span-4">

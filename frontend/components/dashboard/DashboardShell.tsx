@@ -33,7 +33,7 @@ export default function DashboardShell({
       <div className={config.contentPadding}>
         <DashboardHeader config={config} onMenuClick={() => setMenuOpen(true)} />
 
-        <main className="min-h-screen w-full px-4 pt-20 md:px-6">
+        <main className="min-h-screen w-full px-4 pt-24 md:px-6">
           <div
             className={`mx-auto w-full max-w-[1280px] pb-20 ${contentClassName}`}
           >

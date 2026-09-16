@@ -1,5 +1,6 @@
 package com.parlarte.parlarte.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -92,6 +93,7 @@ public class Usuario {
         this.email = email;
     }
 
+    @JsonIgnore
     public String getPassword() {
         return password;
     }

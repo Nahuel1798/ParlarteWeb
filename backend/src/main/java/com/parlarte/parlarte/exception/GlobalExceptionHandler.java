@@ -2,6 +2,7 @@ package com.parlarte.parlarte.exception;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -30,6 +31,12 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public Map<String, String> badCredentials(BadCredentialsException ex) {
         return Map.of("error", "Credenciales inválidas");
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public Map<String, String> accessDenied(AccessDeniedException ex) {
+        return Map.of("error", ex.getMessage() != null ? ex.getMessage() : "Acceso denegado");
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

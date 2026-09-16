@@ -30,6 +30,12 @@ public class UsuarioService {
                 .collect(Collectors.toList());
     }
 
+    public List<UsuarioResponse> listarPorRol(Usuario.Rol rol) {
+        return usuarioRepository.findByRol(rol).stream()
+                .map(UsuarioResponse::fromEntity)
+                .collect(Collectors.toList());
+    }
+
     public UsuarioResponse buscarPorId(Long id) {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + id));

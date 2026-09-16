@@ -17,11 +17,14 @@ public class Clase {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 100)
+    @Column(length = 100)
     private String titulo;
 
-    @Column(nullable = false, length = 500)
+    @Column(length = 500)
     private String descripcion;
+
+    @Column
+    private Integer modulo;
 
     @ManyToOne
     @JoinColumn(name = "curso_id", nullable = false)
@@ -45,6 +48,14 @@ public class Clase {
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
+    }
+
+    public Integer getModulo() {
+        return modulo;
+    }
+
+    public void setModulo(Integer modulo) {
+        this.modulo = modulo;
     }
 
     public Curso getCurso() {

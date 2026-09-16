@@ -2,6 +2,7 @@ package com.parlarte.parlarte.controller;
 
 import com.parlarte.parlarte.dto.UsuarioRequest;
 import com.parlarte.parlarte.dto.UsuarioResponse;
+import com.parlarte.parlarte.entity.Usuario;
 import com.parlarte.parlarte.service.UsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -39,6 +40,21 @@ public class UsuarioController {
     })
     public List<UsuarioResponse> listar() {
         return usuarioService.listarTodos();
+    }
+
+    @GetMapping("/rol/{rol}")
+    @Operation(summary = "Listar usuarios por rol",
+            description = "Devuelve los usuarios según su rol. Requiere rol ADMINISTRADOR o PROFESOR.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Lista de usuarios obtenida",
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = UsuarioResponse.class)))),
+            @ApiResponse(responseCode = "401", description = "No autenticado: token requerido"),
+            @ApiResponse(responseCode = "403", description = "Acceso denegado: rol insuficiente")
+    })
+    public List<UsuarioResponse> listarPorRol(
+            @Parameter(description = "Rol del usuario: ADMINISTRADOR, PROFESOR o ALUMNO", example = "ALUMNO", required = true)
+            @PathVariable Usuario.Rol rol) {
+        return usuarioService.listarPorRol(rol);
     }
 
     @GetMapping("/{id}")

@@ -47,6 +47,9 @@ public class Curso {
     @Column(nullable = false, length = 500)
     private String portadaUrl;
 
+    @Column
+    private Integer numeroModulos = 0;
+
     @ManyToOne
     @JoinColumn(name = "profesor_id", nullable = false)
     private Usuario profesor;
@@ -112,6 +115,14 @@ public class Curso {
 
     public void setPortadaUrl(String portadaUrl) {
         this.portadaUrl = portadaUrl;
+    }
+
+    public Integer getNumeroModulos() {
+        return numeroModulos;
+    }
+
+    public void setNumeroModulos(Integer numeroModulos) {
+        this.numeroModulos = numeroModulos;
     }
 
     public Usuario getProfesor() {
