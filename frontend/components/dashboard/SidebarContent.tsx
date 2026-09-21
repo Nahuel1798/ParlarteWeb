@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import type { DashboardConfig } from "./config";
 
 interface SidebarContentProps {
@@ -14,6 +14,15 @@ export default function SidebarContent({
   onNavigate,
 }: SidebarContentProps) {
   const pathname = usePathname();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    localStorage.removeItem("parlarte_token");
+    localStorage.removeItem("parlarte_user");
+    sessionStorage.removeItem("parlarte_token");
+    sessionStorage.removeItem("parlarte_user");
+    router.replace("/login");
+  };
 
   return (
     <div className="flex h-full flex-col justify-between">
@@ -76,16 +85,20 @@ export default function SidebarContent({
       <div className="p-6">
         <div className="flex items-center justify-between rounded-xl bg-surface-container p-2">
           <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary">
-              <span className="material-symbols-outlined text-[18px] text-on-primary">
-                person
-              </span>
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-semibold text-on-primary">
+              {config.userName.charAt(0).toUpperCase() || (
+                <span className="material-symbols-outlined text-[18px] text-on-primary">
+                  person
+                </span>
+              )}
             </div>
 
-            <div className="flex flex-col">
-              <span className="text-xs font-semibold">{config.userName}</span>
+            <div className="flex max-w-[150px] flex-col">
+              <span className="truncate text-xs font-semibold">
+                {config.userName}
+              </span>
 
-              <span className="text-[11px] text-on-surface-variant">
+              <span className="truncate text-[11px] text-on-surface-variant">
                 {config.userTitle}
               </span>
             </div>
@@ -93,6 +106,9 @@ export default function SidebarContent({
 
           <button
             type="button"
+            onClick={handleLogout}
+            aria-label="Cerrar sesión"
+            title="Cerrar sesión"
             className="text-on-surface-variant transition-colors hover:text-primary"
           >
             <span className="material-symbols-outlined text-[20px]">

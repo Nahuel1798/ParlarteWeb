@@ -139,6 +139,25 @@ export async function listarUsuariosPorRol(
   return data as UsuarioResponse[];
 }
 
+export async function subirPortada(file: File): Promise<string> {
+  const formData = new FormData();
+  formData.append("archivo", file);
+
+  const res = await fetch(`${API_URL}/api/archivos/portada`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${getToken() ?? ""}` },
+    body: formData,
+  });
+
+  const data = await res.json().catch(() => null);
+
+  if (!res.ok) {
+    throw new Error(data?.error ?? "Error al subir la imagen");
+  }
+
+  return data.url as string;
+}
+
 export async function listarCursos(): Promise<CursoResponse[]> {
   const res = await fetch(`${API_URL}/api/cursos`, {
     method: "GET",

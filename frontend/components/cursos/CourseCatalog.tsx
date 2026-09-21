@@ -14,9 +14,9 @@ function nivelTone(nivel: string) {
 }
 
 function formatearPrecio(precio: number) {
-  return new Intl.NumberFormat("it-IT", {
+  return new Intl.NumberFormat("es-AR", {
     style: "currency",
-    currency: "EUR",
+    currency: "ARS",
     minimumFractionDigits: 0,
   }).format(precio);
 }

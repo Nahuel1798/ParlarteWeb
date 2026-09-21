@@ -80,11 +80,25 @@ export default function DashboardHeader({
 
         <div className="h-6 w-px bg-outline-variant" />
 
-        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary">
-          <span className="material-symbols-outlined text-[18px] text-on-primary">
-            person
-          </span>
-        </div>
+        <button
+          type="button"
+          aria-label="Perfil de usuario"
+          className="flex items-center gap-2 rounded-xl px-2 py-1 transition-all hover:bg-surface-container-high"
+        >
+          <div className="hidden flex-col items-end sm:flex">
+            <span className="max-w-[140px] truncate text-xs font-semibold text-on-surface">
+              {config.userName}
+            </span>
+
+            <span className="text-[11px] text-on-surface-variant">
+              {config.roleLabel}
+            </span>
+          </div>
+
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-semibold text-on-primary">
+            {config.userName.charAt(0).toUpperCase() || "?"}
+          </div>
+        </button>
       </div>
     </header>
   );

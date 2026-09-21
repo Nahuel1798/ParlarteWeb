@@ -8,6 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -52,5 +53,17 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.CONFLICT)
     public Map<String, String> dataIntegrity(DataIntegrityViolationException ex) {
         return Map.of("error", "Violación de integridad de datos");
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> badRequest(IllegalArgumentException ex) {
+        return Map.of("error", ex.getMessage() != null ? ex.getMessage() : "Solicitud inválida");
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> maxUploadSize(MaxUploadSizeExceededException ex) {
+        return Map.of("error", "La imagen supera el tamaño máximo permitido (5MB)");
     }
 }
