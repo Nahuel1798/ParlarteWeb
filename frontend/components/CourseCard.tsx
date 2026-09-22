@@ -1,4 +1,7 @@
-import Link from "next/link";
+"use client";
+
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 
 interface CourseCardProps {
   title: string;
@@ -17,6 +20,8 @@ export default function CourseCard({
   href = "#",
   large = false,
 }: CourseCardProps) {
+  const t = useTranslations("courseCard");
+
   return (
     <div
       className={`group relative overflow-hidden rounded-xl border border-primary/15 bg-white transition-all duration-300 hover:shadow-[0_20px_40px_rgba(21,66,18,0.08)] ${
@@ -49,7 +54,7 @@ export default function CourseCard({
           href={href}
           className="inline-flex items-center text-secondary font-semibold text-sm hover:text-secondary-container transition-colors"
         >
-          Explore Syllabus
+          {t("explore")}
 
           <span className="material-symbols-outlined ml-1 text-[16px]">
             chevron_right

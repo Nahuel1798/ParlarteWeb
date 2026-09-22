@@ -1,46 +1,49 @@
+import { getTranslations } from "next-intl/server";
 import Card from "@/components/ui/Card";
 import ToneBadge from "@/components/ui/ToneBadge";
 
 const alerts = [
   {
-    title: "3 certificati MCER in attesa di revisione",
-    detail: "Richiesta docenze — scadenza oggi",
+    titleKey: "alerts1Title",
+    detailKey: "alerts1Detail",
     icon: "certificate",
-    tone: "secondary",
-    badge: "error",
+    tone: "secondary" as const,
+    badge: "error" as const,
   },
   {
-    title: "Aula 3 richiede manutenzione",
-    detail: "Contratto manutenzione in scadenza",
+    titleKey: "alerts2Title",
+    detailKey: "alerts2Detail",
     icon: "building",
-    tone: "tertiary",
-    badge: "warning",
+    tone: "tertiary" as const,
+    badge: "warning" as const,
   },
   {
-    title: "Nuove iscrizioni in attesa",
-    detail: "+24 richieste nell'ultima settimana",
+    titleKey: "alerts3Title",
+    detailKey: "alerts3Detail",
     icon: "how_to_reg",
-    tone: "primary",
-    badge: "success",
+    tone: "primary" as const,
+    badge: "success" as const,
   },
 ];
 
-const iconText = {
+const iconText: Record<string, string> = {
   primary: "text-primary",
   secondary: "text-secondary",
   tertiary: "text-tertiary",
 };
 
-const iconBg = {
+const iconBg: Record<string, string> = {
   primary: "bg-primary/10",
   secondary: "bg-secondary/10",
   tertiary: "bg-tertiary/10",
 };
 
-export default function OperationalAlerts() {
+export default async function OperationalAlerts() {
+  const t = await getTranslations("admin");
+
   return (
     <Card
-      title="Allerte Operative"
+      title={t("alertsTitle")}
       action={
         <ToneBadge tone="neutral">
           <span className="material-symbols-outlined text-[14px]">warning</span>
@@ -50,15 +53,15 @@ export default function OperationalAlerts() {
     >
       <div className="flex flex-col divide-y divide-surface-container">
         {alerts.map((alert) => (
-          <div key={alert.title} className="flex items-start gap-3 py-3">
+          <div key={alert.titleKey} className="flex items-start gap-3 py-3">
             <div
               className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg ${
-                iconBg[alert.tone as keyof typeof iconBg]
+                iconBg[alert.tone]
               }`}
             >
               <span
                 className={`material-symbols-outlined text-lg ${
-                  iconText[alert.tone as keyof typeof iconText]
+                  iconText[alert.tone]
                 }`}
               >
                 {alert.icon}
@@ -66,9 +69,11 @@ export default function OperationalAlerts() {
             </div>
 
             <div className="flex min-w-0 flex-col">
-              <span className="text-sm font-semibold">{alert.title}</span>
+              <span className="text-sm font-semibold">
+                {t(alert.titleKey)}
+              </span>
               <span className="text-xs text-on-surface-variant">
-                {alert.detail}
+                {t(alert.detailKey)}
               </span>
             </div>
           </div>

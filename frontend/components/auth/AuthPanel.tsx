@@ -1,5 +1,8 @@
+"use client";
+
 import { ReactNode } from "react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 
 interface AuthPanelProps {
   badge: string;
@@ -17,6 +20,8 @@ export default function AuthPanel({
   description,
   children,
 }: AuthPanelProps) {
+  const t = useTranslations("auth.panel");
+
   return (
     <div className="relative w-full md:w-5/12 bg-[#154212] flex flex-col justify-between p-6 sm:p-8 lg:p-10 text-white min-h-[420px] md:min-h-0 overflow-hidden">
       <div
@@ -29,7 +34,7 @@ export default function AuthPanel({
       <div className="w-8 h-8 rounded-full bg-[#cca730]/30 flex items-center justify-center overflow-hidden backdrop-blur-sm">
         <Image
           src="/imagen/parlarte.png"
-          alt="Logo de Parlarte"
+          alt="Parlarte"
           width={32}
           height={32}
           className="w-full h-full object-cover"
@@ -42,7 +47,7 @@ export default function AuthPanel({
         </span>
 
         <span className="text-[10px] text-[#a1d494] tracking-wider uppercase">
-          Accademia di Lingua
+          {t("subtitle")}
         </span>
       </div>
     </div>

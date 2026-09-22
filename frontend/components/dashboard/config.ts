@@ -1,13 +1,13 @@
 export interface MenuItem {
-  name: string;
+  nameKey: string;
   href: string;
   icon: string;
 }
 
 export interface DashboardConfig {
-  roleLabel: string;
+  roleKey: string;
+  userTitleKey: string;
   userName: string;
-  userTitle: string;
   menuItems: MenuItem[];
   sidebarVisible: string;
   contentPadding: string;
@@ -19,18 +19,18 @@ const contentPadding = "pl-0 lg:pl-72";
 const headerOffset = "left-0 lg:left-72";
 
 export const adminConfig: DashboardConfig = {
-  roleLabel: "Amministratore",
+  roleKey: "roleAdministrador",
   userName: "Giulia Rinaldi",
-  userTitle: "Direttrice Accademica",
+  userTitleKey: "adminUserTitle",
   menuItems: [
-    { name: "Panoramica", href: "/admin", icon: "space_dashboard" },
-    { name: "I Corsi", href: "/curso", icon: "menu_book" },
-    { name: "Calendario", href: "/admin/calendario", icon: "calendar_month" },
-    { name: "Esercizi e Voti", href: "/admin/esercizi", icon: "assignment" },
-    { name: "Biblioteca Risorse", href: "/admin/risorse", icon: "local_library" },
-    { name: "Club di Conversazione", href: "/admin/conversazione", icon: "forum" },
-    { name: "Docenza & Aule", href: "/admin/docenza", icon: "cast_for_education" },
-    { name: "Amministrazione", href: "/admin/struttura", icon: "admin_panel_settings" },
+    { nameKey: "menuPanoramica", href: "/admin", icon: "space_dashboard" },
+    { nameKey: "menuCursos", href: "/curso", icon: "menu_book" },
+    { nameKey: "menuCalendario", href: "/admin/calendario", icon: "calendar_month" },
+    { nameKey: "menuEjercicios", href: "/admin/esercizi", icon: "assignment" },
+    { nameKey: "menuBiblioteca", href: "/admin/risorse", icon: "local_library" },
+    { nameKey: "menuConversacion", href: "/admin/conversazione", icon: "forum" },
+    { nameKey: "menuDocencia", href: "/admin/docenza", icon: "cast_for_education" },
+    { nameKey: "menuAdministracion", href: "/admin/struttura", icon: "admin_panel_settings" },
   ],
   sidebarVisible,
   contentPadding,
@@ -38,18 +38,18 @@ export const adminConfig: DashboardConfig = {
 };
 
 export const docenteConfig: DashboardConfig = {
-  roleLabel: "Docente",
+  roleKey: "roleProfesor",
   userName: "Sofia Romano",
-  userTitle: "Docente",
+  userTitleKey: "docenteUserTitle",
   menuItems: [
-    { name: "Panoramica", href: "/docente", icon: "space_dashboard" },
-    { name: "I Miei Corsi", href: "/curso", icon: "menu_book" },
-    { name: "Calendario", href: "/docente/calendario", icon: "calendar_month" },
-    { name: "Esercizi e Voti", href: "/docente/esercizi", icon: "assignment" },
-    { name: "Biblioteca Risorse", href: "/docente/biblioteca", icon: "local_library" },
-    { name: "Club di Conversazione", href: "/docente/conversazione", icon: "forum" },
-    { name: "Docenza & Aule", href: "/docente/docenza", icon: "cast_for_education" },
-    { name: "Amministrazione", href: "/docente/amministrazione", icon: "admin_panel_settings" },
+    { nameKey: "menuPanoramica", href: "/docente", icon: "space_dashboard" },
+    { nameKey: "menuMisCursos", href: "/curso", icon: "menu_book" },
+    { nameKey: "menuCalendario", href: "/docente/calendario", icon: "calendar_month" },
+    { nameKey: "menuEjercicios", href: "/docente/esercizi", icon: "assignment" },
+    { nameKey: "menuBiblioteca", href: "/docente/biblioteca", icon: "local_library" },
+    { nameKey: "menuConversacion", href: "/docente/conversazione", icon: "forum" },
+    { nameKey: "menuDocencia", href: "/docente/docenza", icon: "cast_for_education" },
+    { nameKey: "menuAdministracion", href: "/docente/amministrazione", icon: "admin_panel_settings" },
   ],
   sidebarVisible,
   contentPadding,
@@ -57,18 +57,18 @@ export const docenteConfig: DashboardConfig = {
 };
 
 export const estudianteConfig: DashboardConfig = {
-  roleLabel: "Studente",
+  roleKey: "roleAlumno",
   userName: "Marco Bellini",
-  userTitle: "Livello B2 Avanzato",
+  userTitleKey: "estudianteUserTitle",
   menuItems: [
-    { name: "Panoramica", href: "/estudiante", icon: "space_dashboard" },
-    { name: "I Miei Corsi", href: "/curso", icon: "menu_book" },
-    { name: "Calendario", href: "/estudiante/calendario", icon: "calendar_month" },
-    { name: "Esercizi e Voti", href: "/estudiante/esercizi", icon: "assignment" },
-    { name: "Biblioteca Risorse", href: "/estudiante/risorse", icon: "local_library" },
-    { name: "Club di Conversazione", href: "/estudiante/conversazione", icon: "forum" },
-    { name: "Docenza & Aule", href: "/estudiante/docenza", icon: "cast_for_education" },
-    { name: "Amministrazione", href: "/estudiante/amministrazione", icon: "admin_panel_settings" },
+    { nameKey: "menuPanoramica", href: "/estudiante", icon: "space_dashboard" },
+    { nameKey: "menuMisCursos", href: "/curso", icon: "menu_book" },
+    { nameKey: "menuCalendario", href: "/estudiante/calendario", icon: "calendar_month" },
+    { nameKey: "menuEjercicios", href: "/estudiante/esercizi", icon: "assignment" },
+    { nameKey: "menuBiblioteca", href: "/estudiante/risorse", icon: "local_library" },
+    { nameKey: "menuConversacion", href: "/estudiante/conversazione", icon: "forum" },
+    { nameKey: "menuDocencia", href: "/estudiante/docenza", icon: "cast_for_education" },
+    { nameKey: "menuAdministracion", href: "/estudiante/amministrazione", icon: "admin_panel_settings" },
   ],
   sidebarVisible,
   contentPadding,

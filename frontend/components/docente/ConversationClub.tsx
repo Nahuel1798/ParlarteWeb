@@ -1,4 +1,8 @@
-export default function ConversationClub() {
+import { getTranslations } from "next-intl/server";
+
+export default async function ConversationClub() {
+  const t = await getTranslations("docente");
+
   return (
     <section className="relative rounded-xl overflow-hidden shadow-sm h-64 flex flex-col justify-end p-6">
 
@@ -15,23 +19,22 @@ export default function ConversationClub() {
       <div className="relative z-10 flex flex-col gap-1 text-on-primary">
 
         <span className="font-caption uppercase tracking-widest text-[11px] font-semibold opacity-90">
-          Spazio Culturale
+          {t("clubKicker")}
         </span>
 
         <h4 className="font-headline-md text-xl font-semibold">
-          Club di Conversazione
+          {t("clubTitle")}
         </h4>
 
         <p className="text-xs opacity-90">
-          Venerdì ore 18:30 — &quot;I dialetti regionali e la lingua standard
-          nella musica d&apos;autore&quot;.
+          {t("clubDescription")}
         </p>
 
         <button
           type="button"
           className="mt-2 bg-surface-container-lowest text-primary px-4 py-2 rounded font-label-md self-start shadow-sm hover:bg-surface-bright transition-colors"
         >
-          Iscrivi Gruppo Docente
+          {t("clubButton")}
         </button>
 
       </div>

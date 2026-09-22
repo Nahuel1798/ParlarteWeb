@@ -1,15 +1,18 @@
+import { getTranslations } from "next-intl/server";
 import AuthPanel from "@/components/auth/AuthPanel";
 import AuthShell from "@/components/auth/AuthShell";
 import LoginForm from "@/components/login/LoginForm";
 
-export default function LoginPage() {
+export default async function LoginPage() {
+  const t = await getTranslations("auth.login");
+
   return (
     <AuthShell
       panel={
         <AuthPanel
-          badge="Campus Virtual Accademico"
-          quote="«Chi conosce la lingua, conosce il mondo.»"
-          description="Accede a tu portal formativo y continúa tu viaje hacia la excelencia lingüística y cultural italiana."
+          badge={t("badge")}
+          quote={t("quote")}
+          description={t("description")}
         />
       }
     >

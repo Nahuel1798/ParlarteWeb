@@ -1,33 +1,37 @@
+import { getTranslations } from "next-intl/server";
+
 const resources = [
   {
-    title: "Biblioteca Filologica",
-    description: "Grammatiche & Testi PDF",
+    titleKey: "resources1Title",
+    descriptionKey: "resources1Description",
     icon: "auto_stories",
   },
   {
-    title: "Caffè Italiano Podcast",
-    description: "Ep. 42: L'Arte del Gesto",
+    titleKey: "resources2Title",
+    descriptionKey: "resources2Description",
     icon: "podcasts",
   },
   {
-    title: "Circolo Studentesco",
-    description: "3 stanze audio attive ora",
+    titleKey: "resources3Title",
+    descriptionKey: "resources3Description",
     icon: "groups",
   },
 ];
 
-export default function Resources() {
+export default async function Resources() {
+  const t = await getTranslations("estudiante");
+
   return (
     <section>
       <h2 className="mb-3 font-headline-md text-xl font-semibold tracking-tight text-primary">
-        Strumenti Accademici & Risorse
+        {t("resourcesTitle")}
       </h2>
 
       <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
 
         {resources.map((resource) => (
           <button
-            key={resource.title}
+            key={resource.titleKey}
             className="group flex items-center gap-3 rounded-xl bg-surface-container-low p-3 text-left shadow-sm transition-colors hover:bg-surface-container-high"
           >
             <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-surface-container-lowest text-primary shadow-sm transition-transform group-hover:scale-105">
@@ -38,11 +42,11 @@ export default function Resources() {
 
             <div className="min-w-0">
               <span className="block truncate text-xs font-semibold">
-                {resource.title}
+                {t(resource.titleKey)}
               </span>
 
               <span className="block text-[11px] text-on-surface-variant">
-                {resource.description}
+                {t(resource.descriptionKey)}
               </span>
             </div>
           </button>

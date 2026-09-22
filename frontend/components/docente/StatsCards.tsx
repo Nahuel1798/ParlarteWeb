@@ -1,49 +1,54 @@
+import { getTranslations } from "next-intl/server";
 import StatCard from "@/components/ui/StatCard";
 
-export default function StatsCards() {
+export default async function StatsCards() {
+  const t = await getTranslations("docente");
+
   return (
     <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
       <StatCard
-        title="Programma Odierno"
+        title={t("statsProgram")}
         value="3"
         icon="co_present"
         footer={
           <div className="flex flex-wrap items-center justify-between gap-2">
             <span className="text-sm text-on-surface">
-              <span className="font-semibold">24 Studenti</span>{" "}
-              <span className="text-on-surface-variant">attesi nelle aule</span>
+              <span className="font-semibold">{t("statsProgramStudents")}</span>{" "}
+              <span className="text-on-surface-variant">
+                {t("statsProgramExpected")}
+              </span>
             </span>
 
             <span className="text-xs font-semibold text-primary">
-              100% capienza
+              {t("statsProgramCapacity")}
             </span>
           </div>
         }
       />
 
       <StatCard
-        title="Revisioni in Attesa"
+        title={t("statsRevisions")}
         value="12"
         icon="rate_review"
         tone="secondary"
         footer={
           <div className="flex flex-wrap items-center justify-between gap-2">
             <span className="text-sm text-on-surface">
-              <span className="font-semibold">4 Prioritarie</span>{" "}
+              <span className="font-semibold">{t("statsRevisionsPriority")}</span>{" "}
               <span className="text-on-surface-variant">
-                scadenza entro 24h
+                {t("statsRevisionsDeadline")}
               </span>
             </span>
 
             <span className="text-xs font-semibold text-primary">
-              Compiti B1 & C1
+              {t("statsRevisionsHomework")}
             </span>
           </div>
         }
       />
 
       <StatCard
-        title="Valutazione Didattica"
+        title={t("statsRating")}
         value="4.9"
         suffix="/ 5.0"
         icon="stars"
@@ -63,12 +68,12 @@ export default function StatsCards() {
               </div>
 
               <span className="text-xs text-on-surface-variant">
-                (48 recensioni)
+                {t("statsRatingReviews", { count: 48 })}
               </span>
             </div>
 
             <span className="text-xs font-semibold text-primary">
-              Semestre II
+              {t("statsRatingSemester")}
             </span>
           </div>
         }

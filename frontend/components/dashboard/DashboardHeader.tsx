@@ -1,3 +1,7 @@
+"use client";
+
+import { useTranslations } from "next-intl";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 import type { DashboardConfig } from "./config";
 
 interface DashboardHeaderProps {
@@ -9,6 +13,8 @@ export default function DashboardHeader({
   config,
   onMenuClick,
 }: DashboardHeaderProps) {
+  const t = useTranslations("dashboard");
+
   return (
     <header
       className={`fixed right-0 top-0 z-40 flex h-20 items-center justify-between bg-surface/80 px-4 shadow-sm backdrop-blur-xl md:px-6 ${config.headerOffset}`}
@@ -17,20 +23,20 @@ export default function DashboardHeader({
         <button
           type="button"
           onClick={onMenuClick}
-          aria-label="Apri menu"
+          aria-label={t("headerMenuAria")}
           className="rounded-full p-3 text-on-surface-variant transition-all hover:bg-surface-container-high hover:text-on-surface lg:hidden"
         >
           <span className="material-symbols-outlined text-[22px]">menu</span>
         </button>
 
         <span className="font-headline-md text-xl font-medium tracking-tight text-on-surface">
-          Campus Virtual
+          {t("headerCampus")}
         </span>
 
         <span className="h-4 w-px bg-outline-variant" />
 
         <span className="hidden text-xs text-on-surface-variant sm:block">
-          Anno Accademico 2025–2026
+          {t("headerYear")}
         </span>
       </div>
 
@@ -47,7 +53,9 @@ export default function DashboardHeader({
           </div>
         </div>
 
-        <div className="flex items-center gap-1">
+        <LanguageSwitcher />
+
+        <div className="hidden items-center gap-1 sm:flex">
           <button
             type="button"
             className="relative rounded-full p-3 text-on-surface-variant transition-all hover:bg-surface-container-high hover:text-on-surface"
@@ -82,7 +90,7 @@ export default function DashboardHeader({
 
         <button
           type="button"
-          aria-label="Perfil de usuario"
+          aria-label={t("headerProfileAria")}
           className="flex items-center gap-2 rounded-xl px-2 py-1 transition-all hover:bg-surface-container-high"
         >
           <div className="hidden flex-col items-end sm:flex">
@@ -91,7 +99,7 @@ export default function DashboardHeader({
             </span>
 
             <span className="text-[11px] text-on-surface-variant">
-              {config.roleLabel}
+              {t(config.roleKey)}
             </span>
           </div>
 

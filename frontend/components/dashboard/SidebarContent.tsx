@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import type { DashboardConfig } from "./config";
 
 interface SidebarContentProps {
@@ -15,6 +15,7 @@ export default function SidebarContent({
 }: SidebarContentProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const t = useTranslations("dashboard");
 
   const handleLogout = () => {
     localStorage.removeItem("parlarte_token");
@@ -35,7 +36,7 @@ export default function SidebarContent({
             </span>
 
             <span className="mt-1 text-[10px] font-semibold uppercase tracking-widest text-secondary">
-              Accademia Culturale
+              {t("sidebarAccademia")}
             </span>
           </div>
         </div>
@@ -44,11 +45,11 @@ export default function SidebarContent({
         <div className="mb-6 px-6">
           <div className="flex items-center justify-between rounded-xl bg-surface-container-high p-1">
             <span className="pl-2 text-[11px] font-medium uppercase tracking-wider text-on-surface-variant">
-              Rol
+              {t("rol")}
             </span>
 
             <span className="rounded bg-primary px-2 py-1 text-xs font-semibold text-on-primary">
-              {config.roleLabel}
+              {t(config.roleKey)}
             </span>
           </div>
         </div>
@@ -74,7 +75,7 @@ export default function SidebarContent({
                   {item.icon}
                 </span>
 
-                <span>{item.name}</span>
+                <span>{t(item.nameKey)}</span>
               </Link>
             );
           })}
@@ -99,7 +100,7 @@ export default function SidebarContent({
               </span>
 
               <span className="truncate text-[11px] text-on-surface-variant">
-                {config.userTitle}
+                {t(config.userTitleKey)}
               </span>
             </div>
           </div>
@@ -107,8 +108,8 @@ export default function SidebarContent({
           <button
             type="button"
             onClick={handleLogout}
-            aria-label="Cerrar sesión"
-            title="Cerrar sesión"
+            aria-label={t("logout")}
+            title={t("logout")}
             className="text-on-surface-variant transition-colors hover:text-primary"
           >
             <span className="material-symbols-outlined text-[20px]">

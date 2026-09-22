@@ -1,6 +1,11 @@
-import Link from "next/link";
+"use client";
+
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 
 export default function Footer() {
+  const t = useTranslations("footer");
+
   return (
     <footer className="w-full bg-surface-container text-on-surface pt-20 pb-6 mt-20 border-t border-primary/10">
 
@@ -16,8 +21,7 @@ export default function Footer() {
           </Link>
 
           <p className="font-body-md text-base text-on-surface-variant mb-6">
-            La Dolce Vita a través de la excelencia académica. Experimenta el
-            camino definitivo para dominar el idioma italiano.
+            {t("brandDescription")}
           </p>
 
           <div className="flex gap-4">
@@ -44,31 +48,31 @@ export default function Footer() {
         {/* Programs */}
         <div>
           <h4 className="font-semibold text-sm text-primary mb-4 uppercase tracking-wider">
-            Programas
+            {t("programsTitle")}
           </h4>
 
           <ul className="space-y-3 text-base text-on-surface-variant">
             <li>
               <Link href="#" className="hover:text-secondary">
-                Intensivo Principiante
+                {t("program1")}
               </Link>
             </li>
 
             <li>
               <Link href="#" className="hover:text-secondary">
-                Conversacional Intermedio
+                {t("program2")}
               </Link>
             </li>
 
             <li>
               <Link href="#" className="hover:text-secondary">
-                Avanzado de Negocios
+                {t("program3")}
               </Link>
             </li>
 
             <li>
               <Link href="#" className="hover:text-secondary">
-                Preparación para Exámenes
+                {t("program4")}
               </Link>
             </li>
           </ul>
@@ -77,25 +81,25 @@ export default function Footer() {
         {/* School */}
         <div>
           <h4 className="font-semibold text-sm text-primary mb-4 uppercase tracking-wider">
-            Escuela
+            {t("schoolTitle")}
           </h4>
 
           <ul className="space-y-3 text-base text-on-surface-variant">
             <li>
               <Link href="#about" className="hover:text-secondary">
-                About Us
+                {t("schoolAbout")}
               </Link>
             </li>
 
             <li>
               <Link href="#methodology" className="hover:text-secondary">
-                Nuestra Metodología
+                {t("schoolMethodology")}
               </Link>
             </li>
 
             <li>
               <Link href="#" className="hover:text-secondary">
-                Testimonios
+                {t("schoolTestimonials")}
               </Link>
             </li>
           </ul>
@@ -104,25 +108,25 @@ export default function Footer() {
         {/* Legal */}
         <div>
           <h4 className="font-semibold text-sm text-primary mb-4 uppercase tracking-wider">
-            Legal
+            {t("legalTitle")}
           </h4>
 
           <ul className="space-y-3 text-base text-on-surface-variant">
             <li>
               <Link href="#" className="hover:text-secondary">
-                Política de Privacidad
+                {t("legalPrivacy")}
               </Link>
             </li>
 
             <li>
               <Link href="#" className="hover:text-secondary">
-                Terminos y Condiciones
+                {t("legalTerms")}
               </Link>
             </li>
 
             <li>
               <Link href="#" className="hover:text-secondary">
-                Contactos
+                {t("legalContact")}
               </Link>
             </li>
           </ul>
@@ -133,7 +137,7 @@ export default function Footer() {
       {/* Copyright */}
       <div className="w-full px-4 md:px-6 max-w-[1280px] mx-auto border-t border-primary/10 pt-6">
         <p className="text-xs text-on-surface-variant text-center md:text-left">
-          © 2026 Parlarte. All rights reserved.
+          {t("rights")}
         </p>
       </div>
 

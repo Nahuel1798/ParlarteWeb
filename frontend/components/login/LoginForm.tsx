@@ -1,12 +1,13 @@
 "use client";
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
+import { useTranslations } from "next-intl";
+import { Link, useRouter } from "@/i18n/navigation";
 import { login } from "../../lib/api";
 
 export default function LoginForm() {
   const router = useRouter();
+  const t = useTranslations("auth.loginForm");
 
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -46,7 +47,7 @@ export default function LoginForm() {
       }, 800);
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Error al iniciar sesión"
+        err instanceof Error ? err.message : t("defaultError")
       );
     } finally {
       setLoading(false);
@@ -60,17 +61,16 @@ export default function LoginForm() {
         <div className="flex items-center gap-2 mb-2">
           <span className="w-2 h-2 rounded-full bg-[#9d422b]" />
           <span className="text-xs text-[#9d422b] tracking-widest uppercase font-semibold">
-            Portal del Estudiante
+            {t("portalLabel")}
           </span>
         </div>
 
         <h1 className="text-3xl sm:text-4xl font-serif font-semibold text-[#1c1c18] leading-tight mb-2">
-          Bentornato alla Scuola
+          {t("title")}
         </h1>
 
         <p className="text-sm sm:text-base text-[#42493e] leading-relaxed">
-          Ingresa tus credenciales para acceder a tus módulos de estudio,
-          biblioteca de audio y tutorías en vivo.
+          {t("subtitle")}
         </p>
       </div>
 
@@ -82,7 +82,7 @@ export default function LoginForm() {
             htmlFor="email"
             className="block text-xs uppercase text-[#42493e] mb-2 tracking-wider font-semibold"
           >
-            Correo Electrónico
+            {t("emailLabel")}
           </label>
 
           <div className="relative">
@@ -98,7 +98,7 @@ export default function LoginForm() {
               autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="estudiante@scuolaitaliano.edu"
+              placeholder={t("emailPlaceholder")}
               className="w-full pl-10 pr-3 py-3 bg-[#f6f3ec] rounded text-sm text-[#1c1c18] placeholder-[#72796e] focus:outline-none focus:bg-white focus:ring-1 focus:ring-[#154212] transition-all"
             />
           </div>
@@ -111,14 +111,14 @@ export default function LoginForm() {
               htmlFor="password"
               className="block text-xs uppercase text-[#42493e] tracking-wider font-semibold"
             >
-              Contraseña
+              {t("passwordLabel")}
             </label>
 
             <a
               href="#"
               className="text-xs text-[#9d422b] hover:text-[#74250f] font-semibold"
             >
-              ¿Olvidaste tu contraseña?
+              {t("forgotPassword")}
             </a>
           </div>
 
@@ -141,7 +141,7 @@ export default function LoginForm() {
 
             <button
               type="button"
-              aria-label="Mostrar u ocultar contraseña"
+              aria-label={t("showPasswordLabel")}
               onClick={() => setShowPassword(!showPassword)}
               className="absolute inset-y-0 right-0 pr-3 flex items-center text-[#72796e] hover:text-[#1c1c18] cursor-pointer"
             >
@@ -160,7 +160,7 @@ export default function LoginForm() {
               className="w-4 h-4 accent-[#154212]"
             />
             <span className="text-xs text-[#42493e]">
-              Recordar mi sesión en este dispositivo
+              {t("rememberMe")}
             </span>
           </label>
         </div>
@@ -202,16 +202,16 @@ export default function LoginForm() {
                 />
               </svg>
 
-              Verificando credenziali...
+              {t("verifying")}
             </>
           ) : success ? (
             <>
               ✓
-              Accesso Consentito
+              {t("success")}
             </>
           ) : (
             <>
-              Iniciar Sesión
+              {t("submit")}
               →
             </>
           )}
@@ -226,7 +226,7 @@ export default function LoginForm() {
 
         <div className="relative flex justify-center">
           <span className="bg-white px-3 text-xs text-[#42493e] uppercase tracking-wider">
-            o continúa con
+            {t("divider")}
           </span>
         </div>
       </div>
@@ -243,12 +243,12 @@ export default function LoginForm() {
       {/* Footer */}
       <div className="mt-6 pt-4 border-t border-[#e5e2db] text-center">
         <p className="text-xs text-[#42493e]">
-          ¿Aún no eres alumno?{" "}
+          {t("noAccount")}{" "}
           <Link
             href="/register"
             className="font-semibold text-[#154212] hover:text-[#2d5a27] underline underline-offset-4"
           >
-            Crea tu cuenta académica
+            {t("createAccount")}
           </Link>
         </p>
       </div>

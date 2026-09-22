@@ -1,8 +1,14 @@
+"use client";
+
+import { useTranslations } from "next-intl";
+
 export default function About() {
+  const t = useTranslations("about");
+
   const stats = [
-    { value: "10+", label: "Años enseñando italiano" },
-    { value: "1000+", label: "Estudiantes formados" },
-    { value: "A1–C2", label: "Niveles certificables MCER" },
+    { value: "10+", label: t("statYears") },
+    { value: "1000+", label: t("statStudents") },
+    { value: "A1–C2", label: t("statLevels") },
   ];
 
   return (
@@ -14,26 +20,21 @@ export default function About() {
 
         <div>
           <span className="font-label-md text-sm font-semibold text-secondary uppercase tracking-wider mb-3 block">
-            Quiénes Somos
+            {t("kicker")}
           </span>
 
           <h2 className="font-headline-lg text-[32px] md:text-[48px] text-primary mb-6">
-            La Pasión Italiana,
+            {t("titleLine1")}
             <br />
-            <span className="text-secondary italic">Hecha Academia.</span>
+            <span className="text-secondary italic">{t("titleLine2")}</span>
           </h2>
 
           <p className="font-body-md text-base text-on-surface-variant mb-6 max-w-xl">
-            Parlarte nació del amor por la lengua italiana y el deseo de
-            compartirla. Somos un equipo de docentes y amantes de la cultura
-            italiana que cree que aprender un idioma es abrir una puerta a
-            un mundo nuevo.
+            {t("p1")}
           </p>
 
           <p className="font-body-md text-base text-on-surface-variant mb-10 max-w-xl">
-            Combínamos la rigurosidad académica con la calidez italiana para
-            que cada estudiante se sienta acompañado en cada paso, desde su
-            primer «Ciao» hasta la fluidez más sofisticada.
+            {t("p2")}
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">

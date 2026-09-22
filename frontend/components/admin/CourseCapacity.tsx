@@ -1,30 +1,18 @@
+import { getTranslations } from "next-intl/server";
 import Card from "@/components/ui/Card";
 import Progress from "@/components/ui/Progress";
 
 const courses = [
-  {
-    name: "Italiano A2",
-    used: 42,
-    total: 50,
-  },
-  {
-    name: "Italiano B1",
-    used: 35,
-    total: 40,
-  },
-  {
-    name: "Italiano B2",
-    used: 28,
-    total: 30,
-  },
+  { name: "Italiano A2", used: 42, total: 50 },
+  { name: "Italiano B1", used: 35, total: 40 },
+  { name: "Italiano B2", used: 28, total: 30 },
 ];
 
-export default function CourseCapacity() {
+export default async function CourseCapacity() {
+  const t = await getTranslations("admin");
+
   return (
-    <Card
-      title="Capacità Corsi"
-      subtitle="Occupazione delle aule questo semestre"
-    >
+    <Card title={t("capacityTitle")} subtitle={t("capacitySubtitle")}>
       <div className="flex flex-col gap-4">
         {courses.map((course) => {
           const pct = Math.round((course.used / course.total) * 100);

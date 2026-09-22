@@ -1,52 +1,55 @@
+import { getTranslations } from "next-intl/server";
 import Card from "@/components/ui/Card";
 
 const events = [
   {
-    day: "Lun",
+    dayKey: "agenda1Day",
     date: "19",
-    title: "Conversazione & Cultura",
+    titleKey: "agenda1Title",
     time: "18:00",
-    description: "Classe Plenaria • Zoom",
+    descriptionKey: "agenda1Description",
     active: true,
   },
   {
-    day: "Mer",
+    dayKey: "agenda2Day",
     date: "21",
-    title: "Tutoría Individual: Fonética",
+    titleKey: "agenda2Title",
     time: "11:30",
-    description: "Con Dott. Gianluca Vieri",
+    descriptionKey: "agenda2Description",
   },
   {
-    day: "Gio",
+    dayKey: "agenda3Day",
     date: "22",
-    title: "Navigando il Passato: Lez. 9",
+    titleKey: "agenda3Title",
     time: "17:00",
-    description: "Grammatica applicata",
+    descriptionKey: "agenda3Description",
   },
   {
-    day: "Sab",
+    dayKey: "agenda4Day",
     date: "24",
-    title: "Caffè Letterario Weekend",
+    titleKey: "agenda4Title",
     time: "10:30",
-    description: "Club Informale: Racconti di Calvino",
+    descriptionKey: "agenda4Description",
   },
 ];
 
-export default function WeeklyAgenda() {
+export default async function WeeklyAgenda() {
+  const t = await getTranslations("estudiante");
+
   return (
     <Card
-      title="Agenda Settimanale"
+      title={t("agendaTitle")}
       icon="event_upcoming"
       action={
         <span className="text-xs font-semibold text-secondary">
-          Maggio 2025
+          {t("agendaMonth")}
         </span>
       }
     >
       <div className="flex flex-col gap-2">
         {events.map((event) => (
           <div
-            key={`${event.day}-${event.date}`}
+            key={`${event.dayKey}-${event.date}`}
             className={`flex items-start gap-3 rounded-lg p-3 ${
               event.active
                 ? "bg-surface-container-low"
@@ -60,7 +63,9 @@ export default function WeeklyAgenda() {
                   : "bg-surface-container-high text-on-surface"
               }`}
             >
-              <span className="text-[10px] uppercase">{event.day}</span>
+              <span className="text-[10px] uppercase">
+                {t(event.dayKey)}
+              </span>
 
               <span className="font-headline-md text-sm">{event.date}</span>
             </div>
@@ -68,7 +73,7 @@ export default function WeeklyAgenda() {
             <div className="min-w-0 flex-1">
               <div className="flex justify-between gap-2">
                 <span className="truncate text-xs font-semibold">
-                  {event.title}
+                  {t(event.titleKey)}
                 </span>
 
                 <span className="text-[11px] font-semibold text-secondary">
@@ -77,7 +82,7 @@ export default function WeeklyAgenda() {
               </div>
 
               <span className="text-[11px] text-on-surface-variant">
-                {event.description}
+                {t(event.descriptionKey)}
               </span>
             </div>
           </div>
@@ -89,7 +94,7 @@ export default function WeeklyAgenda() {
           calendar_month
         </span>
 
-        Sincronizzare con Google / iCal
+        {t("agendaSync")}
       </button>
     </Card>
   );

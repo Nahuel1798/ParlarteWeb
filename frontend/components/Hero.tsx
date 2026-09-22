@@ -1,6 +1,11 @@
-import Link from "next/link";
+"use client";
+
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 
 export default function Hero() {
+  const t = useTranslations("hero");
+
   return (
     <section className="relative w-full min-h-[819px] flex items-center justify-center overflow-hidden bg-surface-container">
       
@@ -22,16 +27,15 @@ export default function Hero() {
         <div className="max-w-2xl">
 
           <h1 className="font-display-lg-mobile md:font-display-lg text-[40px] md:text-[64px] leading-tight text-primary mb-6">
-            Aprende Italiano
+            {t("titleLine1")}
             <br />
             <span className="text-secondary italic">
-              con Elegancia.
+              {t("titleLine2")}
             </span>
           </h1>
 
           <p className="font-body-lg text-[18px] leading-relaxed text-on-surface-variant mb-12 max-w-xl">
-            Sumérgete en el idioma, la cultura y la dolce vita.
-            Nuestro enfoque académico se une a la auténtica herencia italiana.
+            {t("subtitle")}
           </p>
 
           <div className="flex flex-wrap gap-4">
@@ -40,7 +44,7 @@ export default function Hero() {
               href="#courses"
               className="inline-flex items-center justify-center bg-primary text-white font-label-md text-sm px-8 py-4 rounded hover:bg-primary-container transition-colors"
             >
-              Empieza a Aprender
+              {t("ctaStart")}
 
               <span className="material-symbols-outlined ml-2 text-[18px]">
                 arrow_forward
@@ -51,7 +55,7 @@ export default function Hero() {
               href="#methodology"
               className="inline-flex items-center justify-center border border-primary/20 text-primary font-label-md text-sm px-8 py-4 rounded hover:bg-surface-variant transition-colors"
             >
-              Nuestra Metodología
+              {t("ctaMethod")}
             </Link>
 
           </div>

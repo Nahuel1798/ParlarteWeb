@@ -1,7 +1,8 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
+import { useTranslations } from "next-intl";
+import { Link, useRouter } from "@/i18n/navigation";
 import SocialSignup from "./SocialSignup";
 import { registrar } from "../../lib/api";
 
@@ -14,6 +15,7 @@ const NIVEL_MAP: Record<string, string> = {
 
 export default function RegistrationForm() {
   const router = useRouter();
+  const t = useTranslations("auth.registrationForm");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -47,7 +49,7 @@ export default function RegistrationForm() {
     e.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
-      setError("Las contraseñas no coinciden.");
+      setError(t("mismatchError"));
       return;
     }
 
@@ -69,7 +71,7 @@ export default function RegistrationForm() {
       setTimeout(() => router.push("/login"), 1500);
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Error al crear la cuenta"
+        err instanceof Error ? err.message : t("defaultError")
       );
     } finally {
       setLoading(false);
@@ -83,17 +85,16 @@ export default function RegistrationForm() {
       <div className="flex items-center gap-2 mb-2 text-[#9d422b]">
         <span className="w-1.5 h-1.5 rounded-full bg-[#9d422b]" />
         <span className="text-xs tracking-widest uppercase font-semibold">
-          Immatricolazione Studente
+          {t("badge")}
         </span>
       </div>
 
       <h1 className="text-3xl sm:text-4xl font-serif font-semibold text-[#1c1c18] leading-tight mb-2">
-        Crea tu Cuenta
+        {t("title")}
       </h1>
 
       <p className="text-sm sm:text-base text-[#42493e] leading-relaxed mb-6">
-        Únete a nuestra comunidad académica y formaliza
-        tu ingreso al estudio del idioma.
+        {t("subtitle")}
       </p>
 
       {/* Google */}
@@ -105,7 +106,7 @@ export default function RegistrationForm() {
         <div className="w-full bg-[#e5e2db] h-px" />
 
         <span className="absolute bg-white px-2 text-xs text-[#42493e] uppercase tracking-wider">
-          O mediante formulario
+          {t("separator")}
         </span>
 
       </div>
@@ -120,7 +121,7 @@ export default function RegistrationForm() {
       {/* Éxito */}
       {success && (
         <div className="px-4 py-3 rounded bg-green-50 border border-green-200 text-sm text-green-700 mb-4">
-          ✓ Cuenta creada correctamente. Redirigiendo al login...
+          ✓ {t("successMessage")}
         </div>
       )}
 
@@ -136,7 +137,7 @@ export default function RegistrationForm() {
               htmlFor="nombre"
               className="block text-xs uppercase text-[#42493e] mb-2 tracking-wider font-semibold"
             >
-              Nombre
+              {t("firstNameLabel")}
             </label>
 
             <input
@@ -144,7 +145,7 @@ export default function RegistrationForm() {
               name="nombre"
               value={formData.nombre}
               onChange={handleChange}
-              placeholder="p. ej. Matteo"
+              placeholder={t("firstNamePlaceholder")}
               type="text"
               required
               className="w-full pl-10 pr-3 py-3 bg-[#f6f3ec] rounded text-sm text-[#1c1c18] placeholder-[#72796e] focus:outline-none focus:bg-white focus:ring-1 focus:ring-[#154212] transition-all"
@@ -158,7 +159,7 @@ export default function RegistrationForm() {
               htmlFor="apellidos"
               className="block text-xs uppercase text-[#42493e] mb-2 tracking-wider font-semibold"
             >
-              Apellidos
+              {t("lastNameLabel")}
             </label>
 
             <input
@@ -166,7 +167,7 @@ export default function RegistrationForm() {
               name="apellidos"
               value={formData.apellidos}
               onChange={handleChange}
-              placeholder="p. ej. Rossi"
+              placeholder={t("lastNamePlaceholder")}
               type="text"
               required
               className="w-full pl-10 pr-3 py-3 bg-[#f6f3ec] rounded text-sm text-[#1c1c18] placeholder-[#72796e] focus:outline-none focus:bg-white focus:ring-1 focus:ring-[#154212] transition-all"
@@ -183,7 +184,7 @@ export default function RegistrationForm() {
             htmlFor="email"
             className="block text-xs uppercase text-[#42493e] mb-2 tracking-wider font-semibold"
           >
-            Correo Electrónico
+            {t("emailLabel")}
           </label>
 
           <input
@@ -191,7 +192,7 @@ export default function RegistrationForm() {
             name="email"
             value={formData.email}
             onChange={handleChange}
-            placeholder="estudiante@accademia.it"
+            placeholder={t("emailPlaceholder")}
             type="email"
             required
             className="w-full pl-10 pr-3 py-3 bg-[#f6f3ec] rounded text-sm text-[#1c1c18] placeholder-[#72796e] focus:outline-none focus:bg-white focus:ring-1 focus:ring-[#154212] transition-all"
@@ -206,7 +207,7 @@ export default function RegistrationForm() {
             htmlFor="nivel"
             className="block text-xs uppercase text-[#42493e] mb-2 tracking-wider font-semibold"
           >
-            Nivel de Conocimiento Actual
+            {t("levelLabel")}
           </label>
 
           <select
@@ -218,20 +219,19 @@ export default function RegistrationForm() {
           >
 
             <option value="none">
-              Sin conocimientos previos
-              (Principiante assoluto)
+              {t("levelNone")}
             </option>
 
             <option value="a1-a2">
-              Elementale / Base (A1 - A2)
+              {t("levelBase")}
             </option>
 
             <option value="b1-b2">
-              Intermedio / Fluente (B1 - B2)
+              {t("levelIntermediate")}
             </option>
 
             <option value="c1-c2">
-              Avanzado / Perfezionamento (C1 - C2)
+              {t("levelAdvanced")}
             </option>
 
           </select>
@@ -247,7 +247,7 @@ export default function RegistrationForm() {
               htmlFor="password"
               className="block text-xs uppercase text-[#42493e] mb-2 tracking-wider font-semibold"
             >
-              Contraseña
+              {t("passwordLabel")}
             </label>
 
             <input
@@ -271,7 +271,7 @@ export default function RegistrationForm() {
               htmlFor="confirmPassword"
               className="block text-xs uppercase text-[#42493e] mb-2 tracking-wider font-semibold"
             >
-              Confirmar Contraseña
+              {t("confirmPasswordLabel")}
             </label>
 
             <input
@@ -304,7 +304,7 @@ export default function RegistrationForm() {
           </div>
 
           <span className="text-xs text-[#42493e]">
-            Mín. 8 letras y números
+            {t("securityHint")}
           </span>
 
         </div>
@@ -324,21 +324,21 @@ export default function RegistrationForm() {
             />
 
             <span className="text-xs text-[#42493e] leading-relaxed">
-              Acepto el{" "}
-              <a
+              {t("termsIntro")}{" "}
+              <Link
                 href="/reglamento"
                 className="text-[#154212] underline"
               >
-                Reglamento Académico
-              </a>{" "}
-              y la{" "}
-              <a
+                {t("termsReglamento")}
+              </Link>{" "}
+              {t("termsAnd")}{" "}
+              <Link
                 href="/privacidad"
                 className="text-[#154212] underline"
               >
-                Política de Privacidad
-              </a>{" "}
-              de la Scuola.
+                {t("termsPrivacy")}
+              </Link>{" "}
+              {t("termsOutro")}
             </span>
 
           </label>
@@ -376,13 +376,13 @@ export default function RegistrationForm() {
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
                 />
               </svg>
-              Creando cuenta...
+              {t("creating")}
             </>
           ) : success ? (
-            <>✓ Cuenta creada</>
+            <>✓ {t("created")}</>
           ) : (
             <>
-              Crear Mi Cuenta Académica
+              {t("submit")}
               →
             </>
           )}

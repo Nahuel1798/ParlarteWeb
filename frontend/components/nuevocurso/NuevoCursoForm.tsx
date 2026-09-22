@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { Link, useRouter } from "@/i18n/navigation";
 import {
   crearCurso,
   listarUsuariosPorRol,
@@ -12,15 +12,15 @@ import {
 
 const niveles = ["A1", "A2", "B1", "B2", "C1", "C2"];
 
-const diasSemana = [
-  "Lunes",
-  "Martes",
-  "Miércoles",
-  "Jueves",
-  "Viernes",
-  "Sábado",
-  "Domingo",
-];
+const diasSemanaKey = [
+  "lunes",
+  "martes",
+  "miercoles",
+  "jueves",
+  "viernes",
+  "sabado",
+  "domingo",
+] as const;
 
 const franjasHorarias = (() => {
   const slots: string[] = [];
@@ -41,18 +41,19 @@ function formatearPesos(value: number) {
 
 export default function NuevoCursoForm() {
   const router = useRouter();
+  const t = useTranslations("nuevoCurso");
 
   const [nivel, setNivel] = useState("C1");
   const [nombre, setNombre] = useState("");
   const [duracion, setDuracion] = useState(60);
   const [descripcion, setDescripcion] = useState("");
-  const [dia, setDia] = useState("Lunes");
+  const [dia, setDia] = useState<(typeof diasSemanaKey)[number]>("lunes");
   const [horaInicio, setHoraInicio] = useState("09:00");
   const [horaFin, setHoraFin] = useState("10:00");
   const [numeroModulos, setNumeroModulos] = useState(0);
   const [precio, setPrecio] = useState(45000);
 
-  const horario = `${dia} ${horaInicio} - ${horaFin}`;
+  const horario = `${t(`dias.${dia}`)} ${horaInicio} - ${horaFin}`;
   const [portadaUrl, setPortadaUrl] = useState("");
   const [profesorId, setProfesorId] = useState<number | null>(null);
 
@@ -76,7 +77,7 @@ export default function NuevoCursoForm() {
       .catch((err) => {
         if (active) {
           setError(
-            err instanceof Error ? err.message : "Error al obtener los docentes"
+            err instanceof Error ? err.message : t("teacherDefaultError")
           );
         }
       })
@@ -87,28 +88,28 @@ export default function NuevoCursoForm() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [t]);
 
   const guardar = async (activo: boolean) => {
     setError(null);
 
     if (!nombre.trim()) {
-      setError("El nombre del curso es obligatorio");
+      setError(t("nameRequired"));
       return;
     }
 
     if (!descripcion.trim()) {
-      setError("La descripción del curso es obligatoria");
+      setError(t("descriptionRequired"));
       return;
     }
 
     if (!horario.trim()) {
-      setError("El horario de lección es obligatorio");
+      setError(t("scheduleRequired"));
       return;
     }
 
     if (!profesorId) {
-      setError("Selecciona un docente titular");
+      setError(t("teacherRequired"));
       return;
     }
 
@@ -131,7 +132,7 @@ export default function NuevoCursoForm() {
       router.push("/curso");
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Error al crear el curso"
+        err instanceof Error ? err.message : t("defaultError")
       );
       setSubmitting(null);
     }
@@ -141,7 +142,7 @@ export default function NuevoCursoForm() {
     if (!file) return;
 
     if (!file.type.startsWith("image/")) {
-      setErrorPortada("El archivo debe ser una imagen");
+      setErrorPortada(t("coverMustBeImage"));
       return;
     }
 
@@ -153,7 +154,7 @@ export default function NuevoCursoForm() {
       setPortadaUrl(url);
     } catch (err) {
       setErrorPortada(
-        err instanceof Error ? err.message : "Error al subir la imagen"
+        err instanceof Error ? err.message : t("coverError")
       );
     } finally {
       setSubiendoPortada(false);
@@ -182,13 +183,11 @@ export default function NuevoCursoForm() {
                 <div>
 
                   <h1 className="font-['Playfair_Display'] text-3xl font-semibold tracking-tight sm:text-4xl">
-                    Creazione Nuovo Corso Accademico
+                    {t("title")}
                   </h1>
 
                   <p className="mt-1 max-w-2xl text-sm leading-6 text-[#42493e]">
-                    Configura l&apos;identità pedagogica e la programmazione
-                    oraria per la nuova offerta formativa della Scuola
-                    d&apos;Italiano.
+                    {t("subtitle")}
                   </p>
 
                 </div>
@@ -203,7 +202,7 @@ export default function NuevoCursoForm() {
                       arrow_back
                     </span>
 
-                    Volver a Administración
+                    {t("backAdmin")}
                   </Link>
 
                   <span className="hidden h-6 w-px bg-[#c2c9bb] sm:block" />
@@ -221,7 +220,7 @@ export default function NuevoCursoForm() {
                       </span>
                     )}
 
-                    Salva come Bozza
+                    {t("saveDraft")}
                   </button>
 
                   <button
@@ -237,7 +236,7 @@ export default function NuevoCursoForm() {
                       </span>
                     )}
 
-                    Pubblica Corso
+                    {t("publish")}
                   </button>
 
                 </div>
@@ -266,16 +265,16 @@ export default function NuevoCursoForm() {
                 <section className="flex flex-col gap-6 rounded-xl bg-white p-6 shadow-sm">
 
                   <SectionTitle
-                    number="1"
-                    title="Informazioni Generali del Corso"
-                    subtitle="Didattica Fondamentale"
+                    number={t("section1Number")}
+                    title={t("section1Title")}
+                    subtitle={t("section1Subtitle")}
                   />
 
                   <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
 
                     <div className="flex flex-col gap-1 md:col-span-2">
                       <label className="text-xs font-semibold uppercase tracking-wider text-[#42493e]">
-                        Nome del Corso / Nombre *
+                        {t("nameLabel")}
                       </label>
 
                       <input
@@ -288,7 +287,7 @@ export default function NuevoCursoForm() {
                     <div className="flex flex-col gap-1">
 
                       <label className="text-xs font-semibold uppercase tracking-wider text-[#42493e]">
-                        Durata in Ore *
+                        {t("durationLabel")}
                       </label>
 
                       <div className="flex items-center rounded-lg bg-[#f6f3ec] px-3 shadow-inner">
@@ -303,7 +302,7 @@ export default function NuevoCursoForm() {
                         />
 
                         <span className="text-xs text-[#42493e]">
-                          Ore
+                          {t("hoursSuffix")}
                         </span>
                       </div>
 
@@ -317,7 +316,7 @@ export default function NuevoCursoForm() {
                     <div className="flex items-center justify-between gap-2">
 
                       <label className="text-xs font-semibold uppercase tracking-wider text-[#42493e]">
-                        Numero Moduli / Cantidad de módulos
+                        {t("moduliLabel")}
                       </label>
 
                       <span className="material-symbols-outlined text-[16px] text-[#42493e]">
@@ -346,7 +345,7 @@ export default function NuevoCursoForm() {
                         </span>
 
                         <span className="text-xs text-[#42493e]">
-                          {numeroModulos === 1 ? "módulo" : "módulos"}
+                          {t("moduliUnit", { count: numeroModulos })}
                         </span>
                       </div>
 
@@ -374,15 +373,14 @@ export default function NuevoCursoForm() {
                               : "bg-white text-[#42493e] ring-1 ring-[#e5e2db] hover:bg-[#f6f3ec]"
                           }`}
                         >
-                          {modulo} {modulo === 1 ? "modulo" : "moduli"}
+                          {t("moduliPreset", { count: modulo })}
                         </button>
                       ))}
 
                     </div>
 
                     <span className="text-[11px] text-[#42493e]">
-                      Obiettivo informativo: el profesor agrega las clases
-                      después en cada módulo.
+                      {t("moduliInfo")}
                     </span>
 
                   </div>
@@ -392,11 +390,11 @@ export default function NuevoCursoForm() {
 
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <label className="text-xs font-semibold uppercase tracking-wider text-[#42493e]">
-                        Livello QCER / Nivel *
+                        {t("levelLabel")}
                       </label>
 
                       <span className="text-xs font-semibold text-[#9d422b]">
-                        {nivel} - Livello Avanzato
+                        {nivel} — {t("levelAvanzado")}
                       </span>
                     </div>
 
@@ -426,7 +424,7 @@ export default function NuevoCursoForm() {
                     <div className="flex flex-wrap items-center justify-between gap-2">
 
                       <label className="text-xs font-semibold uppercase tracking-wider text-[#42493e]">
-                        Orario di Lezione / Horario *
+                        {t("scheduleLabel")}
                       </label>
 
                       <span className="material-symbols-outlined text-[16px] text-[#42493e]">
@@ -438,7 +436,7 @@ export default function NuevoCursoForm() {
                     {/* Dia */}
                     <div className="flex flex-wrap gap-1">
 
-                      {diasSemana.map((item) => (
+                      {diasSemanaKey.map((item) => (
                         <button
                           key={item}
                           type="button"
@@ -449,7 +447,7 @@ export default function NuevoCursoForm() {
                               : "bg-[#f6f3ec] text-[#42493e] hover:bg-[#ebe8e1]"
                           }`}
                         >
-                          {item}
+                          {t(`dias.${item}`)}
                         </button>
                       ))}
 
@@ -461,7 +459,7 @@ export default function NuevoCursoForm() {
                       <div className="flex flex-col gap-1">
 
                         <label className="text-xs font-medium text-[#42493e]">
-                          Dalle / Desde
+                          {t("scheduleFrom")}
                         </label>
 
                         <select
@@ -481,7 +479,7 @@ export default function NuevoCursoForm() {
                       <div className="flex flex-col gap-1">
 
                         <label className="text-xs font-medium text-[#42493e]">
-                          Alle / Hasta
+                          {t("scheduleTo")}
                         </label>
 
                         <select
@@ -504,7 +502,7 @@ export default function NuevoCursoForm() {
                     <div className="flex items-center justify-between gap-2 rounded-lg bg-[#bcf0ae]/50 px-3 py-2">
 
                       <span className="text-xs font-medium text-[#42493e]">
-                        Horario del curso
+                        {t("scheduleSummary")}
                       </span>
 
                       <span className="text-sm font-bold text-[#154212]">
@@ -519,7 +517,7 @@ export default function NuevoCursoForm() {
                   <div className="flex flex-col gap-1">
 
                     <label className="text-xs font-semibold uppercase tracking-wider text-[#42493e]">
-                      Descrizione del Corso *
+                      {t("descriptionLabel")}
                     </label>
 
                     <textarea
@@ -547,19 +545,19 @@ export default function NuevoCursoForm() {
                     </span>
 
                     <h3 className="font-['Playfair_Display'] text-lg font-semibold">
-                      Docente Titolare
+                      {t("teacherTitle")}
                     </h3>
                   </div>
 
                   {cargandoDocentes ? (
                     <div className="flex items-center justify-center rounded-xl bg-[#f6f3ec] py-8 text-sm text-[#42493e]">
-                      Caricamento docenti…
+                      {t("teacherLoading")}
                     </div>
                   ) : (
                     <div className="flex flex-col gap-1">
 
                       <label className="text-xs font-semibold uppercase tracking-wider text-[#42493e]">
-                        Seleziona Docente Titolare *
+                        {t("teacherSelectLabel")}
                       </label>
 
                       <select
@@ -571,7 +569,7 @@ export default function NuevoCursoForm() {
                         }
                         className="rounded-lg bg-[#f6f3ec] px-3 py-3 text-sm font-medium outline-none shadow-inner"
                       >
-                        <option value="">Seleziona un docente…</option>
+                        <option value="">{t("teacherSelectPlaceholder")}</option>
 
                         {docentes.map((docente) => (
                           <option key={docente.id} value={docente.id}>
@@ -584,7 +582,7 @@ export default function NuevoCursoForm() {
 
                       {docentes.length === 0 && (
                         <span className="text-xs text-[#9d422b]">
-                          Non ci sono docenti registrati nel sistema.
+                          {t("teacherEmpty")}
                         </span>
                       )}
 
@@ -604,12 +602,12 @@ export default function NuevoCursoForm() {
                       </span>
 
                       <h3 className="font-['Playfair_Display'] text-lg font-semibold">
-                        Tariffa e Iscrizione
+                        {t("priceTitle")}
                       </h3>
                     </div>
 
                     <span className="rounded bg-[#f0eee7] px-3 py-1 text-xs text-[#42493e]">
-                      ARS (pesos argentinos)
+                      {t("priceCurrency")}
                     </span>
 
                   </div>
@@ -617,7 +615,7 @@ export default function NuevoCursoForm() {
                   <div className="flex flex-col gap-1">
 
                     <label className="text-xs font-semibold uppercase tracking-wider text-[#42493e]">
-                      Prezzo / Precio del curso *
+                      {t("priceLabel")}
                     </label>
 
                     <div className="flex items-center rounded-lg bg-[#f6f3ec] px-3 shadow-inner">
@@ -664,7 +662,7 @@ export default function NuevoCursoForm() {
                   </div>
 
                   <span className="text-[11px] text-[#42493e]">
-                    Importe en pesos argentinos. Sin decimales.
+                    {t("priceInfo")}
                   </span>
 
                 </section>
@@ -678,7 +676,7 @@ export default function NuevoCursoForm() {
                     </span>
 
                     <h3 className="font-['Playfair_Display'] text-lg font-semibold">
-                      Copertina del Corso
+                      {t("coverTitle")}
                     </h3>
                   </div>
 
@@ -690,7 +688,7 @@ export default function NuevoCursoForm() {
                     </span>
 
                     <p className="text-sm font-medium text-[#42493e]">
-                      Subí una imagen desde tu dispositivo
+                      {t("coverUploadHint")}
                     </p>
 
                     <button
@@ -707,7 +705,7 @@ export default function NuevoCursoForm() {
                         </span>
                       )}
 
-                      {subiendoPortada ? "Subiendo imagen…" : "Elegir imagen"}
+                      {subiendoPortada ? t("coverUploading") : t("coverChoose")}
                     </button>
 
                     <input
@@ -737,7 +735,7 @@ export default function NuevoCursoForm() {
                       />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center bg-[#f6f3ec] text-xs text-[#42493e]">
-                        Sin imagen de portada
+                        {t("coverNone")}
                       </div>
                     )}
                   </div>

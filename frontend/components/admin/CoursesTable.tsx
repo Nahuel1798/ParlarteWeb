@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import Card from "@/components/ui/Card";
 import ToneBadge from "@/components/ui/ToneBadge";
 import { CursoResponse, listarCursos } from "../../lib/api";
@@ -20,6 +21,7 @@ function formatearPrecio(precio: number) {
 }
 
 export default function CoursesTable() {
+  const t = useTranslations("admin");
   const [cursos, setCursos] = useState<CursoResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -34,7 +36,7 @@ export default function CoursesTable() {
       .catch((err) => {
         if (active) {
           setError(
-            err instanceof Error ? err.message : "Error al cargar los cursos"
+            err instanceof Error ? err.message : t("coursesDefaultError")
           );
         }
       })
@@ -45,24 +47,24 @@ export default function CoursesTable() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [t]);
 
   return (
     <Card
-      title="Cataloghi Corsi"
-      subtitle="Offerta formativa della scuola"
+      title={t("coursesTitle")}
+      subtitle={t("coursesSubtitle")}
       action={
         <Link
           href="/curso"
           className="text-xs font-semibold text-primary transition hover:text-secondary"
         >
-          Gestisci corsi →
+          {t("coursesAction")} →
         </Link>
       }
     >
       {loading ? (
         <div className="flex items-center justify-center py-10 text-sm text-on-surface-variant">
-          Caricamento corsi…
+          {t("coursesLoading")}
         </div>
       ) : error ? (
         <div className="rounded-lg bg-secondary/10 px-4 py-6 text-sm text-secondary">
@@ -70,20 +72,20 @@ export default function CoursesTable() {
         </div>
       ) : cursos.length === 0 ? (
         <div className="py-10 text-center text-sm text-on-surface-variant">
-          Nessun corso registrato.
+          {t("coursesEmpty")}
         </div>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
               <tr className="text-[10px] uppercase tracking-widest text-on-surface-variant">
-                <th className="py-3 pr-6 font-semibold">Corso</th>
-                <th className="px-6 py-3 font-semibold">Livello</th>
-                <th className="px-6 py-3 font-semibold">Docente</th>
-                <th className="px-6 py-3 font-semibold">Orario</th>
-                <th className="px-6 py-3 font-semibold">Durata</th>
-                <th className="px-6 py-3 font-semibold">Prezzo</th>
-                <th className="py-3 pl-6 font-semibold">Stato</th>
+                <th className="py-3 pr-6 font-semibold">{t("coursesHeaderCourse")}</th>
+                <th className="px-6 py-3 font-semibold">{t("coursesHeaderLevel")}</th>
+                <th className="px-6 py-3 font-semibold">{t("coursesHeaderTeacher")}</th>
+                <th className="px-6 py-3 font-semibold">{t("coursesHeaderSchedule")}</th>
+                <th className="px-6 py-3 font-semibold">{t("coursesHeaderDuration")}</th>
+                <th className="px-6 py-3 font-semibold">{t("coursesHeaderPrice")}</th>
+                <th className="py-3 pl-6 font-semibold">{t("coursesHeaderStatus")}</th>
               </tr>
             </thead>
 
@@ -116,7 +118,7 @@ export default function CoursesTable() {
                   </td>
                   <td className="py-3 pl-6">
                     <ToneBadge tone={curso.activo ? "success" : "neutral"}>
-                      {curso.activo ? "Attivo" : "Archiviato"}
+                      {curso.activo ? t("coursesActive") : t("coursesArchived")}
                     </ToneBadge>
                   </td>
                 </tr>

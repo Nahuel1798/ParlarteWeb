@@ -1,4 +1,8 @@
-export default function DailyTip() {
+import { getTranslations } from "next-intl/server";
+
+export default async function DailyTip() {
+  const t = await getTranslations("estudiante");
+
   return (
     <section className="mt-6 flex flex-col items-center justify-between gap-6 rounded-xl bg-surface-container-low p-6 shadow-sm md:flex-row">
 
@@ -12,21 +16,20 @@ export default function DailyTip() {
 
         <div>
           <h3 className="font-headline-md text-lg font-semibold text-primary">
-            Consiglio didattico del giorno
+            {t("tipTitle")}
           </h3>
 
           <p className="mt-1 text-xs leading-relaxed text-on-surface-variant">
-            Per consolidare il <em>Passato Prossimo</em>, prova a descrivere
-            le tue ultime tre azioni della mattinata usando solo verbi
-            ausiliari corretti (<em>essere</em> per movimento e stato,{" "}
-            <em>avere</em> per azioni transitive).
+            {t.rich("tipText", {
+              em: (chunks) => <em>{chunks}</em>,
+            })}
           </p>
         </div>
 
       </div>
 
       <button className="flex-shrink-0 rounded bg-primary px-5 py-3 text-xs font-semibold text-on-primary shadow-sm transition-colors hover:bg-primary-container">
-        Scrivi un Esercizio Lampo
+        {t("tipButton")}
       </button>
 
     </section>

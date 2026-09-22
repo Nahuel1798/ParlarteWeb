@@ -1,31 +1,33 @@
+"use client";
+
+import { useTranslations } from "next-intl";
+
 export default function Methodology() {
+  const t = useTranslations("methodology");
+
   const steps = [
     {
       number: "01",
-      title: "Inmersión Lingüística",
-      description:
-        "Aprende en situaciones reales y cotidianas. Desde el primer día hablamos italiano para que tu oído y tu voz se acostumbren al idioma de forma natural.",
+      title: t("step1Title"),
+      description: t("step1Description"),
       icon: "record_voice_over",
     },
     {
       number: "02",
-      title: "Método Comunicativo",
-      description:
-        "La conversación es el corazón de nuestras clases. Expresamos ideas, debatimos y resolvemos situaciones auténticas, no solo memorizamos reglas.",
+      title: t("step2Title"),
+      description: t("step2Description"),
       icon: "forum",
     },
     {
       number: "03",
-      title: "Marco CEFR / MCER",
-      description:
-        "Progresión estructurada y medible alineada con el Marco Común Europeo de Referencia (A1 → C2) para certificarte de forma oficial.",
+      title: t("step3Title"),
+      description: t("step3Description"),
       icon: "verified",
     },
     {
       number: "04",
-      title: "Cultura Italiana",
-      description:
-        "La dolce vita es parte del programa: literatura, cine, cocina y tradiciones que convierten cada clase en un viaje por Italia.",
+      title: t("step4Title"),
+      description: t("step4Description"),
       icon: "holiday_village",
     },
   ];
@@ -39,16 +41,15 @@ export default function Methodology() {
 
         <div className="text-center mb-12">
           <span className="font-label-md text-sm font-semibold text-secondary uppercase tracking-wider mb-3 block">
-            Nuestra Metodología
+            {t("kicker")}
           </span>
 
           <h2 className="font-headline-lg text-[32px] md:text-[48px] text-primary mb-4">
-            Un Método que se Siente Natural
+            {t("title")}
           </h2>
 
           <p className="font-body-md text-base text-on-surface-variant max-w-2xl mx-auto">
-            No aprendemos italiano de memoria: lo vivimos. Combinamos rigor
-            académico con la autenticidad de la vida italiana.
+            {t("subtitle")}
           </p>
         </div>
 

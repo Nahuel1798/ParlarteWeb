@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { Link, useRouter } from "@/i18n/navigation";
 import {
   crearClase,
   eliminarClase,
@@ -15,6 +15,7 @@ import { useSessionUser } from "../../lib/session";
 
 export default function CursoClases({ cursoId }: { cursoId: number }) {
   const router = useRouter();
+  const t = useTranslations("docente.curseClases");
   const user = useSessionUser();
 
   const [curso, setCurso] = useState<CursoResponse | null>(null);
@@ -49,7 +50,7 @@ export default function CursoClases({ cursoId }: { cursoId: number }) {
 
         const encontrado = cursos.find((c) => c.id === cursoId);
         if (!encontrado) {
-          setError("Curso no encontrado");
+          setError(t("courseNotFound"));
           return;
         }
 
@@ -59,7 +60,7 @@ export default function CursoClases({ cursoId }: { cursoId: number }) {
       .catch((err) => {
         if (active) {
           setError(
-            err instanceof Error ? err.message : "Error al cargar las clases"
+            err instanceof Error ? err.message : t("defaultErrorLoad")
           );
         }
       })
@@ -70,7 +71,7 @@ export default function CursoClases({ cursoId }: { cursoId: number }) {
     return () => {
       active = false;
     };
-  }, [cursoId, user, router]);
+  }, [cursoId, user, router, t]);
 
   const grupos = useMemo(() => {
     const map = new Map<number | null, ClaseResponse[]>();
@@ -93,12 +94,12 @@ export default function CursoClases({ cursoId }: { cursoId: number }) {
     setError(null);
 
     if (!titulo.trim()) {
-      setError("El título de la clase es obligatorio");
+      setError(t("titleRequired"));
       return;
     }
 
     if (!descripcion.trim()) {
-      setError("La descripción de la clase es obligatoria");
+      setError(t("descriptionRequired"));
       return;
     }
 
@@ -116,7 +117,7 @@ export default function CursoClases({ cursoId }: { cursoId: number }) {
       setDescripcion("");
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Error al crear la clase"
+        err instanceof Error ? err.message : t("defaultErrorCreate")
       );
     } finally {
       setCreando(false);
@@ -124,7 +125,7 @@ export default function CursoClases({ cursoId }: { cursoId: number }) {
   };
 
   const borrarClase = async (clase: ClaseResponse) => {
-    if (!window.confirm(`¿Eliminar la clase "${clase.titulo}"?`)) return;
+    if (!window.confirm(t("confirmDelete", { title: clase.titulo }))) return;
 
     setError(null);
 
@@ -133,7 +134,7 @@ export default function CursoClases({ cursoId }: { cursoId: number }) {
       setClases((prev) => prev.filter((c) => c.id !== clase.id));
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Error al eliminar la clase"
+        err instanceof Error ? err.message : t("defaultErrorDelete")
       );
     }
   };
@@ -159,17 +160,17 @@ export default function CursoClases({ cursoId }: { cursoId: number }) {
               <span className="material-symbols-outlined text-[16px]">
                 arrow_back
               </span>
-              Volver al panel docente
+              {t("back")}
             </Link>
 
             <h1 className="mt-3 font-headline-md text-2xl font-semibold text-primary sm:text-3xl">
-              {loading ? "Caricamento…" : curso?.nombre}
+              {loading ? t("loading") : curso?.nombre}
             </h1>
 
             {curso && (
               <p className="mt-1 text-sm text-on-surface-variant">
-                {curso.nivel} · {curso.duracionHoras} horas ·{" "}
-                {curso.numeroModulos ?? 0} módulos planificados
+                {curso.nivel} · {curso.duracionHoras} {t("hours")} ·{" "}
+                {t("moduliPlanned", { count: curso.numeroModulos ?? 0 })}
               </p>
             )}
           </div>
@@ -178,7 +179,7 @@ export default function CursoClases({ cursoId }: { cursoId: number }) {
             <span className="material-symbols-outlined text-[16px] text-primary">
               menu_book
             </span>
-            {clases.length} {clases.length === 1 ? "classe" : "classi"}
+            {t("classe", { count: clases.length })}
           </span>
         </div>
 
@@ -194,7 +195,7 @@ export default function CursoClases({ cursoId }: { cursoId: number }) {
 
         {loading ? (
           <div className="flex items-center justify-center rounded-xl bg-surface-container-lowest py-20 text-sm text-on-surface-variant">
-            Caricando le classi…
+            {t("loadingClasses")}
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
@@ -209,41 +210,41 @@ export default function CursoClases({ cursoId }: { cursoId: number }) {
                 </span>
 
                 <h2 className="font-headline-md text-lg font-semibold text-primary">
-                  Aggiungi Classe
+                  {t("addClasse")}
                 </h2>
               </div>
 
               <div className="mt-5 flex flex-col gap-4">
                 <div className="flex flex-col gap-1">
                   <label className="text-xs font-semibold uppercase tracking-widest text-on-surface-variant">
-                    Titolo *
+                    {t("titleLabel")}
                   </label>
 
                   <input
                     value={titulo}
                     onChange={(e) => setTitulo(e.target.value)}
-                    placeholder="Es. Lezione 1.1: Introduzione"
+                    placeholder={t("titlePlaceholder")}
                     className="rounded-lg bg-surface-container-low px-3 py-3 text-sm outline-none focus:bg-surface-bright focus:ring-1 focus:ring-primary"
                   />
                 </div>
 
                 <div className="flex flex-col gap-1">
                   <label className="text-xs font-semibold uppercase tracking-widest text-on-surface-variant">
-                    Descrizione *
+                    {t("descriptionLabel")}
                   </label>
 
                   <textarea
                     rows={3}
                     value={descripcion}
                     onChange={(e) => setDescripcion(e.target.value)}
-                    placeholder="Obiettivi e attività della lezione"
+                    placeholder={t("descriptionPlaceholder")}
                     className="resize-none rounded-lg bg-surface-container-low px-3 py-3 text-sm outline-none focus:bg-surface-bright focus:ring-1 focus:ring-primary"
                   />
                 </div>
 
                 <div className="flex flex-col gap-1">
                   <label className="text-xs font-semibold uppercase tracking-widest text-on-surface-variant">
-                    Módulo n°
+                    {t("moduloLabel")}
                   </label>
 
                   <div className="flex items-center rounded-lg bg-surface-container-low px-3 focus-within:bg-surface-bright focus-within:ring-1 focus-within:ring-primary">
@@ -274,7 +275,7 @@ export default function CursoClases({ cursoId }: { cursoId: number }) {
                     </span>
                   )}
 
-                  Aggiungi Classe
+                  {t("addClasse")}
                 </button>
               </div>
             </form>
@@ -288,8 +289,7 @@ export default function CursoClases({ cursoId }: { cursoId: number }) {
                   </span>
 
                   <p className="mt-3 font-body-md text-base text-on-surface-variant">
-                    Todavía no hay clases en este curso. Agregá la primera desde
-                    el formulario.
+                    {t("emptyTitle")}
                   </p>
                 </div>
               ) : (
@@ -304,11 +304,13 @@ export default function CursoClases({ cursoId }: { cursoId: number }) {
                           {numModulo ?? "—"}
                         </span>
 
-                        {numModulo ? `Módulo ${numModulo}` : "Sin módulo"}
+                        {numModulo
+                          ? t("modulo", { num: numModulo })
+                          : t("sinModulo")}
                       </h2>
 
                       <span className="text-xs text-on-surface-variant">
-                        {items.length} {items.length === 1 ? "classe" : "classi"}
+                        {t("classe", { count: items.length })}
                       </span>
                     </div>
 
@@ -336,7 +338,9 @@ export default function CursoClases({ cursoId }: { cursoId: number }) {
                             type="button"
                             onClick={() => borrarClase(clase)}
                             className="shrink-0 rounded-lg p-2 text-on-surface-variant transition hover:bg-error-container hover:text-on-error-container"
-                            aria-label={`Eliminar ${clase.titulo}`}
+                            aria-label={t("deleteAria", {
+                              title: clase.titulo,
+                            })}
                           >
                             <span className="material-symbols-outlined text-[18px]">
                               delete

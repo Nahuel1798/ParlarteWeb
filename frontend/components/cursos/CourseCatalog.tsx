@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import type { ReactNode } from "react";
 import PageHeader from "@/components/ui/PageHeader";
 import ToneBadge from "@/components/ui/ToneBadge";
@@ -34,6 +35,7 @@ function MetaRow({ icon, children }: { icon: string; children: ReactNode }) {
 }
 
 export default function CourseCatalog() {
+  const t = useTranslations("curso");
   const user = useSessionUser();
   const canCreate = user?.rol === "ADMINISTRADOR";
 
@@ -51,7 +53,7 @@ export default function CourseCatalog() {
       .catch((err) => {
         if (active) {
           setError(
-            err instanceof Error ? err.message : "Error al cargar los cursos"
+            err instanceof Error ? err.message : t("catalogDefaultError")
           );
         }
       })
@@ -62,15 +64,15 @@ export default function CourseCatalog() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [t]);
 
   return (
     <section className="w-full bg-surface py-16 md:py-20">
       <div className="mx-auto w-full max-w-[1280px] px-4 md:px-6">
         <PageHeader
-          kicker="Catalogo Corsi"
-          title="Todos Nuestros Cursos"
-          description="Explorá la oferta formativa completa de la Scuola, alineada con el MCER desde A1 hasta C2."
+          kicker={t("catalogKicker")}
+          title={t("catalogTitle")}
+          description={t("catalogDescription")}
           actions={
             canCreate ? (
               <Link
@@ -81,7 +83,7 @@ export default function CourseCatalog() {
                   add_circle
                 </span>
 
-                Crear Curso
+                {t("catalogCreate")}
               </Link>
             ) : undefined
           }
@@ -89,7 +91,7 @@ export default function CourseCatalog() {
 
         {loading ? (
           <div className="flex items-center justify-center rounded-xl bg-surface-container-lowest py-20 text-sm text-on-surface-variant">
-            Cargando cursos…
+            {t("catalogLoading")}
           </div>
         ) : error ? (
           <div className="rounded-xl bg-secondary/10 px-6 py-10 text-sm text-secondary">
@@ -98,7 +100,7 @@ export default function CourseCatalog() {
         ) : cursos.length === 0 ? (
           <div className="rounded-xl bg-surface-container-lowest px-6 py-16 text-center">
             <p className="font-body-md text-base text-on-surface-variant">
-              Todavía no hay cursos registrados.
+              {t("catalogEmpty")}
             </p>
 
             {canCreate && (
@@ -110,7 +112,7 @@ export default function CourseCatalog() {
                   add_circle
                 </span>
 
-                Crear el primer curso
+                {t("catalogCreateFirst")}
               </Link>
             )}
           </div>
@@ -149,7 +151,7 @@ export default function CourseCatalog() {
                     </h3>
 
                     <ToneBadge tone={curso.activo ? "success" : "neutral"}>
-                      {curso.activo ? "Activo" : "Archivado"}
+                      {curso.activo ? t("catalogActive") : t("catalogArchived")}
                     </ToneBadge>
                   </div>
 
@@ -163,7 +165,7 @@ export default function CourseCatalog() {
                     </MetaRow>
 
                     <MetaRow icon="hourglass_top">
-                      {curso.duracionHoras} horas
+                      {t("catalogHours", { count: curso.duracionHoras })}
                     </MetaRow>
 
                     <MetaRow icon="co_present">
@@ -173,7 +175,7 @@ export default function CourseCatalog() {
                               ? ` ${curso.profesor.apellidos}`
                               : ""
                           }`
-                        : "Sin asignar"}
+                        : t("catalogUnassigned")}
                     </MetaRow>
 
                     <div className="flex items-center justify-between pt-1">
@@ -182,7 +184,7 @@ export default function CourseCatalog() {
                       </MetaRow>
 
                       <span className="font-caption text-[11px] uppercase tracking-wider text-on-surface-variant">
-                        Inscripción abierta
+                        {t("catalogEnrollment")}
                       </span>
                     </div>
                   </div>

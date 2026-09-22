@@ -1,11 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const t = useTranslations("nav");
 
   return (
     <header className="bg-surface/95 backdrop-blur-md sticky top-0 z-50 w-full">
@@ -35,45 +38,47 @@ export default function Navbar() {
             href="/"
             className="text-primary border-b-2 border-primary pb-1 font-label-md text-sm"
           >
-            Inicio
+            {t("inicio")}
           </Link>
 
           <Link
             href="#courses"
             className="text-on-surface-variant hover:text-primary transition-colors font-label-md text-sm"
           >
-            Cursos
+            {t("cursos")}
           </Link>
 
           <Link
             href="#methodology"
             className="text-on-surface-variant hover:text-primary transition-colors font-label-md text-sm"
           >
-            Metodologia
+            {t("metodologia")}
           </Link>
 
           <Link
             href="#about"
             className="text-on-surface-variant hover:text-primary transition-colors font-label-md text-sm"
           >
-            Quienes Somos
+            {t("quienesSomos")}
           </Link>
         </nav>
 
         {/* Actions */}
         <div className="hidden md:flex items-center gap-3">
+          <LanguageSwitcher />
+
           <Link
             href="/login"
             className="text-primary hover:opacity-80 transition-opacity font-label-md text-sm px-4 py-2"
           >
-            Iniciar Sesión
+            {t("iniciarSesion")}
           </Link>
 
           <Link
             href="/register"
             className="bg-primary text-white hover:opacity-90 transition-opacity font-label-md text-sm px-6 py-3 rounded"
           >
-            Registrarse
+            {t("registrarse")}
           </Link>
         </div>
 
@@ -81,7 +86,7 @@ export default function Navbar() {
         <button
           onClick={() => setMenuOpen(!menuOpen)}
           className="md:hidden text-primary p-2"
-          aria-label="Open menu"
+          aria-label={t("menuAria")}
         >
           <span className="material-symbols-outlined text-2xl">
             {menuOpen ? "close" : "menu"}
@@ -94,25 +99,27 @@ export default function Navbar() {
         <div className="md:hidden bg-surface border-t border-primary/10 px-4 py-6">
           <nav className="flex flex-col gap-5">
             <Link href="/" onClick={() => setMenuOpen(false)}>
-              Inicio
+              {t("inicio")}
             </Link>
 
             <Link href="#courses" onClick={() => setMenuOpen(false)}>
-              Cursos
+              {t("cursos")}
             </Link>
 
             <Link href="#methodology" onClick={() => setMenuOpen(false)}>
-              Metodologia
+              {t("metodologia")}
             </Link>
 
             <Link href="#about" onClick={() => setMenuOpen(false)}>
-              Quienes Somos
+              {t("quienesSomos")}
             </Link>
 
             <hr className="border-primary/10" />
 
+            <LanguageSwitcher onChange={() => setMenuOpen(false)} />
+
             <Link href="/login" onClick={() => setMenuOpen(false)}>
-              Iniciar Sesión
+              {t("iniciarSesion")}
             </Link>
 
             <Link
@@ -120,7 +127,7 @@ export default function Navbar() {
               onClick={() => setMenuOpen(false)}
               className="bg-primary text-white px-6 py-3 rounded text-center"
             >
-              Registrarse
+              {t("registrarse")}
             </Link>
           </nav>
         </div>

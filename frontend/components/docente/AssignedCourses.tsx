@@ -1,12 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import Card from "@/components/ui/Card";
 import { listarCursos, type CursoResponse } from "../../lib/api";
 import { useSessionUser } from "../../lib/session";
 
 export default function AssignedCourses() {
+  const t = useTranslations("docente");
   const user = useSessionUser();
   const [cursos, setCursos] = useState<CursoResponse[]>([]);
   const [loading, setLoading] = useState(true);
@@ -28,7 +30,7 @@ export default function AssignedCourses() {
       .catch((err) => {
         if (active) {
           setError(
-            err instanceof Error ? err.message : "Error al cargar los cursos"
+            err instanceof Error ? err.message : t("assignedDefaultError")
           );
         }
       })
@@ -39,17 +41,17 @@ export default function AssignedCourses() {
     return () => {
       active = false;
     };
-  }, [user]);
+  }, [user, t]);
 
   return (
     <Card
-      kicker="Didattica Attiva"
-      title="Corsi Assegnati"
-      subtitle="Corsi di cui sei il docente titolare"
+      kicker={t("assignedKicker")}
+      title={t("assignedTitle")}
+      subtitle={t("assignedSubtitle")}
     >
       {loading ? (
         <div className="flex items-center justify-center py-8 text-sm text-on-surface-variant">
-          Caricamento corsi…
+          {t("assignedLoading")}
         </div>
       ) : error ? (
         <div className="rounded-lg bg-secondary/10 px-4 py-6 text-sm text-secondary">
@@ -57,7 +59,7 @@ export default function AssignedCourses() {
         </div>
       ) : cursos.length === 0 ? (
         <div className="py-8 text-center text-sm text-on-surface-variant">
-          Nessun corso assegnato.
+          {t("assignedEmpty")}
         </div>
       ) : (
         <div className="flex flex-col gap-4">
@@ -74,8 +76,9 @@ export default function AssignedCourses() {
                   </span>
 
                   <span className="font-caption text-xs text-on-surface-variant">
-                    {course.numeroModulos ?? 0} modulo
-                    {course.numeroModulos === 1 ? "" : "li"} pianificati
+                    {t("assignedModuli", {
+                      count: course.numeroModulos ?? 0,
+                    })}
                   </span>
                 </div>
 
@@ -91,7 +94,7 @@ export default function AssignedCourses() {
                       edit_note
                     </span>
 
-                    Gestisci classi
+                    {t("assignedManage")}
                   </span>
                 </div>
               </div>

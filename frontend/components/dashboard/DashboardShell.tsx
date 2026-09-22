@@ -8,12 +8,6 @@ import DashboardHeader from "./DashboardHeader";
 import type { DashboardConfig } from "./config";
 import { useSessionUser } from "../../lib/session";
 
-const roleLabels: Record<string, string> = {
-  ADMINISTRADOR: "Amministratore",
-  PROFESOR: "Docente",
-  ALUMNO: "Studente",
-};
-
 interface DashboardShellProps {
   config: DashboardConfig;
   contentClassName?: string;
@@ -30,11 +24,15 @@ export default function DashboardShell({
 
   const effectiveConfig: DashboardConfig = {
     ...config,
-    roleLabel: user
-      ? roleLabels[user.rol] ?? user.rol
-      : config.roleLabel,
+    roleKey: user?.rol === "ADMINISTRADOR"
+      ? "roleAdministrador"
+      : user?.rol === "PROFESOR"
+        ? "roleProfesor"
+        : user?.rol === "ALUMNO"
+          ? "roleAlumno"
+          : config.roleKey,
     userName: user?.nombre ?? config.userName,
-    userTitle: user ? user.email : config.userTitle,
+    userTitleKey: config.userTitleKey,
   };
 
   return (

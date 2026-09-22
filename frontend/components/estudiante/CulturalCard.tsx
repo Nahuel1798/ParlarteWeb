@@ -1,4 +1,8 @@
-export default function CulturalCard() {
+import { getTranslations } from "next-intl/server";
+
+export default async function CulturalCard() {
+  const t = await getTranslations("estudiante");
+
   return (
     <section className="overflow-hidden rounded-xl bg-surface-container-lowest shadow-sm">
 
@@ -16,11 +20,11 @@ export default function CulturalCard() {
 
         <div className="absolute bottom-4 left-4 right-4 text-white">
           <span className="text-[10px] font-semibold uppercase tracking-widest text-tertiary-fixed">
-            Pillola Culturale della Settimana
+            {t("culturalBadge")}
           </span>
 
           <h4 className="font-headline-md text-base font-semibold leading-tight">
-            Il Rito del Caffè: Regole Non Scritte
+            {t("culturalTitle")}
           </h4>
         </div>
 
@@ -29,8 +33,7 @@ export default function CulturalCard() {
       <div className="flex flex-col justify-between p-6">
 
         <p className="text-xs leading-relaxed text-on-surface-variant">
-          Perché non si ordina mai un cappuccino dopo le undici del mattino?
-          Scopri il legame tra digestione, convivialità e la vita al bancone.
+          {t("culturalText")}
         </p>
 
         <div className="mt-5 flex items-center justify-between">
@@ -40,11 +43,11 @@ export default function CulturalCard() {
               timer
             </span>
 
-            Lettura di 4 min
+            {t("culturalReadTime")}
           </span>
 
           <button className="flex items-center gap-1 text-xs font-semibold text-secondary hover:underline">
-            Leggere l&apos;articolo
+            {t("culturalAction")}
 
             <span className="material-symbols-outlined text-[14px]">
               arrow_forward

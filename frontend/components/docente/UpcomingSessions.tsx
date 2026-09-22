@@ -1,39 +1,34 @@
+import { getTranslations } from "next-intl/server";
 import Card from "@/components/ui/Card";
 
 const sessions = [
   {
     time: "18:00",
-    end: "19:30 Fine",
-    type: "Livello B1",
-    group: "Gruppo Roma • 8 Iscritti",
-    title: "Conversazione e Uso del Congiuntivo",
-    description:
-      "Focus tematico: Arte rinascimentale fiorentina ed espressione di opinione personale.",
-    details: [
-      "8/8 Presenti confermati",
-      "2 dispense caricate",
-    ],
+    endKey: "sessions1End",
+    typeKey: "sessions1Type",
+    groupKey: "sessions1Group",
+    titleKey: "sessions1Title",
+    descriptionKey: "sessions1Description",
+    detailsKeys: ["sessions1Detail1", "sessions1Detail2"],
   },
   {
     time: "20:00",
-    end: "20:45 Fine",
-    type: "Tutorato 1-a-1",
-    group: "Sessione Personalizzata",
-    title: "Tutorato Individuale: Matteo Rossi",
-    description:
-      "Preparazione esame di certificazione CILS B2 (sezione produzione scritta e colloquio orale).",
-    details: [
-      "Studente Regolare",
-      "Revisione bozza saggio n. 4",
-    ],
+    endKey: "sessions2End",
+    typeKey: "sessions2Type",
+    groupKey: "sessions2Group",
+    titleKey: "sessions2Title",
+    descriptionKey: "sessions2Description",
+    detailsKeys: ["sessions2Detail1", "sessions2Detail2"],
   },
 ];
 
-export default function UpcomingSessions() {
+export default async function UpcomingSessions() {
+  const t = await getTranslations("docente");
+
   return (
     <Card
-      kicker="Orario Giornaliero"
-      title="Prossime Sessioni in Diretta"
+      kicker={t("sessionsKicker")}
+      title={t("sessionsTitle")}
       action={
         <div className="flex items-center gap-1 rounded-xl bg-surface-container px-3 py-1">
           <span className="material-symbols-outlined text-[18px] text-primary">
@@ -41,7 +36,7 @@ export default function UpcomingSessions() {
           </span>
 
           <span className="font-caption text-xs text-on-surface-variant">
-            Piattaforma Aula Virtuale WebRTC HD
+            {t("sessionsPlatform")}
           </span>
         </div>
       }
@@ -49,13 +44,13 @@ export default function UpcomingSessions() {
       <div className="flex flex-col gap-4">
         {sessions.map((session) => (
           <div
-            key={session.title}
+            key={session.titleKey}
             className="flex flex-col items-start justify-between gap-6 rounded-xl bg-surface-container-low p-4 transition-all hover:bg-surface-container md:flex-row md:items-center"
           >
             <div className="flex items-start gap-4">
               <div className="flex min-w-[90px] flex-col items-center justify-center rounded-xl bg-primary px-4 py-3 text-center text-on-primary">
                 <span className="font-label-md text-xs uppercase">
-                  Inizio
+                  {t("sessionsStart")}
                 </span>
 
                 <span className="font-headline-md my-1 text-2xl font-bold leading-none">
@@ -63,37 +58,40 @@ export default function UpcomingSessions() {
                 </span>
 
                 <span className="font-caption text-[10px] opacity-80">
-                  {session.end}
+                  {t(session.endKey)}
                 </span>
               </div>
 
               <div className="flex flex-col gap-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="rounded bg-tertiary-fixed text-[11px] font-semibold uppercase tracking-wide text-on-tertiary-fixed px-2 py-1">
-                    {session.type}
+                    {t(session.typeKey)}
                   </span>
 
                   <span className="font-caption text-xs font-semibold text-secondary">
-                    {session.group}
+                    {t(session.groupKey)}
                   </span>
                 </div>
 
                 <h3 className="font-headline-md text-xl font-semibold text-primary">
-                  {session.title}
+                  {t(session.titleKey)}
                 </h3>
 
                 <p className="text-sm text-on-surface-variant">
-                  {session.description}
+                  {t(session.descriptionKey)}
                 </p>
 
                 <div className="mt-1 flex flex-wrap items-center gap-3 text-on-surface-variant">
-                  {session.details.map((detail, index) => (
-                    <span key={detail} className="flex items-center gap-1 text-xs">
+                  {session.detailsKeys.map((key, index) => (
+                    <span
+                      key={key}
+                      className="flex items-center gap-1 text-xs"
+                    >
                       <span className="material-symbols-outlined text-[16px] text-primary">
                         {index === 0 ? "groups" : "description"}
                       </span>
 
-                      {detail}
+                      {t(key)}
                     </span>
                   ))}
                 </div>
@@ -109,7 +107,7 @@ export default function UpcomingSessions() {
                   meeting_room
                 </span>
 
-                Apri Aula Virtuale
+                {t("sessionsOpenRoom")}
               </button>
 
               <button
@@ -120,7 +118,7 @@ export default function UpcomingSessions() {
                   checklist
                 </span>
 
-                Appello e Note
+                {t("sessionsAttendance")}
               </button>
             </div>
           </div>

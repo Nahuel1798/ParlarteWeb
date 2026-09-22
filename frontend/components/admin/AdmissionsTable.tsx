@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import Card from "@/components/ui/Card";
 import ToneBadge from "@/components/ui/ToneBadge";
 import { listarUsuariosPorRol, UsuarioResponse } from "../../lib/api";
@@ -17,23 +18,10 @@ function nivelTone(nivel: string | null) {
   }
 }
 
-function nivelLabel(nivel: string | null) {
-  switch (nivel) {
-    case "A1_A2":
-      return "A1–A2";
-    case "B1_B2":
-      return "B1–B2";
-    case "C1_C2":
-      return "C1–C2";
-    default:
-      return "Nessuno";
-  }
-}
-
 function formatearFecha(fecha: string) {
   const date = new Date(fecha);
   if (Number.isNaN(date.getTime())) return fecha;
-  return date.toLocaleDateString("it-IT", {
+  return date.toLocaleDateString("es-AR", {
     day: "2-digit",
     month: "short",
     year: "numeric",
@@ -41,6 +29,7 @@ function formatearFecha(fecha: string) {
 }
 
 export default function AdmissionsTable() {
+  const t = useTranslations("admin");
   const [alumnos, setAlumnos] = useState<UsuarioResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -55,7 +44,7 @@ export default function AdmissionsTable() {
       .catch((err) => {
         if (active) {
           setError(
-            err instanceof Error ? err.message : "Error al cargar alumnos"
+            err instanceof Error ? err.message : t("admissionsDefaultError")
           );
         }
       })
@@ -66,21 +55,21 @@ export default function AdmissionsTable() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [t]);
 
   return (
     <Card
-      title="Studenti Iscritti"
-      subtitle="Alunni registrati nella piattaforma"
+      title={t("admissionsTitle")}
+      subtitle={t("admissionsSubtitle")}
       action={
         <button className="text-xs font-semibold text-primary transition hover:text-secondary">
-          Ver tutte →
+          {t("admissionsAction")} →
         </button>
       }
     >
       {loading ? (
         <div className="flex items-center justify-center py-10 text-sm text-on-surface-variant">
-          Caricamento studenti…
+          {t("admissionsLoading")}
         </div>
       ) : error ? (
         <div className="rounded-lg bg-secondary/10 px-4 py-6 text-sm text-secondary">
@@ -88,17 +77,17 @@ export default function AdmissionsTable() {
         </div>
       ) : alumnos.length === 0 ? (
         <div className="py-10 text-center text-sm text-on-surface-variant">
-          Nessun alunno registrato.
+          {t("admissionsEmpty")}
         </div>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
               <tr className="text-[10px] uppercase tracking-widest text-on-surface-variant">
-                <th className="py-3 pr-6 font-semibold">Studente</th>
-                <th className="px-6 py-3 font-semibold">Email</th>
-                <th className="px-6 py-3 font-semibold">Livello</th>
-                <th className="py-3 pl-6 font-semibold">Data Iscrizione</th>
+                <th className="py-3 pr-6 font-semibold">{t("admissionsHeaderStudent")}</th>
+                <th className="px-6 py-3 font-semibold">{t("admissionsHeaderEmail")}</th>
+                <th className="px-6 py-3 font-semibold">{t("admissionsHeaderLevel")}</th>
+                <th className="py-3 pl-6 font-semibold">{t("admissionsHeaderDate")}</th>
               </tr>
             </thead>
 
@@ -114,7 +103,10 @@ export default function AdmissionsTable() {
                   </td>
                   <td className="px-6 py-3">
                     <ToneBadge tone={nivelTone(alumno.nivel)}>
-                      {nivelLabel(alumno.nivel)}
+                      {alumno.nivel === "A1_A2" && "A1–A2"}
+                      {alumno.nivel === "B1_B2" && "B1–B2"}
+                      {alumno.nivel === "C1_C2" && "C1–C2"}
+                      {!alumno.nivel && t("admissionsLevelNone")}
                     </ToneBadge>
                   </td>
                   <td className="py-3 pl-6 text-on-surface-variant">

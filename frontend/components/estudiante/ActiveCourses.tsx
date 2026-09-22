@@ -1,37 +1,39 @@
+import { getTranslations } from "next-intl/server";
+
 const courses = [
   {
-    badge: "Modulo B1.2",
+    badgeKey: "active1Badge",
     percentage: 68,
-    title: "Italiano B1: Navigando il Passato",
-    description:
-      "Studio approfondito del Passato Prossimo vs Imperfetto e forme narrative.",
-    progress: "8 di 12 lezioni superate",
-    remaining: "4 lezioni rimaste",
+    titleKey: "active1Title",
+    descriptionKey: "active1Description",
+    progressKey: "active1Progress",
+    remainingKey: "active1Remaining",
     icon: "assignment_late",
-    label: "Prossima Consegna (Giovedì)",
-    task: "Ensayo breve: 'Ladri di biciclette' e il dopoguerra",
+    labelKey: "active1Label",
+    taskKey: "active1Task",
     footerIcon: "folder_open",
-    footer: "3 materiali da revisionare",
-    action: "Continuar",
+    footerKey: "active1Footer",
+    actionKey: "active1Action",
   },
   {
-    badge: "Laboratorio Speciale",
+    badgeKey: "active2Badge",
     percentage: 45,
-    title: "Laboratorio di Fonetica e Pronuncia",
-    description:
-      "Consonanti doppie, cadenza toscana e intonazione musicale del discorso.",
-    progress: "5 di 11 moduli completati",
-    remaining: "Prossima sessione: Giovedì",
+    titleKey: "active2Title",
+    descriptionKey: "active2Description",
+    progressKey: "active2Progress",
+    remainingKey: "active2Remaining",
     icon: "mic",
-    label: "Esercizio Pratico Orale",
-    task: "Registrazione: 'Sci' vs 'Chi' in contesto narrativo",
+    labelKey: "active2Label",
+    taskKey: "active2Task",
     footerIcon: "graphic_eq",
-    footer: "8 feedback del docente",
-    action: "Ascolta",
+    footerKey: "active2Footer",
+    actionKey: "active2Action",
   },
 ];
 
-export default function ActiveCourses() {
+export default async function ActiveCourses() {
+  const t = await getTranslations("estudiante");
+
   return (
     <section>
       <div className="mb-3 flex items-center justify-between">
@@ -41,12 +43,12 @@ export default function ActiveCourses() {
           </span>
 
           <h2 className="font-headline-md text-xl font-semibold tracking-tight text-primary">
-            I Miei Corsi Attivi
+            {t("activeTitle")}
           </h2>
         </div>
 
         <button className="flex items-center gap-1 text-xs font-semibold text-secondary hover:underline">
-          Ver curriculum completo
+          {t("activeAction")}
           <span className="material-symbols-outlined text-[16px]">
             arrow_forward
           </span>
@@ -57,27 +59,27 @@ export default function ActiveCourses() {
 
         {courses.map((course) => (
           <div
-            key={course.title}
+            key={course.titleKey}
             className="flex flex-col justify-between rounded-xl bg-surface-container-lowest p-6 shadow-sm transition-all hover:shadow-md"
           >
             <div>
 
               <div className="mb-3 flex items-center justify-between">
                 <span className="rounded bg-primary/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-primary">
-                  {course.badge}
+                  {t(course.badgeKey)}
                 </span>
 
                 <span className="text-xs font-semibold text-on-surface-variant">
-                  {course.percentage}% Completato
+                  {t("activePercent", { percentage: course.percentage })}
                 </span>
               </div>
 
               <h3 className="font-headline-md text-lg font-semibold text-on-surface">
-                {course.title}
+                {t(course.titleKey)}
               </h3>
 
               <p className="mt-1 text-xs text-on-surface-variant">
-                {course.description}
+                {t(course.descriptionKey)}
               </p>
 
               <div className="mt-5 h-1.5 w-full overflow-hidden rounded-full bg-surface-container-high">
@@ -88,8 +90,8 @@ export default function ActiveCourses() {
               </div>
 
               <div className="mt-1 flex justify-between text-[11px] text-on-surface-variant">
-                <span>{course.progress}</span>
-                <span>{course.remaining}</span>
+                <span>{t(course.progressKey)}</span>
+                <span>{t(course.remainingKey)}</span>
               </div>
 
               <div className="mt-5 flex items-start gap-3 rounded-lg bg-surface-container p-3">
@@ -99,11 +101,11 @@ export default function ActiveCourses() {
 
                 <div className="min-w-0">
                   <span className="block text-[11px] font-semibold uppercase tracking-wider text-secondary">
-                    {course.label}
+                    {t(course.labelKey)}
                   </span>
 
                   <span className="block truncate text-xs font-semibold">
-                    {course.task}
+                    {t(course.taskKey)}
                   </span>
                 </div>
               </div>
@@ -115,11 +117,11 @@ export default function ActiveCourses() {
                   {course.footerIcon}
                 </span>
 
-                {course.footer}
+                {t(course.footerKey)}
               </span>
 
               <button className="flex items-center gap-1 rounded bg-surface-container-high px-3 py-2 text-xs font-semibold text-primary hover:bg-surface-variant">
-                {course.action}
+                {t(course.actionKey)}
 
                 <span className="material-symbols-outlined text-[14px]">
                   arrow_forward

@@ -1,56 +1,57 @@
+import { getTranslations } from "next-intl/server";
 import Card from "@/components/ui/Card";
 
 const announcements = [
   {
-    title: "Calendario Esami CILS",
-    date: "Ieri, 17:15",
-    text:
-      "Sono aperte le iscrizioni per la sessione invernale CILS e CELI. Si prega di verificare l'elenco dei candidati della classe B1 e confermare l'idoneità accademica entro venerdì.",
-    action: "Scarica Circolare PDF",
+    titleKey: "announcements1Title",
+    dateKey: "announcements1Date",
+    textKey: "announcements1Text",
+    actionKey: "announcements1Action",
     icon: "download",
   },
   {
-    title: "Materiali Glottodidattici",
-    date: "14 Ottobre",
-    text:
-      'Nuova antologia digitale disponibile in biblioteca docenti: "Letteratura Italiana Contemporanea e Cortometraggi per Livelli Intermedi".',
-    action: "Esplora Risorse Didattiche",
+    titleKey: "announcements2Title",
+    dateKey: "announcements2Date",
+    textKey: "announcements2Text",
+    actionKey: "announcements2Action",
     icon: "open_in_new",
   },
 ];
 
-export default function Announcements() {
+export default async function Announcements() {
+  const t = await getTranslations("docente");
+
   return (
     <Card
-      kicker="Comunicazioni Ufficiali"
-      title="Segreteria Accademica"
+      kicker={t("announcementsKicker")}
+      title={t("announcementsTitle")}
       icon="campaign"
     >
       <div className="flex flex-col gap-4">
         {announcements.map((announcement) => (
           <div
-            key={announcement.title}
+            key={announcement.titleKey}
             className="flex flex-col gap-1 rounded-xl bg-surface-container-low p-4"
           >
             <div className="flex items-center justify-between">
               <span className="font-label-md text-xs font-semibold text-secondary">
-                {announcement.title}
+                {t(announcement.titleKey)}
               </span>
 
               <span className="font-caption text-[11px] text-on-surface-variant">
-                {announcement.date}
+                {t(announcement.dateKey)}
               </span>
             </div>
 
             <p className="text-sm text-on-surface-variant">
-              {announcement.text}
+              {t(announcement.textKey)}
             </p>
 
             <button
               type="button"
               className="mt-1 inline-flex items-center gap-1 self-start font-caption text-xs font-semibold text-primary transition hover:underline"
             >
-              {announcement.action}
+              {t(announcement.actionKey)}
 
               <span className="material-symbols-outlined text-[14px]">
                 {announcement.icon}

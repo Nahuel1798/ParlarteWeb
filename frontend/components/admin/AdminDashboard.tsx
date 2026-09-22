@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import DashboardShell from "@/components/dashboard/DashboardShell";
 import { adminConfig } from "@/components/dashboard/config";
 import PageHeader from "@/components/ui/PageHeader";
@@ -8,13 +9,15 @@ import CourseCapacity from "./CourseCapacity";
 import TeachersToday from "./TeachersToday";
 import CoursesTable from "./CoursesTable";
 
-export default function AdminDashboard() {
+export default async function AdminDashboard() {
+  const t = await getTranslations("admin");
+
   return (
     <DashboardShell config={adminConfig}>
       <PageHeader
-        kicker="Ufficio Rettorale · Firenze"
-        title="Direzione Accademica & Amministrazione"
-        description="Quadro sinottico delle prestazioni didattiche, ammissioni e operatività istituzionale."
+        kicker={t("kicker")}
+        title={t("title")}
+        description={t("description")}
         actions={
           <>
             <div className="flex items-center gap-2 rounded-lg bg-surface-container-low px-4 py-2">
@@ -22,12 +25,12 @@ export default function AdminDashboard() {
                 calendar_today
               </span>
 
-              <span className="text-xs text-on-surface-variant">Periodo:</span>
+              <span className="text-xs text-on-surface-variant">{t("periodo")}</span>
 
               <select className="bg-transparent text-xs font-semibold text-primary outline-none">
-                <option>Semestre de Otoño 2024–2025</option>
-                <option>Primavera 2025</option>
-                <option>Sessione Estiva Intensiva 2024</option>
+                <option>{t("periodOtono")}</option>
+                <option>{t("periodPrimavera")}</option>
+                <option>{t("periodVerano")}</option>
               </select>
             </div>
 
@@ -36,7 +39,7 @@ export default function AdminDashboard() {
                 file_download
               </span>
 
-              Rapporto Esecutivo
+              {t("report")}
             </button>
           </>
         }
@@ -45,39 +48,39 @@ export default function AdminDashboard() {
       {/* KPIs */}
       <section className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
-          title="Studenti Attivi"
+          title={t("statStudenti")}
           value="1.420"
-          change="+14%"
-          description="Rispetto al mese precedente"
+          change={t("statStudentiChange")}
+          description={t("statStudentiDesc")}
           icon="groups"
           progress={78}
         />
 
         <StatCard
-          title="Tasso Presenze & Ritenzione"
+          title={t("statPresenze")}
           value="94.2%"
-          change="+1.8%"
-          description="Frequenza regolare certificata"
+          change={t("statPresenzeChange")}
+          description={t("statPresenzeDesc")}
           icon="verified"
           progress={94.2}
           tone="secondary"
         />
 
         <StatCard
-          title="Entrate Iscrizioni"
+          title={t("statEntrate")}
           value="€184.500"
-          change="+8%"
-          description="Obiettivo semestrale superato"
+          change={t("statEntrateChange")}
+          description={t("statEntrateDesc")}
           icon="payments"
           progress={88}
           tone="tertiary"
         />
 
         <StatCard
-          title="Corpo Docente"
+          title={t("statDocenti")}
           value="28"
-          change="Docenti Certificati"
-          description="100% madrelingua DITALS/CEDILS"
+          change={t("statDocentiChange")}
+          description={t("statDocentiDesc")}
           icon="co_present"
           progress={100}
         />

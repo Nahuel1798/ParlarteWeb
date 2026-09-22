@@ -1,5 +1,8 @@
-import Link from "next/link";
+"use client";
+
 import { ReactNode } from "react";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 
 interface AuthShellProps {
   panel: ReactNode;
@@ -7,6 +10,8 @@ interface AuthShellProps {
 }
 
 export default function AuthShell({ panel, children }: AuthShellProps) {
+  const t = useTranslations("auth.shell");
+
   return (
     <main className="min-h-dvh bg-[#fcf9f2] flex items-stretch justify-center p-4 sm:p-6 lg:p-8">
       <div className="w-full max-w-7xl bg-white rounded-xl shadow-xl overflow-hidden flex flex-col md:flex-row md:min-h-[min(100dvh-4rem,900px)] mx-auto">
@@ -17,7 +22,7 @@ export default function AuthShell({ panel, children }: AuthShellProps) {
             className="inline-flex items-center gap-2 mb-6 w-fit text-xs font-semibold uppercase tracking-wider text-[#42493e] hover:text-[#154212] transition-colors"
           >
             <span className="text-sm leading-none">←</span>
-            Volver al inicio
+            {t("back")}
           </Link>
           {children}
         </div>

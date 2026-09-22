@@ -1,42 +1,43 @@
+import { getTranslations } from "next-intl/server";
 import Card from "@/components/ui/Card";
 
 const assignments = [
   {
     initials: "EB",
-    name: "Elena Bianchi",
-    level: "B1 Italiano",
-    title: 'Saggio: "Il Mio Viaggio Immaginario tra le Colline Senesi"',
-    info: "Sottomesso oggi alle 11:20 • 420 parole • Formato PDF",
+    nameKey: "pending1Name",
+    levelKey: "pending1Level",
+    titleKey: "pending1Title",
+    infoKey: "pending1Info",
   },
   {
     initials: "LM",
-    name: "Lucas Müller",
-    level: "C1 Linguistica",
-    title:
-      'Analisi critica: "L\'Evoluzione dei Neologismi nel Giornalismo Moderno"',
-    info: "Sottomesso ieri alle 19:45 • 850 parole • Con audio allegato",
+    nameKey: "pending2Name",
+    levelKey: "pending2Level",
+    titleKey: "pending2Title",
+    infoKey: "pending2Info",
   },
   {
     initials: "CD",
-    name: "Claire Dupont",
-    level: "B1 Italiano",
-    title:
-      'Esercizio: "Periodo Ipotetico della Possibilità ed Irrealtà"',
-    info: "Sottomesso ieri alle 16:30 • 15 risposte aperte",
+    nameKey: "pending3Name",
+    levelKey: "pending3Level",
+    titleKey: "pending3Title",
+    infoKey: "pending3Info",
   },
 ];
 
-export default function PendingAssignments() {
+export default async function PendingAssignments() {
+  const t = await getTranslations("docente");
+
   return (
     <Card
-      kicker="Compiti e Valutazioni"
-      title="Elaborati in Attesa di Correzione"
+      kicker={t("pendingKicker")}
+      title={t("pendingTitle")}
       action={
         <button
           type="button"
           className="flex items-center gap-1 font-label-md text-secondary transition hover:underline"
         >
-          Vedi tutti (12)
+          {t("pendingAction")} (12)
 
           <span className="material-symbols-outlined text-[16px]">
             arrow_forward
@@ -47,7 +48,7 @@ export default function PendingAssignments() {
       <div className="flex flex-col gap-2">
         {assignments.map((assignment) => (
           <div
-            key={assignment.name}
+            key={assignment.nameKey}
             className="flex flex-col items-start justify-between gap-6 rounded-xl bg-surface-container-low p-4 transition-all hover:bg-surface-container md:flex-row md:items-center"
           >
             <div className="flex items-start gap-4">
@@ -58,20 +59,20 @@ export default function PendingAssignments() {
               <div className="flex flex-col">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="font-label-md text-on-surface">
-                    {assignment.name}
+                    {t(assignment.nameKey)}
                   </span>
 
                   <span className="rounded bg-tertiary-fixed px-2 py-1 text-[11px] font-semibold text-on-tertiary-fixed">
-                    {assignment.level}
+                    {t(assignment.levelKey)}
                   </span>
                 </div>
 
                 <span className="mt-1 text-sm font-medium text-on-surface">
-                  {assignment.title}
+                  {t(assignment.titleKey)}
                 </span>
 
                 <span className="font-caption text-xs text-on-surface-variant">
-                  {assignment.info}
+                  {t(assignment.infoKey)}
                 </span>
               </div>
             </div>
@@ -84,7 +85,7 @@ export default function PendingAssignments() {
                 edit_note
               </span>
 
-              Correggi &amp; Vota
+              {t("pendingCorrect")}
             </button>
           </div>
         ))}

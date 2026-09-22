@@ -1,33 +1,22 @@
-import Link from "next/link";
+import { getTranslations } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
 
 const actions = [
-  {
-    label: "Nuovo Corso",
-    icon: "add_circle",
-    href: "/curso/nuevo",
-  },
-  {
-    label: "Invita Docente",
-    icon: "person_add",
-  },
-  {
-    label: "Emetti Certificati MCER",
-    icon: "card_membership",
-  },
-  {
-    label: "Report Finanziario",
-    icon: "receipt_long",
-  },
+  { labelKey: "quickNuovoCorso", icon: "add_circle", href: "/curso/nuevo" },
+  { labelKey: "quickInscripciones", icon: "how_to_reg" },
+  { labelKey: "quickReport", icon: "receipt_long" },
 ];
 
-export default function QuickActions() {
+export default async function QuickActions() {
+  const t = await getTranslations("admin");
+
   return (
     <section className="mt-6 flex flex-wrap items-center justify-between gap-4 rounded-xl bg-surface-container-low p-3">
       <div className="flex items-center gap-2 px-3">
         <span className="material-symbols-outlined text-primary">bolt</span>
 
         <span className="text-xs font-semibold uppercase tracking-wider text-primary">
-          Azioni Rapide di Direzione:
+          {t("quickLabel")}
         </span>
       </div>
 
@@ -38,23 +27,27 @@ export default function QuickActions() {
 
           if (action.href) {
             return (
-              <Link key={action.label} href={action.href} className={className}>
+              <Link
+                key={action.labelKey}
+                href={action.href}
+                className={className}
+              >
                 <span className="material-symbols-outlined text-base text-primary">
                   {action.icon}
                 </span>
 
-                {action.label}
+                {t(action.labelKey)}
               </Link>
             );
           }
 
           return (
-            <button key={action.label} className={className}>
+            <button key={action.labelKey} className={className}>
               <span className="material-symbols-outlined text-base text-primary">
                 {action.icon}
               </span>
 
-              {action.label}
+              {t(action.labelKey)}
             </button>
           );
         })}

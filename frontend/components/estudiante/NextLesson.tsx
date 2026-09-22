@@ -1,4 +1,8 @@
-export default function NextLesson() {
+import { getTranslations } from "next-intl/server";
+
+export default async function NextLesson() {
+  const t = await getTranslations("estudiante");
+
   return (
     <section className="flex flex-col overflow-hidden rounded-xl bg-surface-container-lowest shadow-md md:flex-row">
 
@@ -14,7 +18,7 @@ export default function NextLesson() {
 
         <div className="absolute left-4 top-4 flex items-center gap-2 rounded bg-secondary px-3 py-1 text-xs font-semibold uppercase tracking-wider text-white shadow-sm">
           <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white" />
-          Oggi • In Diretta
+          {t("nextLessonLive")}
         </div>
       </div>
 
@@ -28,22 +32,20 @@ export default function NextLesson() {
                 schedule
               </span>
 
-              18:00 CEST (Tra 2 ore)
+              {t("nextLessonTime")}
             </span>
 
             <span className="hidden md:block">
-              Aula Virtuale Michelangelo
+              {t("nextLessonRoom")}
             </span>
           </div>
 
           <h2 className="font-headline-md text-2xl font-semibold leading-snug text-primary">
-            Conversazione & Cultura Italiana
+            {t("nextLessonTitle")}
           </h2>
 
           <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-on-surface-variant">
-            Analisi dell&apos;influenza del Neorealismo nel linguaggio
-            quotidiano contemporaneo. Sessione guidata di espressione orale
-            e dibattito critico.
+            {t("nextLessonDescription")}
           </p>
 
           <div className="mt-6 flex items-center gap-3 rounded-lg bg-surface-container-low p-3">
@@ -53,11 +55,11 @@ export default function NextLesson() {
 
             <div className="flex flex-col">
               <span className="text-xs font-semibold">
-                Prof.ssa Sofia Romano
+                {t("nextLessonTeacher")}
               </span>
 
               <span className="text-[11px] text-on-surface-variant">
-                Cattedra di Letteratura e Cinema
+                {t("nextLessonChair")}
               </span>
             </div>
           </div>
@@ -71,7 +73,7 @@ export default function NextLesson() {
               videocam
             </span>
 
-            Unirse al Aula Virtual
+            {t("nextLessonJoin")}
           </button>
 
           <button className="flex items-center gap-2 rounded bg-surface-container-high px-4 py-3 text-xs font-semibold text-on-surface transition-colors hover:bg-surface-variant">
@@ -79,7 +81,7 @@ export default function NextLesson() {
               menu_book
             </span>
 
-            Materiales Previos (PDF)
+            {t("nextLessonMaterials")}
           </button>
 
         </div>

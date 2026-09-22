@@ -1,6 +1,9 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 export default function WordOfDay() {
+  const t = useTranslations("estudiante");
 
   const speakWord = () => {
     if (typeof window === "undefined") return;
@@ -11,7 +14,7 @@ export default function WordOfDay() {
 
     speech.cancel();
 
-    const utterance = new SpeechSynthesisUtterance("Mozzafiato");
+    const utterance = new SpeechSynthesisUtterance(t("wordWord"));
     utterance.lang = "it-IT";
 
     speech.speak(utterance);
@@ -26,7 +29,7 @@ export default function WordOfDay() {
 
         <div className="flex items-center justify-between">
           <span className="text-[10px] font-semibold uppercase tracking-widest text-on-primary-container">
-            Vocabolario d&apos;Autore
+            {t("wordBadge")}
           </span>
 
           <span className="material-symbols-outlined text-[18px] text-tertiary-fixed">
@@ -36,23 +39,21 @@ export default function WordOfDay() {
 
         <div className="mt-3">
           <span className="font-headline-md text-2xl italic text-surface-bright">
-            Mozzafiato
+            {t("wordWord")}
           </span>
 
           <span className="ml-1 text-xs text-on-primary-container">
-            [mot-tsa-fià-to] • agg.
+            {t("wordPhonetic")}
           </span>
         </div>
 
         <p className="mt-2 text-xs leading-relaxed text-inverse-on-surface">
-          Letteralmente:{" "}
-          <em>&quot;che toglie il fiato&quot;</em>. Straordinario per bellezza,
-          emozione o intensità emotiva.
+          {t("wordLiteral")}{" "}
+          <em>{t("wordDefinition")}</em>
         </p>
 
         <div className="mt-3 rounded bg-primary-container/60 p-2 text-[11px] italic text-inverse-on-surface">
-          &quot;Dalla cima della cupola del Brunelleschi si gode una vista
-          mozzafiato su tutta Firenze.&quot;
+          {t("wordExample")}
         </div>
 
       </div>
@@ -61,13 +62,13 @@ export default function WordOfDay() {
 
         <button
           onClick={speakWord}
-          className="flex items-center gap-1 text-xs font-semibold text-on-primary transition-colors hover:text-tertiary-fixed"
+          className="flex items-center gap-1 text-xs font-semibold text-inverse-on-surface transition-colors hover:text-tertiary-fixed"
         >
           <span className="material-symbols-outlined text-[16px]">
             volume_up
           </span>
 
-          Ascolta Pronuncia
+          {t("wordPronunciation")}
         </button>
 
         <button className="text-on-primary-container hover:text-white">

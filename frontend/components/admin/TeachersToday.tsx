@@ -1,31 +1,19 @@
+import { getTranslations } from "next-intl/server";
 import Card from "@/components/ui/Card";
 import Avatar from "@/components/ui/Avatar";
 
 const teachers = [
-  {
-    name: "Anna Berti",
-    course: "Italiano A2 — 09:00",
-    initials: "AB",
-    tone: "primary",
-  },
-  {
-    name: "Giovanni Ferri",
-    course: "Italiano B1 — 11:30",
-    initials: "GF",
-    tone: "secondary",
-  },
-  {
-    name: "Elena Marchetti",
-    course: "Conversazione — 15:00",
-    initials: "EM",
-    tone: "tertiary",
-  },
-] as const;
+  { name: "Anna Berti", courseKey: "teachers1Course", initials: "AB", tone: "primary" as const },
+  { name: "Giovanni Ferri", courseKey: "teachers2Course", initials: "GF", tone: "secondary" as const },
+  { name: "Elena Marchetti", courseKey: "teachers3Course", initials: "EM", tone: "tertiary" as const },
+];
 
-export default function TeachersToday() {
+export default async function TeachersToday() {
+  const t = await getTranslations("admin");
+
   return (
     <Card
-      title="Docenti Oggi"
+      title={t("teachersTitle")}
       action={
         <span className="material-symbols-outlined text-secondary">
           cast_for_education
@@ -40,7 +28,7 @@ export default function TeachersToday() {
             <div className="flex flex-col">
               <span className="text-sm font-semibold">{teacher.name}</span>
               <span className="text-xs text-on-surface-variant">
-                {teacher.course}
+                {t(teacher.courseKey)}
               </span>
             </div>
           </div>

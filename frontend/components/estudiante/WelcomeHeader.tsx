@@ -1,12 +1,15 @@
-import Link from "next/link";
+import { getTranslations } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
 import PageHeader from "@/components/ui/PageHeader";
 
-export default function WelcomeHeader() {
+export default async function WelcomeHeader() {
+  const t = await getTranslations("estudiante");
+
   return (
     <PageHeader
-      kicker="Accademia di Lingua & Cultura • Anno 2025"
-      title="Bentornato, Matteo!"
-      description="Tu viaje hacia la maestría del italiano continúa hoy con nuevas perspectivas."
+      kicker={t("welcomeKicker")}
+      title={t("welcomeTitle")}
+      description={t("welcomeDescription")}
       actions={
         <>
           <Link
@@ -17,7 +20,7 @@ export default function WelcomeHeader() {
               menu_book
             </span>
 
-            Catálogo de Cursos
+            {t("welcomeCatalog")}
           </Link>
 
           <div className="flex items-center gap-3 rounded-xl bg-surface-container-low px-3 py-2 shadow-sm">
@@ -27,11 +30,11 @@ export default function WelcomeHeader() {
 
             <div className="flex flex-col">
               <span className="text-[11px] text-on-surface-variant">
-                Livello Quadro QCER
+                {t("welcomeLevelLabel")}
               </span>
 
               <span className="text-xs font-semibold text-primary">
-                Intermedio Progressivo
+                {t("welcomeLevelValue")}
               </span>
             </div>
           </div>
@@ -43,10 +46,12 @@ export default function WelcomeHeader() {
 
             <div>
               <span className="block text-[11px] text-on-surface-variant">
-                Racha de Estudio
+                {t("welcomeStreakLabel")}
               </span>
 
-              <span className="text-xs font-semibold">14 Giorni di Fila</span>
+              <span className="text-xs font-semibold">
+                {t("welcomeStreakValue")}
+              </span>
             </div>
           </div>
         </>
