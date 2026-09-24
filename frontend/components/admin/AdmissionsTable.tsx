@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import Card from "@/components/ui/Card";
 import ToneBadge from "@/components/ui/ToneBadge";
+import { Link } from "@/i18n/navigation";
 import { listarUsuariosPorRol, UsuarioResponse } from "../../lib/api";
 
 function nivelTone(nivel: string | null) {
@@ -62,9 +63,12 @@ export default function AdmissionsTable() {
       title={t("admissionsTitle")}
       subtitle={t("admissionsSubtitle")}
       action={
-        <button className="text-xs font-semibold text-primary transition hover:text-secondary">
+        <Link
+          href="/admin/inscripciones"
+          className="text-xs font-semibold text-primary transition hover:text-secondary"
+        >
           {t("admissionsAction")} →
-        </button>
+        </Link>
       }
     >
       {loading ? (

@@ -3,7 +3,8 @@ import { Link } from "@/i18n/navigation";
 
 const actions = [
   { labelKey: "quickNuovoCorso", icon: "add_circle", href: "/curso/nuevo" },
-  { labelKey: "quickInscripciones", icon: "how_to_reg" },
+  { labelKey: "quickNuevaInscripcion", icon: "person_add", href: "/admin/inscripciones/nueva" },
+  { labelKey: "quickInscripciones", icon: "how_to_reg", href: "/admin/inscripciones" },
   { labelKey: "quickReport", icon: "receipt_long" },
 ];
 

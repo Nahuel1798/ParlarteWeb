@@ -25,6 +25,7 @@ export const adminConfig: DashboardConfig = {
   menuItems: [
     { nameKey: "menuPanoramica", href: "/admin", icon: "space_dashboard" },
     { nameKey: "menuCursos", href: "/curso", icon: "menu_book" },
+    { nameKey: "menuInscripciones", href: "/admin/inscripciones", icon: "how_to_reg" },
     { nameKey: "menuCalendario", href: "/admin/calendario", icon: "calendar_month" },
     { nameKey: "menuEjercicios", href: "/admin/esercizi", icon: "assignment" },
     { nameKey: "menuBiblioteca", href: "/admin/risorse", icon: "local_library" },

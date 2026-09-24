@@ -58,6 +58,21 @@ export interface CrearCursoRequest {
   profesor: { id: number };
 }
 
+export interface InscripcionResponse {
+  id: number;
+  alumnoId: number;
+  alumnoNombre: string;
+  cursoId: number;
+  cursoNombre: string;
+  fechaInscripcion: string;
+  activa: boolean;
+}
+
+export interface CrearInscripcionRequest {
+  alumnoId: number;
+  cursoId: number;
+}
+
 export interface ClaseResponse {
   id: number;
   titulo: string;
@@ -156,6 +171,39 @@ export async function subirPortada(file: File): Promise<string> {
   }
 
   return data.url as string;
+}
+
+export async function listarInscripciones(): Promise<InscripcionResponse[]> {
+  const res = await fetch(`${API_URL}/api/inscripciones`, {
+    method: "GET",
+    headers: authHeaders(),
+  });
+
+  const data = await res.json().catch(() => null);
+
+  if (!res.ok) {
+    throw new Error(data?.error ?? "Error al obtener las inscripciones");
+  }
+
+  return data as InscripcionResponse[];
+}
+
+export async function crearInscripcion(
+  request: CrearInscripcionRequest
+): Promise<InscripcionResponse> {
+  const res = await fetch(`${API_URL}/api/inscripciones`, {
+    method: "POST",
+    headers: authHeaders(),
+    body: JSON.stringify(request),
+  });
+
+  const data = await res.json().catch(() => null);
+
+  if (!res.ok) {
+    throw new Error(data?.error ?? "Error al crear la inscripción");
+  }
+
+  return data as InscripcionResponse;
 }
 
 export async function listarCursos(): Promise<CursoResponse[]> {
