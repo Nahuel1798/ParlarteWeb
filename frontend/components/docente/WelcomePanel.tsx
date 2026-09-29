@@ -1,9 +1,13 @@
-import { getTranslations } from "next-intl/server";
+"use client";
+
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import PageHeader from "@/components/ui/PageHeader";
+import { useSessionUser } from "../../lib/session";
 
-export default async function WelcomePanel() {
-  const t = await getTranslations("docente");
+export default function WelcomePanel() {
+  const t = useTranslations("docente");
+  const user = useSessionUser();
 
   return (
     <section className="relative mb-8 overflow-hidden rounded-xl bg-surface-container p-6 shadow-sm md:p-8">
@@ -12,7 +16,7 @@ export default async function WelcomePanel() {
       <div className="relative z-10">
         <PageHeader
           kicker={t("welcomeKicker")}
-          title={t("welcomeTitle")}
+          title={t("welcomeTitle", { name: user?.nombre ?? "" })}
           description={t("welcomeDescription")}
           actions={
             <div className="flex flex-col items-start gap-2 md:items-end">

@@ -87,6 +87,84 @@ export interface ClaseRequest {
   modulo: number | null;
 }
 
+export interface VideoResponse {
+  id: number;
+  titulo: string;
+  url: string;
+  duracionSegundos: number | null;
+  claseId: number;
+}
+
+export interface VideoRequest {
+  titulo: string;
+  url: string;
+  duracionSegundos: number | null;
+}
+
+export interface MaterialResponse {
+  id: number;
+  titulo: string;
+  tipo: string;
+  url: string;
+  claseId: number;
+}
+
+export interface MaterialRequest {
+  titulo: string;
+  tipo: string;
+  url: string;
+}
+
+export interface TareaResponse {
+  id: number;
+  titulo: string;
+  descripcion: string;
+  fechaEntrega: string;
+  claseId: number;
+}
+
+export interface TareaRequest {
+  titulo: string;
+  descripcion: string;
+  fechaEntrega: string;
+}
+
+export interface RespuestaRequest {
+  texto: string;
+  correcta: boolean;
+}
+
+export interface PreguntaRequest {
+  enunciado: string;
+  respuestas: RespuestaRequest[];
+}
+
+export interface TestRequest {
+  titulo: string;
+  porcentajeAprobacion: string;
+  preguntas: PreguntaRequest[];
+}
+
+export interface RespuestaResponse {
+  id: number;
+  texto: string;
+  correcta: boolean;
+}
+
+export interface PreguntaResponse {
+  id: number;
+  enunciado: string;
+  respuestas: RespuestaResponse[];
+}
+
+export interface TestResponse {
+  id: number;
+  titulo: string;
+  porcentajeAprobacion: string;
+  claseId: number;
+  preguntas: PreguntaResponse[];
+}
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
 
 export async function login(
@@ -303,5 +381,252 @@ export async function eliminarClase(
   if (!res.ok) {
     const data = await res.json().catch(() => null);
     throw new Error(data?.error ?? "Error al eliminar la clase");
+  }
+}
+
+export async function subirRecurso(file: File): Promise<string> {
+  const formData = new FormData();
+  formData.append("archivo", file);
+
+  const res = await fetch(`${API_URL}/api/archivos/recurso`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${getToken() ?? ""}` },
+    body: formData,
+  });
+
+  const data = await res.json().catch(() => null);
+
+  if (!res.ok) {
+    throw new Error(data?.error ?? "Error al subir el archivo");
+  }
+
+  return data.url as string;
+}
+
+export async function listarVideos(
+  cursoId: number,
+  claseId: number
+): Promise<VideoResponse[]> {
+  const res = await fetch(
+    `${API_URL}/api/cursos/${cursoId}/clases/${claseId}/videos`,
+    { method: "GET", headers: authHeaders() }
+  );
+
+  const data = await res.json().catch(() => null);
+
+  if (!res.ok) {
+    throw new Error(data?.error ?? "Error al obtener los videos");
+  }
+
+  return data as VideoResponse[];
+}
+
+export async function crearVideo(
+  cursoId: number,
+  claseId: number,
+  request: VideoRequest
+): Promise<VideoResponse> {
+  const res = await fetch(
+    `${API_URL}/api/cursos/${cursoId}/clases/${claseId}/videos`,
+    {
+      method: "POST",
+      headers: authHeaders(),
+      body: JSON.stringify(request),
+    }
+  );
+
+  const data = await res.json().catch(() => null);
+
+  if (!res.ok) {
+    throw new Error(data?.error ?? "Error al crear el video");
+  }
+
+  return data as VideoResponse;
+}
+
+export async function eliminarVideo(
+  cursoId: number,
+  claseId: number,
+  videoId: number
+): Promise<void> {
+  const res = await fetch(
+    `${API_URL}/api/cursos/${cursoId}/clases/${claseId}/videos/${videoId}`,
+    { method: "DELETE", headers: authHeaders() }
+  );
+
+  if (!res.ok) {
+    const data = await res.json().catch(() => null);
+    throw new Error(data?.error ?? "Error al eliminar el video");
+  }
+}
+
+export async function listarMateriales(
+  cursoId: number,
+  claseId: number
+): Promise<MaterialResponse[]> {
+  const res = await fetch(
+    `${API_URL}/api/cursos/${cursoId}/clases/${claseId}/materiales`,
+    { method: "GET", headers: authHeaders() }
+  );
+
+  const data = await res.json().catch(() => null);
+
+  if (!res.ok) {
+    throw new Error(data?.error ?? "Error al obtener los materiales");
+  }
+
+  return data as MaterialResponse[];
+}
+
+export async function crearMaterial(
+  cursoId: number,
+  claseId: number,
+  request: MaterialRequest
+): Promise<MaterialResponse> {
+  const res = await fetch(
+    `${API_URL}/api/cursos/${cursoId}/clases/${claseId}/materiales`,
+    {
+      method: "POST",
+      headers: authHeaders(),
+      body: JSON.stringify(request),
+    }
+  );
+
+  const data = await res.json().catch(() => null);
+
+  if (!res.ok) {
+    throw new Error(data?.error ?? "Error al crear el material");
+  }
+
+  return data as MaterialResponse;
+}
+
+export async function eliminarMaterial(
+  cursoId: number,
+  claseId: number,
+  materialId: number
+): Promise<void> {
+  const res = await fetch(
+    `${API_URL}/api/cursos/${cursoId}/clases/${claseId}/materiales/${materialId}`,
+    { method: "DELETE", headers: authHeaders() }
+  );
+
+  if (!res.ok) {
+    const data = await res.json().catch(() => null);
+    throw new Error(data?.error ?? "Error al eliminar el material");
+  }
+}
+
+export async function listarTareas(
+  cursoId: number,
+  claseId: number
+): Promise<TareaResponse[]> {
+  const res = await fetch(
+    `${API_URL}/api/cursos/${cursoId}/clases/${claseId}/tareas`,
+    { method: "GET", headers: authHeaders() }
+  );
+
+  const data = await res.json().catch(() => null);
+
+  if (!res.ok) {
+    throw new Error(data?.error ?? "Error al obtener las tareas");
+  }
+
+  return data as TareaResponse[];
+}
+
+export async function crearTarea(
+  cursoId: number,
+  claseId: number,
+  request: TareaRequest
+): Promise<TareaResponse> {
+  const res = await fetch(
+    `${API_URL}/api/cursos/${cursoId}/clases/${claseId}/tareas`,
+    {
+      method: "POST",
+      headers: authHeaders(),
+      body: JSON.stringify(request),
+    }
+  );
+
+  const data = await res.json().catch(() => null);
+
+  if (!res.ok) {
+    throw new Error(data?.error ?? "Error al crear la tarea");
+  }
+
+  return data as TareaResponse;
+}
+
+export async function eliminarTarea(
+  cursoId: number,
+  claseId: number,
+  tareaId: number
+): Promise<void> {
+  const res = await fetch(
+    `${API_URL}/api/cursos/${cursoId}/clases/${claseId}/tareas/${tareaId}`,
+    { method: "DELETE", headers: authHeaders() }
+  );
+
+  if (!res.ok) {
+    const data = await res.json().catch(() => null);
+    throw new Error(data?.error ?? "Error al eliminar la tarea");
+  }
+}
+
+export async function listarTests(
+  cursoId: number,
+  claseId: number
+): Promise<TestResponse[]> {
+  const res = await fetch(
+    `${API_URL}/api/cursos/${cursoId}/clases/${claseId}/tests`,
+    { method: "GET", headers: authHeaders() }
+  );
+
+  const data = await res.json().catch(() => null);
+
+  if (!res.ok) {
+    throw new Error(data?.error ?? "Error al obtener los tests");
+  }
+
+  return data as TestResponse[];
+}
+
+export async function crearTest(
+  cursoId: number,
+  claseId: number,
+  request: TestRequest
+): Promise<TestResponse> {
+  const res = await fetch(
+    `${API_URL}/api/cursos/${cursoId}/clases/${claseId}/tests`,
+    {
+      method: "POST",
+      headers: authHeaders(),
+      body: JSON.stringify(request),
+    }
+  );
+
+  const data = await res.json().catch(() => null);
+
+  if (!res.ok) {
+    throw new Error(data?.error ?? "Error al crear el test");
+  }
+
+  return data as TestResponse;
+}
+
+export async function eliminarTest(
+  cursoId: number,
+  claseId: number,
+  testId: number
+): Promise<void> {
+  const res = await fetch(
+    `${API_URL}/api/cursos/${cursoId}/clases/${claseId}/tests/${testId}`,
+    { method: "DELETE", headers: authHeaders() }
+  );
+
+  if (!res.ok) {
+    const data = await res.json().catch(() => null);
+    throw new Error(data?.error ?? "Error al eliminar el test");
   }
 }

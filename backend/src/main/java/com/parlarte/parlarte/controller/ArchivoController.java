@@ -69,6 +69,33 @@ public class ArchivoController {
         return Map.of("url", baseUrl + "/uploads/" + filename);
     }
 
+    @PostMapping("/recurso")
+    @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "Subir un recurso de clase",
+        description = "Guarda el archivo enviado (video, material, etc.) y devuelve su URL pública. Requiere rol ADMINISTRADOR o PROFESOR.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "201", description = "Recurso subido",
+            content = @Content(schema = @Schema(example = "{ \"url\": \"http://localhost:8080/uploads/abc.mp4\" }"))),
+        @ApiResponse(responseCode = "400", description = "Archivo vacío o tipo no permitido")
+    })
+    public Map<String, String> subirRecurso(
+            @RequestParam("archivo") MultipartFile archivo,
+            HttpServletRequest request) throws IOException {
+        if (archivo == null || archivo.isEmpty()) {
+            throw new IllegalArgumentException("Selecciona un archivo");
+        }
+
+        String filename = UUID.randomUUID() + obtenerExtensionRecurso(archivo.getOriginalFilename());
+        Path destino = this.uploadDir.resolve(filename);
+
+        try (var in = archivo.getInputStream()) {
+            Files.copy(in, destino, StandardCopyOption.REPLACE_EXISTING);
+        }
+
+        String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
+        return Map.of("url", baseUrl + "/uploads/" + filename);
+    }
+
     private String obtenerExtension(String originalFilename) {
         if (originalFilename == null) {
             return "";
@@ -79,6 +106,21 @@ public class ArchivoController {
         }
         String ext = originalFilename.substring(index);
         if (ext.matches("(?i)\\.(jpg|jpeg|png|webp|gif|avif|bmp|svg)")) {
+            return ext.toLowerCase();
+        }
+        return "";
+    }
+
+    private String obtenerExtensionRecurso(String originalFilename) {
+        if (originalFilename == null) {
+            return "";
+        }
+        int index = originalFilename.lastIndexOf('.');
+        if (index == -1) {
+            return "";
+        }
+        String ext = originalFilename.substring(index);
+        if (ext.matches("(?i)\\.[a-z0-9]{1,8}")) {
             return ext.toLowerCase();
         }
         return "";

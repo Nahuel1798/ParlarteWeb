@@ -55,12 +55,32 @@ public class SecurityConfig {
                             .hasAnyRole("ADMINISTRADOR", "PROFESOR")
                         .requestMatchers(HttpMethod.DELETE, "/api/cursos/*/clases/*")
                             .hasAnyRole("ADMINISTRADOR", "PROFESOR")
+                        .requestMatchers(HttpMethod.POST,
+                                "/api/cursos/*/clases/*/videos",
+                                "/api/cursos/*/clases/*/materiales",
+                                "/api/cursos/*/clases/*/tareas",
+                                "/api/cursos/*/clases/*/tests")
+                            .hasAnyRole("ADMINISTRADOR", "PROFESOR")
+                        .requestMatchers(HttpMethod.PUT,
+                                "/api/cursos/*/clases/*/videos/*",
+                                "/api/cursos/*/clases/*/materiales/*",
+                                "/api/cursos/*/clases/*/tareas/*",
+                                "/api/cursos/*/clases/*/tests/*")
+                            .hasAnyRole("ADMINISTRADOR", "PROFESOR")
+                        .requestMatchers(HttpMethod.DELETE,
+                                "/api/cursos/*/clases/*/videos/*",
+                                "/api/cursos/*/clases/*/materiales/*",
+                                "/api/cursos/*/clases/*/tareas/*",
+                                "/api/cursos/*/clases/*/tests/*")
+                            .hasAnyRole("ADMINISTRADOR", "PROFESOR")
                         .requestMatchers(HttpMethod.GET, "/api/usuarios/**")
                             .hasAnyRole("ADMINISTRADOR", "PROFESOR")
                         .requestMatchers(HttpMethod.PUT, "/api/usuarios/**").hasRole("ADMINISTRADOR")
                         .requestMatchers(HttpMethod.DELETE, "/api/usuarios/**").hasRole("ADMINISTRADOR")
                         .requestMatchers(HttpMethod.POST, "/api/cursos").hasRole("ADMINISTRADOR")
-                        .requestMatchers(HttpMethod.POST, "/api/archivos/**").hasRole("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.POST, "/api/archivos/portada").hasRole("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.POST, "/api/archivos/recurso")
+                            .hasAnyRole("ADMINISTRADOR", "PROFESOR")
                         .requestMatchers(HttpMethod.PUT, "/api/cursos/**").hasRole("ADMINISTRADOR")
                         .requestMatchers(HttpMethod.DELETE, "/api/cursos/**").hasRole("ADMINISTRADOR")
                         .anyRequest().authenticated())

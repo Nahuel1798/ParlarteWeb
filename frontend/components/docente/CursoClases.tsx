@@ -12,6 +12,7 @@ import {
   type CursoResponse,
 } from "../../lib/api";
 import { useSessionUser } from "../../lib/session";
+import ClaseRecursos from "./recursos/ClaseRecursos";
 
 export default function CursoClases({ cursoId }: { cursoId: number }) {
   const router = useRouter();
@@ -22,6 +23,7 @@ export default function CursoClases({ cursoId }: { cursoId: number }) {
   const [clases, setClases] = useState<ClaseResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [expandidas, setExpandidas] = useState<Set<number>>(() => new Set());
 
   const [titulo, setTitulo] = useState("");
   const [descripcion, setDescripcion] = useState("");
@@ -137,6 +139,18 @@ export default function CursoClases({ cursoId }: { cursoId: number }) {
         err instanceof Error ? err.message : t("defaultErrorDelete")
       );
     }
+  };
+
+  const toggleRecursos = (claseId: number) => {
+    setExpandidas((prev) => {
+      const next = new Set(prev);
+      if (next.has(claseId)) {
+        next.delete(claseId);
+      } else {
+        next.add(claseId);
+      }
+      return next;
+    });
   };
 
   if (!puedeGestionar) {
@@ -318,34 +332,66 @@ export default function CursoClases({ cursoId }: { cursoId: number }) {
                       {items.map((clase) => (
                         <div
                           key={clase.id}
-                          className="flex items-start justify-between gap-3 rounded-lg bg-surface-container-low p-4"
+                          className="flex flex-col gap-3 rounded-lg bg-surface-container-low p-4"
                         >
-                          <div className="min-w-0">
-                            <span className="flex items-center gap-1.5 text-sm font-semibold text-on-surface">
-                              <span className="material-symbols-outlined text-[18px] text-secondary">
-                                record_voice_over
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="min-w-0">
+                              <span className="flex items-center gap-1.5 text-sm font-semibold text-on-surface">
+                                <span className="material-symbols-outlined text-[18px] text-secondary">
+                                  record_voice_over
+                                </span>
+
+                                {clase.titulo}
                               </span>
 
-                              {clase.titulo}
-                            </span>
+                              <span className="mt-1 block text-xs leading-relaxed text-on-surface-variant">
+                                {clase.descripcion}
+                              </span>
+                            </div>
 
-                            <span className="mt-1 block text-xs leading-relaxed text-on-surface-variant">
-                              {clase.descripcion}
-                            </span>
+                            <div className="flex shrink-0 items-center gap-1">
+                              <button
+                                type="button"
+                                onClick={() => toggleRecursos(clase.id)}
+                                aria-expanded={expandidas.has(clase.id)}
+                                className="flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-semibold text-primary transition hover:bg-primary-container/40"
+                              >
+                                {t("resources")}
+
+                                <span
+                                  className={`material-symbols-outlined text-[18px] transition-transform ${
+                                    expandidas.has(clase.id)
+                                      ? "rotate-180"
+                                      : ""
+                                  }`}
+                                >
+                                  expand_more
+                                </span>
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={() => borrarClase(clase)}
+                                className="rounded-lg p-2 text-on-surface-variant transition hover:bg-error-container hover:text-on-error-container"
+                                aria-label={t("deleteAria", {
+                                  title: clase.titulo,
+                                })}
+                              >
+                                <span className="material-symbols-outlined text-[18px]">
+                                  delete
+                                </span>
+                              </button>
+                            </div>
                           </div>
 
-                          <button
-                            type="button"
-                            onClick={() => borrarClase(clase)}
-                            className="shrink-0 rounded-lg p-2 text-on-surface-variant transition hover:bg-error-container hover:text-on-error-container"
-                            aria-label={t("deleteAria", {
-                              title: clase.titulo,
-                            })}
-                          >
-                            <span className="material-symbols-outlined text-[18px]">
-                              delete
-                            </span>
-                          </button>
+                          {expandidas.has(clase.id) && (
+                            <div className="border-t border-outline-variant/20 pt-3">
+                              <ClaseRecursos
+                                cursoId={cursoId}
+                                clase={clase}
+                              />
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>
