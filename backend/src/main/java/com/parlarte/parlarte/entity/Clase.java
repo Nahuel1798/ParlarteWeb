@@ -26,6 +26,9 @@ public class Clase {
     @Column
     private Integer modulo;
 
+    @Column
+    private Integer orden;
+
     @ManyToOne
     @JoinColumn(name = "curso_id", nullable = false)
     private Curso curso;
@@ -56,6 +59,14 @@ public class Clase {
 
     public void setModulo(Integer modulo) {
         this.modulo = modulo;
+    }
+
+    public Integer getOrden() {
+        return orden;
+    }
+
+    public void setOrden(Integer orden) {
+        this.orden = orden;
     }
 
     public Curso getCurso() {

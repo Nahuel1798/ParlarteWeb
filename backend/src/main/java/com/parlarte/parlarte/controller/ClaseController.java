@@ -2,6 +2,7 @@ package com.parlarte.parlarte.controller;
 
 import com.parlarte.parlarte.dto.ClaseRequest;
 import com.parlarte.parlarte.dto.ClaseResponse;
+import com.parlarte.parlarte.dto.ReordenarClasesRequest;
 import com.parlarte.parlarte.service.ClaseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -52,6 +53,25 @@ public class ClaseController {
             @PathVariable Long cursoId,
             Authentication authentication) {
         return claseService.listarPorCurso(cursoId, authentication.getName());
+    }
+
+    @PutMapping("/{cursoId}/clases/orden")
+    @Operation(summary = "Reordenar las clases de un curso",
+            description = "Fija el orden de las clases del curso según la lista de ids enviada. Requiere el profesor asignado o un administrador.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Orden actualizado"),
+            @ApiResponse(responseCode = "400", description = "La lista enviada no coincide con las clases del curso"),
+            @ApiResponse(responseCode = "401", description = "No autenticado: token requerido"),
+            @ApiResponse(responseCode = "403", description = "Acceso denegado: rol insuficiente"),
+            @ApiResponse(responseCode = "404", description = "Curso no encontrado con ese id")
+    })
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void reordenar(
+            @Parameter(description = "ID del curso", example = "1", required = true)
+            @PathVariable Long cursoId,
+            @Valid @RequestBody ReordenarClasesRequest request,
+            Authentication authentication) {
+        claseService.reordenar(cursoId, request.getOrden(), authentication.getName());
     }
 
     @PostMapping("/{cursoId}/clases")

@@ -41,3 +41,20 @@ export function useSessionUser(): LoginResponse | null {
 
   return parseUser(raw);
 }
+
+function noSuscribir(): () => void {
+  return () => {};
+}
+
+function getClienteMontado(): boolean {
+  return true;
+}
+
+function getServidorMontado(): boolean {
+  return false;
+}
+
+/** `false` durante el render del servidor y la hidratación; `true` después. */
+export function useMontado(): boolean {
+  return useSyncExternalStore(noSuscribir, getClienteMontado, getServidorMontado);
+}

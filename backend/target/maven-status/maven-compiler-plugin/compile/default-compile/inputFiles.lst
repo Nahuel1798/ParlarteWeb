@@ -7,6 +7,7 @@
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/controller/AuthController.java
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/controller/ClaseController.java
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/controller/CursoController.java
+/home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/controller/EventoController.java
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/controller/InscripcionController.java
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/controller/MaterialController.java
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/controller/TareaController.java
@@ -15,6 +16,9 @@
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/controller/VideoController.java
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/dto/ClaseRequest.java
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/dto/ClaseResponse.java
+/home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/dto/CursoResumenResponse.java
+/home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/dto/EventoRequest.java
+/home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/dto/EventoResponse.java
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/dto/InscripcionRequest.java
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/dto/InscripcionResponse.java
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/dto/LoginRequest.java
@@ -23,6 +27,7 @@
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/dto/MaterialResponse.java
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/dto/PreguntaRequest.java
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/dto/PreguntaResponse.java
+/home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/dto/ReordenarClasesRequest.java
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/dto/RespuestaRequest.java
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/dto/RespuestaResponse.java
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/dto/TareaRequest.java
@@ -37,6 +42,7 @@
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/entity/Clase.java
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/entity/Curso.java
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/entity/EntregarTarea.java
+/home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/entity/Evento.java
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/entity/Inscripcion.java
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/entity/Material.java
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/entity/Pagos.java
@@ -52,6 +58,7 @@
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/exception/ResourceNotFoundException.java
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/repository/ClaseRepository.java
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/repository/CursoRepository.java
+/home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/repository/EventoRepository.java
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/repository/InscripcionRepository.java
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/repository/MaterialRepository.java
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/repository/PreguntaRepository.java
@@ -66,7 +73,9 @@
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/service/AuthService.java
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/service/ClaseAccesoService.java
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/service/ClaseService.java
+/home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/service/CursoResumenService.java
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/service/CursoService.java
+/home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/service/EventoService.java
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/service/InscripcionService.java
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/service/MaterialService.java
 /home/nahuel/Documentos/Programacion/ParlarteWeb/backend/src/main/java/com/parlarte/parlarte/service/TareaService.java

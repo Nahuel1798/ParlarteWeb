@@ -38,7 +38,7 @@ public class TestService {
     @Transactional(readOnly = true)
     public List<TestResponse> listarPorClase(Long cursoId, Long claseId, String email) {
         Clase clase = claseAccesoService.buscarClase(claseId);
-        claseAccesoService.verificarAccesoPorClase(cursoId, clase, email);
+        claseAccesoService.verificarAccesoLecturaPorClase(cursoId, clase, email);
         return testRepository.findByClaseIdOrderByIdAsc(claseId).stream()
                 .map(TestResponse::fromEntity)
                 .collect(Collectors.toList());

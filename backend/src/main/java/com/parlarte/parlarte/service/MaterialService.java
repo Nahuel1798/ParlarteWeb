@@ -26,7 +26,7 @@ public class MaterialService {
     @Transactional(readOnly = true)
     public List<MaterialResponse> listarPorClase(Long cursoId, Long claseId, String email) {
         Clase clase = claseAccesoService.buscarClase(claseId);
-        claseAccesoService.verificarAccesoPorClase(cursoId, clase, email);
+        claseAccesoService.verificarAccesoLecturaPorClase(cursoId, clase, email);
         return materialRepository.findByClaseIdOrderByIdAsc(claseId).stream()
                 .map(MaterialResponse::fromEntity)
                 .collect(Collectors.toList());

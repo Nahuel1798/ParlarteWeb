@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import {
+  actualizarVideo,
   crearVideo,
   eliminarVideo,
   listarVideos,
@@ -21,6 +22,7 @@ export default function VideosPanel({
   const [videos, setVideos] = useState<VideoResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [formOpen, setFormOpen] = useState(false);
+  const [editandoId, setEditandoId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const [titulo, setTitulo] = useState("");
@@ -51,6 +53,32 @@ export default function VideosPanel({
     };
   }, [cursoId, claseId, t]);
 
+  const limpiarFormulario = () => {
+    setTitulo("");
+    setUrl("");
+    setDuracion("");
+    setEditandoId(null);
+    setFormOpen(false);
+  };
+
+  const abrirNuevo = () => {
+    setTitulo("");
+    setUrl("");
+    setDuracion("");
+    setEditandoId(null);
+    setFormOpen(true);
+  };
+
+  const abrirEdicion = (video: VideoResponse) => {
+    setTitulo(video.titulo);
+    setUrl(video.url);
+    setDuracion(
+      video.duracionSegundos === null ? "" : String(video.duracionSegundos)
+    );
+    setEditandoId(video.id);
+    setFormOpen(true);
+  };
+
   const guardar = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -60,21 +88,26 @@ export default function VideosPanel({
       return;
     }
 
+    const request = {
+      titulo: titulo.trim(),
+      url: url.trim(),
+      duracionSegundos: duracion ? Number(duracion) : null,
+    };
+
     setSaving(true);
 
     try {
-      const video = await crearVideo(cursoId, claseId, {
-        titulo: titulo.trim(),
-        url: url.trim(),
-        duracionSegundos: duracion ? Number(duracion) : null,
-      });
-      setVideos((prev) => [...prev, video]);
-      setTitulo("");
-      setUrl("");
-      setDuracion("");
-      setFormOpen(false);
+      if (editandoId === null) {
+        const video = await crearVideo(cursoId, claseId, request);
+        setVideos((prev) => [...prev, video]);
+      } else {
+        const video = await actualizarVideo(cursoId, claseId, editandoId, request);
+        setVideos((prev) => prev.map((v) => (v.id === editandoId ? video : v)));
+      }
+
+      limpiarFormulario();
     } catch (err) {
-      setError(err instanceof Error ? err.message : t("videoCreateError"));
+      setError(err instanceof Error ? err.message : t("videoSaveError"));
     } finally {
       setSaving(false);
     }
@@ -88,6 +121,10 @@ export default function VideosPanel({
     try {
       await eliminarVideo(cursoId, claseId, video.id);
       setVideos((prev) => prev.filter((v) => v.id !== video.id));
+
+      if (editandoId === video.id) {
+        limpiarFormulario();
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : t("defaultError"));
     }
@@ -110,7 +147,7 @@ export default function VideosPanel({
 
         <button
           type="button"
-          onClick={() => setFormOpen((prev) => !prev)}
+          onClick={() => (formOpen && editandoId === null ? setFormOpen(false) : abrirNuevo())}
           className="flex items-center gap-1 text-xs font-semibold text-primary transition hover:underline"
         >
           <span className="material-symbols-outlined text-[14px]">
@@ -165,23 +202,55 @@ export default function VideosPanel({
                 </span>
               </div>
 
-              <button
-                type="button"
-                onClick={() => borrar(video)}
-                aria-label={t("deleteAria", { title: video.titulo })}
-                className="shrink-0 rounded p-1.5 text-on-surface-variant transition hover:bg-error-container hover:text-on-error-container"
-              >
-                <span className="material-symbols-outlined text-[16px]">
-                  delete
-                </span>
-              </button>
+              <div className="flex shrink-0 items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => abrirEdicion(video)}
+                  aria-label={t("editAria", { title: video.titulo })}
+                  className="rounded p-1.5 text-on-surface-variant transition hover:bg-primary/10 hover:text-primary"
+                >
+                  <span className="material-symbols-outlined text-[16px]">
+                    edit
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => borrar(video)}
+                  aria-label={t("deleteAria", { title: video.titulo })}
+                  className="rounded p-1.5 text-on-surface-variant transition hover:bg-error-container hover:text-on-error-container"
+                >
+                  <span className="material-symbols-outlined text-[16px]">
+                    delete
+                  </span>
+                </button>
+              </div>
             </div>
           ))}
         </div>
       )}
 
       {formOpen && (
-        <form onSubmit={guardar} className="flex flex-col gap-3">
+        <form
+          onSubmit={guardar}
+          className="flex flex-col gap-3 border-t border-outline-variant/20 pt-3"
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-semibold uppercase tracking-widest text-secondary">
+              {editandoId === null ? t("videosAdd") : t("videoEdit")}
+            </span>
+
+            <button
+              type="button"
+              onClick={limpiarFormulario}
+              className="flex items-center gap-1 text-[11px] font-semibold text-on-surface-variant transition hover:text-primary"
+            >
+              <span className="material-symbols-outlined text-[14px]">close</span>
+
+              {t("cancel")}
+            </button>
+          </div>
+
           <div className="flex flex-col gap-1">
             <label className="text-[11px] font-semibold uppercase tracking-widest text-on-surface-variant">
               {t("videoTituloLabel")}

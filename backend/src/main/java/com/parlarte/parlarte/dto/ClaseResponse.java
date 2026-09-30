@@ -8,6 +8,7 @@ public class ClaseResponse {
     private String titulo;
     private String descripcion;
     private Integer modulo;
+    private Integer orden;
     private Long cursoId;
 
     public static ClaseResponse fromEntity(Clase clase) {
@@ -16,6 +17,7 @@ public class ClaseResponse {
         response.titulo = clase.getTitulo();
         response.descripcion = clase.getDescripcion();
         response.modulo = clase.getModulo();
+        response.orden = clase.getOrden();
         response.cursoId = clase.getCurso().getId();
         return response;
     }
@@ -34,6 +36,10 @@ public class ClaseResponse {
 
     public Integer getModulo() {
         return modulo;
+    }
+
+    public Integer getOrden() {
+        return orden;
     }
 
     public Long getCursoId() {

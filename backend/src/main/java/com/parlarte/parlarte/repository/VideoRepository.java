@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface VideoRepository extends JpaRepository<Videos, Long> {
     List<Videos> findByClaseIdOrderByIdAsc(Long claseId);
+
+    long countByClase_Curso_Id(Long cursoId);
 }

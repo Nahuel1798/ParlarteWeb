@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface MaterialRepository extends JpaRepository<Material, Long> {
     List<Material> findByClaseIdOrderByIdAsc(Long claseId);
+
+    long countByClase_Curso_Id(Long cursoId);
 }

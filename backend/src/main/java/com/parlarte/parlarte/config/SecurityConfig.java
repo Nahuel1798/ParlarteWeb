@@ -48,7 +48,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/uploads/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/usuarios").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/cursos/*/clases")
-                            .hasAnyRole("ADMINISTRADOR", "PROFESOR")
+                            .authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/cursos/*/clases")
                             .hasAnyRole("ADMINISTRADOR", "PROFESOR")
                         .requestMatchers(HttpMethod.PUT, "/api/cursos/*/clases/*")
@@ -72,6 +72,14 @@ public class SecurityConfig {
                                 "/api/cursos/*/clases/*/materiales/*",
                                 "/api/cursos/*/clases/*/tareas/*",
                                 "/api/cursos/*/clases/*/tests/*")
+                            .hasAnyRole("ADMINISTRADOR", "PROFESOR")
+                        .requestMatchers(HttpMethod.GET, "/api/eventos/**")
+                            .authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/eventos")
+                            .hasAnyRole("ADMINISTRADOR", "PROFESOR")
+                        .requestMatchers(HttpMethod.PUT, "/api/eventos/*")
+                            .hasAnyRole("ADMINISTRADOR", "PROFESOR")
+                        .requestMatchers(HttpMethod.DELETE, "/api/eventos/*")
                             .hasAnyRole("ADMINISTRADOR", "PROFESOR")
                         .requestMatchers(HttpMethod.GET, "/api/usuarios/**")
                             .hasAnyRole("ADMINISTRADOR", "PROFESOR")

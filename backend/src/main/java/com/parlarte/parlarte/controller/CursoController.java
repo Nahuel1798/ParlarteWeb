@@ -1,6 +1,8 @@
 package com.parlarte.parlarte.controller;
 
+import com.parlarte.parlarte.dto.CursoResumenResponse;
 import com.parlarte.parlarte.entity.Curso;
+import com.parlarte.parlarte.service.CursoResumenService;
 import com.parlarte.parlarte.service.CursoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -11,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,9 +33,28 @@ import java.util.List;
 public class CursoController {
 
     private final CursoService cursoService;
+    private final CursoResumenService cursoResumenService;
 
-    public CursoController(CursoService cursoService) {
+    public CursoController(CursoService cursoService, CursoResumenService cursoResumenService) {
         this.cursoService = cursoService;
+        this.cursoResumenService = cursoResumenService;
+    }
+
+    @GetMapping("/{id}/resumen")
+    @Operation(summary = "Obtener el resumen de un curso",
+            description = "Devuelve los totales de módulos, clases y material del curso. Requiere el profesor asignado, un administrador o un alumno inscrito.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Resumen del curso",
+            content = @Content(schema = @Schema(implementation = CursoResumenResponse.class))),
+        @ApiResponse(responseCode = "401", description = "No autenticado: token requerido"),
+        @ApiResponse(responseCode = "403", description = "Acceso denegado: rol insuficiente"),
+        @ApiResponse(responseCode = "404", description = "Curso no encontrado con ese id")
+    })
+    public CursoResumenResponse resumen(
+        @Parameter(description = "ID del curso", example = "1", required = true)
+        @PathVariable Long id,
+        Authentication authentication) {
+        return cursoResumenService.obtener(id, authentication.getName());
     }
 
         @GetMapping

@@ -9,6 +9,8 @@ import java.util.Optional;
 public interface InscripcionRepository extends JpaRepository<Inscripcion, Long> {
     List<Inscripcion> findByAlumnoId(Long alumnoId);
 
+    List<Inscripcion> findByAlumnoIdAndActivaTrue(Long alumnoId);
+
     Optional<Inscripcion> findByAlumnoIdAndCursoId(Long alumnoId, Long cursoId);
 
     boolean existsByAlumnoIdAndCursoId(Long alumnoId, Long cursoId);

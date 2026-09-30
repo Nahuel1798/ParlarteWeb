@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface TareaRepository extends JpaRepository<Tarea, Long> {
     List<Tarea> findByClaseIdOrderByIdAsc(Long claseId);
+
+    long countByClase_Curso_Id(Long cursoId);
 }

@@ -119,8 +119,9 @@ export default function CourseCatalog() {
         ) : (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
             {cursos.map((curso) => (
-              <article
+              <Link
                 key={curso.id}
+                href={`/curso/${curso.id}`}
                 className="group flex flex-col overflow-hidden rounded-xl border border-primary/15 bg-surface-container-lowest shadow-sm transition-all duration-300 hover:shadow-[0_20px_40px_rgba(21,66,18,0.08)]"
               >
                 <div className="relative h-44 overflow-hidden">
@@ -188,8 +189,16 @@ export default function CourseCatalog() {
                       </span>
                     </div>
                   </div>
+
+                  <span className="mt-5 flex items-center justify-center gap-1.5 rounded-lg bg-primary px-4 py-2.5 text-xs font-semibold text-on-primary transition group-hover:bg-primary-container">
+                    {t("catalogDetail")}
+
+                    <span className="material-symbols-outlined text-[16px] transition-transform duration-300 group-hover:translate-x-1">
+                      arrow_forward
+                    </span>
+                  </span>
                 </div>
-              </article>
+              </Link>
             ))}
           </div>
         )}

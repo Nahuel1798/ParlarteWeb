@@ -78,6 +78,7 @@ export interface ClaseResponse {
   titulo: string;
   descripcion: string;
   modulo: number | null;
+  orden: number | null;
   cursoId: number;
 }
 
@@ -85,6 +86,16 @@ export interface ClaseRequest {
   titulo: string;
   descripcion: string;
   modulo: number | null;
+}
+
+export interface CursoResumenResponse {
+  cursoId: number;
+  modulos: number;
+  clases: number;
+  videos: number;
+  materiales: number;
+  tareas: number;
+  tests: number;
 }
 
 export interface VideoResponse {
@@ -302,6 +313,23 @@ export async function listarCursos(): Promise<CursoResponse[]> {
   return data as CursoResponse[];
 }
 
+export async function obtenerCurso(
+  cursoId: number
+): Promise<CursoResponse> {
+  const res = await fetch(`${API_URL}/api/cursos/${cursoId}`, {
+    method: "GET",
+    headers: authHeaders(),
+  });
+
+  const data = await res.json().catch(() => null);
+
+  if (!res.ok) {
+    throw new Error(data?.error ?? "Error al obtener el curso");
+  }
+
+  return data as CursoResponse;
+}
+
 export async function crearCurso(
   request: CrearCursoRequest
 ): Promise<CursoResponse> {
@@ -364,6 +392,62 @@ export async function crearClase(
   }
 
   return data as ClaseResponse;
+}
+
+export async function actualizarClase(
+  cursoId: number,
+  claseId: number,
+  request: ClaseRequest
+): Promise<ClaseResponse> {
+  const res = await fetch(
+    `${API_URL}/api/cursos/${cursoId}/clases/${claseId}`,
+    {
+      method: "PUT",
+      headers: authHeaders(),
+      body: JSON.stringify(request),
+    }
+  );
+
+  const data = await res.json().catch(() => null);
+
+  if (!res.ok) {
+    throw new Error(data?.error ?? "Error al actualizar la clase");
+  }
+
+  return data as ClaseResponse;
+}
+
+export async function reordenarClases(
+  cursoId: number,
+  orden: number[]
+): Promise<void> {
+  const res = await fetch(`${API_URL}/api/cursos/${cursoId}/clases/orden`, {
+    method: "PUT",
+    headers: authHeaders(),
+    body: JSON.stringify({ orden }),
+  });
+
+  if (!res.ok) {
+    const data = await res.json().catch(() => null);
+    throw new Error(data?.error ?? "Error al reordenar las clases");
+  }
+}
+
+export async function obtenerResumen(
+  cursoId: number
+): Promise<CursoResumenResponse> {
+  const res = await fetch(`${API_URL}/api/cursos/${cursoId}/resumen`, {
+    method: "GET",
+    headers: authHeaders(),
+  });
+
+  const data = await res.json().catch(() => null);
+
+  if (!res.ok) {
+    throw new Error(data?.error ?? "Error al obtener el resumen del curso");
+  }
+
+  return data as CursoResumenResponse;
 }
 
 export async function eliminarClase(
@@ -444,6 +528,30 @@ export async function crearVideo(
   return data as VideoResponse;
 }
 
+export async function actualizarVideo(
+  cursoId: number,
+  claseId: number,
+  videoId: number,
+  request: VideoRequest
+): Promise<VideoResponse> {
+  const res = await fetch(
+    `${API_URL}/api/cursos/${cursoId}/clases/${claseId}/videos/${videoId}`,
+    {
+      method: "PUT",
+      headers: authHeaders(),
+      body: JSON.stringify(request),
+    }
+  );
+
+  const data = await res.json().catch(() => null);
+
+  if (!res.ok) {
+    throw new Error(data?.error ?? "Error al actualizar el video");
+  }
+
+  return data as VideoResponse;
+}
+
 export async function eliminarVideo(
   cursoId: number,
   claseId: number,
@@ -501,6 +609,30 @@ export async function crearMaterial(
   return data as MaterialResponse;
 }
 
+export async function actualizarMaterial(
+  cursoId: number,
+  claseId: number,
+  materialId: number,
+  request: MaterialRequest
+): Promise<MaterialResponse> {
+  const res = await fetch(
+    `${API_URL}/api/cursos/${cursoId}/clases/${claseId}/materiales/${materialId}`,
+    {
+      method: "PUT",
+      headers: authHeaders(),
+      body: JSON.stringify(request),
+    }
+  );
+
+  const data = await res.json().catch(() => null);
+
+  if (!res.ok) {
+    throw new Error(data?.error ?? "Error al actualizar el material");
+  }
+
+  return data as MaterialResponse;
+}
+
 export async function eliminarMaterial(
   cursoId: number,
   claseId: number,
@@ -553,6 +685,30 @@ export async function crearTarea(
 
   if (!res.ok) {
     throw new Error(data?.error ?? "Error al crear la tarea");
+  }
+
+  return data as TareaResponse;
+}
+
+export async function actualizarTarea(
+  cursoId: number,
+  claseId: number,
+  tareaId: number,
+  request: TareaRequest
+): Promise<TareaResponse> {
+  const res = await fetch(
+    `${API_URL}/api/cursos/${cursoId}/clases/${claseId}/tareas/${tareaId}`,
+    {
+      method: "PUT",
+      headers: authHeaders(),
+      body: JSON.stringify(request),
+    }
+  );
+
+  const data = await res.json().catch(() => null);
+
+  if (!res.ok) {
+    throw new Error(data?.error ?? "Error al actualizar la tarea");
   }
 
   return data as TareaResponse;
@@ -628,5 +784,98 @@ export async function eliminarTest(
   if (!res.ok) {
     const data = await res.json().catch(() => null);
     throw new Error(data?.error ?? "Error al eliminar el test");
+  }
+}
+// ---------- Eventos (calendario) ----------
+
+export interface EventoResponse {
+  id: number;
+  titulo: string;
+  descripcion: string | null;
+  fecha: string;
+  duracionMinutos: number;
+  tipo: string;
+  activo: boolean;
+  cursoId: number | null;
+  cursoNombre: string | null;
+  claseId: number | null;
+  claseTitulo: string | null;
+}
+
+export interface EventoRequest {
+  titulo: string;
+  descripcion: string;
+  fecha: string;
+  duracionMinutos: number;
+  tipo: string;
+  cursoId: number | null;
+  claseId: number | null;
+}
+
+export async function listarEventos(
+  desde: string,
+  hasta: string
+): Promise<EventoResponse[]> {
+  const query = new URLSearchParams({ desde, hasta });
+  const res = await fetch(`${API_URL}/api/eventos?${query}`, {
+    method: "GET",
+    headers: authHeaders(),
+  });
+
+  const data = await res.json().catch(() => null);
+
+  if (!res.ok) {
+    throw new Error(data?.error ?? "Error al obtener los eventos");
+  }
+
+  return data as EventoResponse[];
+}
+
+export async function crearEvento(
+  request: EventoRequest
+): Promise<EventoResponse> {
+  const res = await fetch(`${API_URL}/api/eventos`, {
+    method: "POST",
+    headers: authHeaders(),
+    body: JSON.stringify(request),
+  });
+
+  const data = await res.json().catch(() => null);
+
+  if (!res.ok) {
+    throw new Error(data?.error ?? "Error al crear el evento");
+  }
+
+  return data as EventoResponse;
+}
+
+export async function actualizarEvento(
+  eventoId: number,
+  request: EventoRequest
+): Promise<EventoResponse> {
+  const res = await fetch(`${API_URL}/api/eventos/${eventoId}`, {
+    method: "PUT",
+    headers: authHeaders(),
+    body: JSON.stringify(request),
+  });
+
+  const data = await res.json().catch(() => null);
+
+  if (!res.ok) {
+    throw new Error(data?.error ?? "Error al actualizar el evento");
+  }
+
+  return data as EventoResponse;
+}
+
+export async function eliminarEvento(eventoId: number): Promise<void> {
+  const res = await fetch(`${API_URL}/api/eventos/${eventoId}`, {
+    method: "DELETE",
+    headers: authHeaders(),
+  });
+
+  if (!res.ok) {
+    const data = await res.json().catch(() => null);
+    throw new Error(data?.error ?? "Error al eliminar el evento");
   }
 }

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import {
+  actualizarMaterial,
   crearMaterial,
   eliminarMaterial,
   listarMateriales,
@@ -22,6 +23,7 @@ export default function MaterialesPanel({
   const [materiales, setMateriales] = useState<MaterialResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [formOpen, setFormOpen] = useState(false);
+  const [editandoId, setEditandoId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const [titulo, setTitulo] = useState("");
@@ -78,6 +80,30 @@ export default function MaterialesPanel({
     }
   };
 
+  const limpiarFormulario = () => {
+    setTitulo("");
+    setTipo("");
+    setUrl("");
+    setEditandoId(null);
+    setFormOpen(false);
+  };
+
+  const abrirNuevo = () => {
+    setTitulo("");
+    setTipo("");
+    setUrl("");
+    setEditandoId(null);
+    setFormOpen(true);
+  };
+
+  const abrirEdicion = (material: MaterialResponse) => {
+    setTitulo(material.titulo);
+    setTipo(material.tipo);
+    setUrl(material.url);
+    setEditandoId(material.id);
+    setFormOpen(true);
+  };
+
   const guardar = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -87,21 +113,26 @@ export default function MaterialesPanel({
       return;
     }
 
+    const request = {
+      titulo: titulo.trim(),
+      tipo: tipo.trim() || "ARCHIVO",
+      url: url.trim(),
+    };
+
     setSaving(true);
 
     try {
-      const material = await crearMaterial(cursoId, claseId, {
-        titulo: titulo.trim(),
-        tipo: tipo.trim() || "ARCHIVO",
-        url: url.trim(),
-      });
-      setMateriales((prev) => [...prev, material]);
-      setTitulo("");
-      setTipo("");
-      setUrl("");
-      setFormOpen(false);
+      if (editandoId === null) {
+        const material = await crearMaterial(cursoId, claseId, request);
+        setMateriales((prev) => [...prev, material]);
+      } else {
+        const material = await actualizarMaterial(cursoId, claseId, editandoId, request);
+        setMateriales((prev) => prev.map((m) => (m.id === editandoId ? material : m)));
+      }
+
+      limpiarFormulario();
     } catch (err) {
-      setError(err instanceof Error ? err.message : t("materialCreateError"));
+      setError(err instanceof Error ? err.message : t("materialSaveError"));
     } finally {
       setSaving(false);
     }
@@ -115,6 +146,10 @@ export default function MaterialesPanel({
     try {
       await eliminarMaterial(cursoId, claseId, material.id);
       setMateriales((prev) => prev.filter((m) => m.id !== material.id));
+
+      if (editandoId === material.id) {
+        limpiarFormulario();
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : t("defaultError"));
     }
@@ -137,7 +172,7 @@ export default function MaterialesPanel({
 
         <button
           type="button"
-          onClick={() => setFormOpen((prev) => !prev)}
+          onClick={() => (formOpen && editandoId === null ? setFormOpen(false) : abrirNuevo())}
           className="flex items-center gap-1 text-xs font-semibold text-primary transition hover:underline"
         >
           <span className="material-symbols-outlined text-[14px]">
@@ -192,23 +227,55 @@ export default function MaterialesPanel({
                 </span>
               </div>
 
-              <button
-                type="button"
-                onClick={() => borrar(material)}
-                aria-label={t("deleteAria", { title: material.titulo })}
-                className="shrink-0 rounded p-1.5 text-on-surface-variant transition hover:bg-error-container hover:text-on-error-container"
-              >
-                <span className="material-symbols-outlined text-[16px]">
-                  delete
-                </span>
-              </button>
+              <div className="flex shrink-0 items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => abrirEdicion(material)}
+                  aria-label={t("editAria", { title: material.titulo })}
+                  className="rounded p-1.5 text-on-surface-variant transition hover:bg-primary/10 hover:text-primary"
+                >
+                  <span className="material-symbols-outlined text-[16px]">
+                    edit
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => borrar(material)}
+                  aria-label={t("deleteAria", { title: material.titulo })}
+                  className="rounded p-1.5 text-on-surface-variant transition hover:bg-error-container hover:text-on-error-container"
+                >
+                  <span className="material-symbols-outlined text-[16px]">
+                    delete
+                  </span>
+                </button>
+              </div>
             </div>
           ))}
         </div>
       )}
 
       {formOpen && (
-        <form onSubmit={guardar} className="flex flex-col gap-3">
+        <form
+          onSubmit={guardar}
+          className="flex flex-col gap-3 border-t border-outline-variant/20 pt-3"
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-semibold uppercase tracking-widest text-secondary">
+              {editandoId === null ? t("materialesAdd") : t("materialEdit")}
+            </span>
+
+            <button
+              type="button"
+              onClick={limpiarFormulario}
+              className="flex items-center gap-1 text-[11px] font-semibold text-on-surface-variant transition hover:text-primary"
+            >
+              <span className="material-symbols-outlined text-[14px]">close</span>
+
+              {t("cancel")}
+            </button>
+          </div>
+
           <div className="flex flex-col gap-1">
             <label className="text-[11px] font-semibold uppercase tracking-widest text-on-surface-variant">
               {t("materialTituloLabel")}

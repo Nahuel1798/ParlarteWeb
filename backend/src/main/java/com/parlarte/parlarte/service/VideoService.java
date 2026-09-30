@@ -26,7 +26,7 @@ public class VideoService {
     @Transactional(readOnly = true)
     public List<VideoResponse> listarPorClase(Long cursoId, Long claseId, String email) {
         Clase clase = claseAccesoService.buscarClase(claseId);
-        claseAccesoService.verificarAccesoPorClase(cursoId, clase, email);
+        claseAccesoService.verificarAccesoLecturaPorClase(cursoId, clase, email);
         return videoRepository.findByClaseIdOrderByIdAsc(claseId).stream()
                 .map(VideoResponse::fromEntity)
                 .collect(Collectors.toList());

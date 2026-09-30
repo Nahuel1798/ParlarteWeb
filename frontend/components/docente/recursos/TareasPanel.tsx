@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import {
+  actualizarTarea,
   crearTarea,
   eliminarTarea,
   listarTareas,
@@ -21,6 +22,7 @@ export default function TareasPanel({
   const [tareas, setTareas] = useState<TareaResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [formOpen, setFormOpen] = useState(false);
+  const [editandoId, setEditandoId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const [titulo, setTitulo] = useState("");
@@ -51,6 +53,30 @@ export default function TareasPanel({
     };
   }, [cursoId, claseId, t]);
 
+  const limpiarFormulario = () => {
+    setTitulo("");
+    setDescripcion("");
+    setFecha("");
+    setEditandoId(null);
+    setFormOpen(false);
+  };
+
+  const abrirNuevo = () => {
+    setTitulo("");
+    setDescripcion("");
+    setFecha("");
+    setEditandoId(null);
+    setFormOpen(true);
+  };
+
+  const abrirEdicion = (tarea: TareaResponse) => {
+    setTitulo(tarea.titulo);
+    setDescripcion(tarea.descripcion);
+    setFecha(tarea.fechaEntrega.slice(0, 16));
+    setEditandoId(tarea.id);
+    setFormOpen(true);
+  };
+
   const guardar = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -60,21 +86,26 @@ export default function TareasPanel({
       return;
     }
 
+    const request = {
+      titulo: titulo.trim(),
+      descripcion: descripcion.trim(),
+      fechaEntrega: `${fecha}:00`,
+    };
+
     setSaving(true);
 
     try {
-      const tarea = await crearTarea(cursoId, claseId, {
-        titulo: titulo.trim(),
-        descripcion: descripcion.trim(),
-        fechaEntrega: `${fecha}:00`,
-      });
-      setTareas((prev) => [...prev, tarea]);
-      setTitulo("");
-      setDescripcion("");
-      setFecha("");
-      setFormOpen(false);
+      if (editandoId === null) {
+        const tarea = await crearTarea(cursoId, claseId, request);
+        setTareas((prev) => [...prev, tarea]);
+      } else {
+        const tarea = await actualizarTarea(cursoId, claseId, editandoId, request);
+        setTareas((prev) => prev.map((ta) => (ta.id === editandoId ? tarea : ta)));
+      }
+
+      limpiarFormulario();
     } catch (err) {
-      setError(err instanceof Error ? err.message : t("tareaCreateError"));
+      setError(err instanceof Error ? err.message : t("tareaSaveError"));
     } finally {
       setSaving(false);
     }
@@ -88,6 +119,10 @@ export default function TareasPanel({
     try {
       await eliminarTarea(cursoId, claseId, tarea.id);
       setTareas((prev) => prev.filter((ta) => ta.id !== tarea.id));
+
+      if (editandoId === tarea.id) {
+        limpiarFormulario();
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : t("defaultError"));
     }
@@ -110,7 +145,7 @@ export default function TareasPanel({
 
         <button
           type="button"
-          onClick={() => setFormOpen((prev) => !prev)}
+          onClick={() => (formOpen && editandoId === null ? setFormOpen(false) : abrirNuevo())}
           className="flex items-center gap-1 text-xs font-semibold text-primary transition hover:underline"
         >
           <span className="material-symbols-outlined text-[14px]">
@@ -160,23 +195,55 @@ export default function TareasPanel({
                 </span>
               </div>
 
-              <button
-                type="button"
-                onClick={() => borrar(tarea)}
-                aria-label={t("deleteAria", { title: tarea.titulo })}
-                className="shrink-0 rounded p-1.5 text-on-surface-variant transition hover:bg-error-container hover:text-on-error-container"
-              >
-                <span className="material-symbols-outlined text-[16px]">
-                  delete
-                </span>
-              </button>
+              <div className="flex shrink-0 items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => abrirEdicion(tarea)}
+                  aria-label={t("editAria", { title: tarea.titulo })}
+                  className="rounded p-1.5 text-on-surface-variant transition hover:bg-primary/10 hover:text-primary"
+                >
+                  <span className="material-symbols-outlined text-[16px]">
+                    edit
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => borrar(tarea)}
+                  aria-label={t("deleteAria", { title: tarea.titulo })}
+                  className="rounded p-1.5 text-on-surface-variant transition hover:bg-error-container hover:text-on-error-container"
+                >
+                  <span className="material-symbols-outlined text-[16px]">
+                    delete
+                  </span>
+                </button>
+              </div>
             </div>
           ))}
         </div>
       )}
 
       {formOpen && (
-        <form onSubmit={guardar} className="flex flex-col gap-3">
+        <form
+          onSubmit={guardar}
+          className="flex flex-col gap-3 border-t border-outline-variant/20 pt-3"
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-semibold uppercase tracking-widest text-secondary">
+              {editandoId === null ? t("tareasAdd") : t("tareaEdit")}
+            </span>
+
+            <button
+              type="button"
+              onClick={limpiarFormulario}
+              className="flex items-center gap-1 text-[11px] font-semibold text-on-surface-variant transition hover:text-primary"
+            >
+              <span className="material-symbols-outlined text-[14px]">close</span>
+
+              {t("cancel")}
+            </button>
+          </div>
+
           <div className="flex flex-col gap-1">
             <label className="text-[11px] font-semibold uppercase tracking-widest text-on-surface-variant">
               {t("tareaTituloLabel")}
