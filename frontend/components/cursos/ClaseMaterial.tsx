@@ -12,6 +12,7 @@ import {
   type TestResponse,
   type VideoResponse,
 } from "../../lib/api";
+import { esUrlVideoDirecto } from "../../lib/video";
 import type { ReactNode } from "react";
 
 function iconForTipo(tipo: string) {
@@ -163,33 +164,65 @@ export default function ClaseMaterial({
           total={videos.length}
           vacio={t("videosEmpty")}
         >
-          {videos.map((video) => (
-            <a
-              key={video.id}
-              href={video.url}
-              target="_blank"
-              rel="noreferrer"
-              className="flex items-center justify-between gap-3 rounded bg-surface-container-lowest px-3 py-2 transition hover:bg-surface-bright"
-            >
-              <div className="min-w-0">
-                <span className="block truncate text-sm font-medium text-on-surface">
-                  {video.titulo}
-                </span>
+          {videos.map((video) =>
+            esUrlVideoDirecto(video.url) ? (
+              <figure
+                key={video.id}
+                className="flex flex-col gap-2 rounded bg-surface-container-lowest p-3"
+              >
+                <video
+                  controls
+                  preload="metadata"
+                  src={video.url}
+                  className="aspect-video w-full rounded bg-black"
+                >
+                  {t("videoSinSoporte")}
+                </video>
 
-                <span className="block truncate text-xs text-on-surface-variant">
-                  {video.url}
-                </span>
-              </div>
+                <figcaption className="flex items-center justify-between gap-3">
+                  <span className="min-w-0 truncate text-sm font-medium text-on-surface">
+                    {video.titulo}
+                  </span>
 
-              <span className="flex shrink-0 items-center gap-1 rounded-full bg-secondary/10 px-2 py-0.5 text-[11px] font-semibold text-secondary">
-                <span className="material-symbols-outlined text-[14px]">
-                  schedule
-                </span>
+                  {video.duracionSegundos ? (
+                    <span className="flex shrink-0 items-center gap-1 rounded-full bg-secondary/10 px-2 py-0.5 text-[11px] font-semibold text-secondary">
+                      <span className="material-symbols-outlined text-[14px]">
+                        schedule
+                      </span>
 
-                {formatDuracion(video.duracionSegundos ?? 0)}
-              </span>
-            </a>
-          ))}
+                      {formatDuracion(video.duracionSegundos)}
+                    </span>
+                  ) : null}
+                </figcaption>
+              </figure>
+            ) : (
+              <a
+                key={video.id}
+                href={video.url}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center justify-between gap-3 rounded bg-surface-container-lowest px-3 py-2 transition hover:bg-surface-bright"
+              >
+                <div className="min-w-0">
+                  <span className="block truncate text-sm font-medium text-on-surface">
+                    {video.titulo}
+                  </span>
+
+                  <span className="block truncate text-xs text-on-surface-variant">
+                    {video.url}
+                  </span>
+                </div>
+
+                <span className="flex shrink-0 items-center gap-1 rounded-full bg-secondary/10 px-2 py-0.5 text-[11px] font-semibold text-secondary">
+                  <span className="material-symbols-outlined text-[14px]">
+                    open_in_new
+                  </span>
+
+                  {t("videoAbrirExterno")}
+                </span>
+              </a>
+            )
+          )}
         </Grupo>
       )}
 

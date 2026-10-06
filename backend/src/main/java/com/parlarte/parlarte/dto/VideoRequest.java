@@ -1,6 +1,8 @@
 package com.parlarte.parlarte.dto;
 
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 
 public class VideoRequest {
@@ -13,6 +15,8 @@ public class VideoRequest {
     @Size(max = 500, message = "La URL no puede superar los 500 caracteres")
     private String url;
 
+    @PositiveOrZero(message = "La duración no puede ser negativa")
+    @Max(value = 599999, message = "La duración no puede superar los 599999 segundos")
     private Integer duracionSegundos;
 
     public String getTitulo() {

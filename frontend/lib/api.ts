@@ -487,6 +487,30 @@ export async function subirRecurso(file: File): Promise<string> {
   return data.url as string;
 }
 
+/**
+ * Sube un video MP4 al backend y devuelve la URL pública del archivo.
+ * La duración no se manda acá: se lee en el navegador y recién después se
+ * envía al crear o editar el video, vía `crearVideo` / `actualizarVideo`.
+ */
+export async function subirVideo(file: File): Promise<string> {
+  const formData = new FormData();
+  formData.append("archivo", file);
+
+  const res = await fetch(`${API_URL}/api/archivos/video`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${getToken() ?? ""}` },
+    body: formData,
+  });
+
+  const data = await res.json().catch(() => null);
+
+  if (!res.ok) {
+    throw new Error(data?.error ?? "Error al subir el video");
+  }
+
+  return data.url as string;
+}
+
 export async function listarVideos(
   cursoId: number,
   claseId: number

@@ -23,7 +23,7 @@ public class Videos {
     @Column(nullable = false, length = 500)
     private String url;
 
-    @Column(nullable = false)
+    @Column
     private Integer duracionSegundos;
 
     @ManyToOne

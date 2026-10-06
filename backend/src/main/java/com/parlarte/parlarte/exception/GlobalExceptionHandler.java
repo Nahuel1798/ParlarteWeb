@@ -69,7 +69,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> maxUploadSize(MaxUploadSizeExceededException ex) {
-        return Map.of("error", "La imagen supera el tamaño máximo permitido (5MB)");
+        return Map.of("error", "El archivo supera el tamaño máximo permitido (500MB)");
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)

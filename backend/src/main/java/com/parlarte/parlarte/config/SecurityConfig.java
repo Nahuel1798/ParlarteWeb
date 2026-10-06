@@ -89,6 +89,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/archivos/portada").hasRole("ADMINISTRADOR")
                         .requestMatchers(HttpMethod.POST, "/api/archivos/recurso")
                             .hasAnyRole("ADMINISTRADOR", "PROFESOR")
+                        .requestMatchers(HttpMethod.POST, "/api/archivos/video")
+                            .hasAnyRole("ADMINISTRADOR", "PROFESOR")
                         .requestMatchers(HttpMethod.PUT, "/api/cursos/**").hasRole("ADMINISTRADOR")
                         .requestMatchers(HttpMethod.DELETE, "/api/cursos/**").hasRole("ADMINISTRADOR")
                         .anyRequest().authenticated())
