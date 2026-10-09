@@ -42,13 +42,10 @@ export default function VideosPanel({
   const [titulo, setTitulo] = useState("");
   const [url, setUrl] = useState("");
   const [duracion, setDuracion] = useState("");
-  const [duracionAuto, setDuracionAuto] = useState(false);
-  const [leyendoDuracion, setLeyendoDuracion] = useState(false);
   const [subiendo, setSubiendo] = useState(false);
   const [saving, setSaving] = useState(false);
   const inputArchivo = useRef<HTMLInputElement>(null);
   const timerDuracion = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const duracionEditada = useRef(false);
 
   useEffect(() => {
     let active = true;
@@ -75,17 +72,6 @@ export default function VideosPanel({
   }, [cursoId, claseId, t]);
 
   /**
-   * Rellena la duración solo si el docente no la escribió a mano. Así una
-   * detección posterior refresca el valor, pero nunca pisa una carga manual.
-   */
-  const aplicarDuracionAuto = (segundos: number) => {
-    if (duracionEditada.current) return;
-
-    setDuracion(String(segundos));
-    setDuracionAuto(true);
-  };
-
-  /**
    * Al escribir una URL se intenta leer su duración. Con una URL externa el
    * navegador la bloquea casi siempre, así que el resultado es opcional.
    */
@@ -95,18 +81,13 @@ export default function VideosPanel({
     const limpio = valor.trim();
 
     if (limpio === "" || !esUrlVideoDirecto(limpio)) {
-      setLeyendoDuracion(false);
       return;
     }
-
-    setLeyendoDuracion(true);
 
     timerDuracion.current = setTimeout(async () => {
       const segundos = await obtenerDuracionUrl(limpio);
 
-      setLeyendoDuracion(false);
-
-      if (segundos !== null) aplicarDuracionAuto(segundos);
+      if (segundos !== null) setDuracion(String(segundos));
     }, 700);
   };
 
@@ -124,7 +105,6 @@ export default function VideosPanel({
     }
 
     setSubiendo(true);
-    setLeyendoDuracion(true);
 
     try {
       // Se lee del archivo local: funciona siempre, sin depender de CORS.
@@ -137,16 +117,11 @@ export default function VideosPanel({
         setTitulo(file.name.replace(/\.[^.]+$/, ""));
       }
 
-      // El archivo nuevo deja obsoleta la duración anterior, se haya escrito
-      // a mano o venga de la base.
-      duracionEditada.current = false;
-
-      if (segundos !== null) aplicarDuracionAuto(segundos);
+      if (segundos !== null) setDuracion(String(segundos));
     } catch (err) {
       setError(err instanceof Error ? err.message : t("uploadError"));
     } finally {
       setSubiendo(false);
-      setLeyendoDuracion(false);
 
       if (inputArchivo.current) {
         inputArchivo.current.value = "";
@@ -157,13 +132,9 @@ export default function VideosPanel({
   const limpiarFormulario = () => {
     if (timerDuracion.current) clearTimeout(timerDuracion.current);
 
-    duracionEditada.current = false;
-
     setTitulo("");
     setUrl("");
     setDuracion("");
-    setDuracionAuto(false);
-    setLeyendoDuracion(false);
     setModo("archivo");
     setEditandoId(null);
     setFormOpen(false);
@@ -172,13 +143,9 @@ export default function VideosPanel({
   const abrirNuevo = () => {
     if (timerDuracion.current) clearTimeout(timerDuracion.current);
 
-    duracionEditada.current = false;
-
     setTitulo("");
     setUrl("");
     setDuracion("");
-    setDuracionAuto(false);
-    setLeyendoDuracion(false);
     setModo("archivo");
     setEditandoId(null);
     setFormOpen(true);
@@ -187,16 +154,11 @@ export default function VideosPanel({
   const abrirEdicion = (video: VideoResponse) => {
     if (timerDuracion.current) clearTimeout(timerDuracion.current);
 
-    // La duración guardada viene de la base, no de una detección en vivo.
-    duracionEditada.current = true;
-
     setTitulo(video.titulo);
     setUrl(video.url);
     setDuracion(
       video.duracionSegundos === null ? "" : String(video.duracionSegundos)
     );
-    setDuracionAuto(false);
-    setLeyendoDuracion(false);
     // Al editar la URL ya está guardada: no se vuelve a leer sola.
     setModo(esUrlVideoDirecto(video.url) ? "archivo" : "url");
     setEditandoId(video.id);
@@ -207,7 +169,6 @@ export default function VideosPanel({
     if (timerDuracion.current) clearTimeout(timerDuracion.current);
 
     setModo(valor);
-    setLeyendoDuracion(false);
     setError(null);
 
     // El archivo subido ya dejó una URL puesta: al cambiar de pestaña se
@@ -440,6 +401,7 @@ export default function VideosPanel({
                   </label>
 
                   <input
+                    key="archivo"
                     ref={inputArchivo}
                     type="file"
                     accept="video/mp4,.mp4"
@@ -462,6 +424,7 @@ export default function VideosPanel({
                   </label>
 
                   <input
+                    key="url"
                     value={url}
                     onChange={(e) => {
                       setUrl(e.target.value);
@@ -515,38 +478,6 @@ export default function VideosPanel({
               {t("uploading")}…
             </span>
           )}
-
-          <div className="flex flex-col gap-1">
-            <div className="flex items-center justify-between">
-              <label className="text-[11px] font-semibold uppercase tracking-widest text-on-surface-variant">
-                {t("videoDuracionLabel")}
-              </label>
-
-              {duracionAuto ? (
-                <span className="rounded bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
-                  {t("videoDuracionAuto")}
-                </span>
-              ) : null}
-            </div>
-
-            <input
-              type="number"
-              min={0}
-              value={duracion}
-              disabled={leyendoDuracion}
-              onChange={(e) => {
-                setDuracion(e.target.value);
-                setDuracionAuto(false);
-                duracionEditada.current = true;
-              }}
-              placeholder="90"
-              className="rounded bg-surface-container-lowest px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-primary disabled:opacity-60"
-            />
-
-            <span className="text-[11px] leading-relaxed text-on-surface-variant">
-              {leyendoDuracion ? t("videoDuracionLeyendo") : t("videoDuracionHint")}
-            </span>
-          </div>
 
           <button
             type="submit"

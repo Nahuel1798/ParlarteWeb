@@ -277,6 +277,23 @@ export async function listarInscripciones(): Promise<InscripcionResponse[]> {
   return data as InscripcionResponse[];
 }
 
+export async function listarInscripcionesPorAlumno(
+  alumnoId: number
+): Promise<InscripcionResponse[]> {
+  const res = await fetch(`${API_URL}/api/inscripciones/alumno/${alumnoId}`, {
+    method: "GET",
+    headers: authHeaders(),
+  });
+
+  const data = await res.json().catch(() => null);
+
+  if (!res.ok) {
+    throw new Error(data?.error ?? "Error al obtener las inscripciones del alumno");
+  }
+
+  return data as InscripcionResponse[];
+}
+
 export async function crearInscripcion(
   request: CrearInscripcionRequest
 ): Promise<InscripcionResponse> {

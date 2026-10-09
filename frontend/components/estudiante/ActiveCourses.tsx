@@ -1,38 +1,54 @@
-import { getTranslations } from "next-intl/server";
+"use client";
 
-const courses = [
-  {
-    badgeKey: "active1Badge",
-    percentage: 68,
-    titleKey: "active1Title",
-    descriptionKey: "active1Description",
-    progressKey: "active1Progress",
-    remainingKey: "active1Remaining",
-    icon: "assignment_late",
-    labelKey: "active1Label",
-    taskKey: "active1Task",
-    footerIcon: "folder_open",
-    footerKey: "active1Footer",
-    actionKey: "active1Action",
-  },
-  {
-    badgeKey: "active2Badge",
-    percentage: 45,
-    titleKey: "active2Title",
-    descriptionKey: "active2Description",
-    progressKey: "active2Progress",
-    remainingKey: "active2Remaining",
-    icon: "mic",
-    labelKey: "active2Label",
-    taskKey: "active2Task",
-    footerIcon: "graphic_eq",
-    footerKey: "active2Footer",
-    actionKey: "active2Action",
-  },
-];
+import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
+import {
+  obtenerResumen,
+  type CursoResumenResponse,
+} from "../../lib/api";
+import { useCursosAlumno } from "../../lib/alumno";
 
-export default async function ActiveCourses() {
-  const t = await getTranslations("estudiante");
+interface Recurso {
+  icon: string;
+  labelKey: string;
+  valor: number;
+}
+
+export default function ActiveCourses() {
+  const t = useTranslations("estudiante");
+  const { cursos, cargando, error } = useCursosAlumno();
+
+  const [resumenes, setResumenes] = useState<
+    Record<number, CursoResumenResponse>
+  >({});
+
+  useEffect(() => {
+    if (cursos.length === 0) return;
+
+    let active = true;
+
+    Promise.all(
+      cursos.map((curso) =>
+        obtenerResumen(curso.id)
+          .then((resumen) => [curso.id, resumen] as const)
+          .catch(() => null)
+      )
+    ).then((pares) => {
+      if (!active) return;
+
+      const mapa: Record<number, CursoResumenResponse> = {};
+      pares.forEach((par) => {
+        if (par) mapa[par[0]] = par[1];
+      });
+
+      setResumenes(mapa);
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [cursos]);
 
   return (
     <section>
@@ -47,92 +63,158 @@ export default async function ActiveCourses() {
           </h2>
         </div>
 
-        <button className="flex items-center gap-1 text-xs font-semibold text-secondary hover:underline">
+        <Link
+          href="/curso"
+          className="flex items-center gap-1 text-xs font-semibold text-secondary hover:underline"
+        >
           {t("activeAction")}
           <span className="material-symbols-outlined text-[16px]">
             arrow_forward
           </span>
-        </button>
+        </Link>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+      {cargando ? (
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          {Array.from({ length: 2 }, (_, i) => (
+            <div
+              key={i}
+              className="h-72 animate-pulse rounded-xl bg-surface-container-lowest shadow-sm"
+            />
+          ))}
+        </div>
+      ) : error ? (
+        <div className="rounded-xl bg-secondary/10 px-4 py-6 text-sm text-secondary">
+          {t("activeError")}
+        </div>
+      ) : cursos.length === 0 ? (
+        <div className="flex flex-col items-center gap-3 rounded-xl bg-surface-container-lowest px-4 py-10 text-center shadow-sm">
+          <span className="material-symbols-outlined text-[32px] text-on-surface-variant">
+            school
+          </span>
 
-        {courses.map((course) => (
-          <div
-            key={course.titleKey}
-            className="flex flex-col justify-between rounded-xl bg-surface-container-lowest p-6 shadow-sm transition-all hover:shadow-md"
+          <p className="text-sm text-on-surface-variant">{t("activeEmpty")}</p>
+
+          <Link
+            href="/curso"
+            className="rounded bg-primary px-4 py-2 text-xs font-semibold text-on-primary transition hover:bg-primary-container"
           >
-            <div>
+            {t("activeEmptyAction")}
+          </Link>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          {cursos.map((curso) => {
+            const resumen = resumenes[curso.id];
 
-              <div className="mb-3 flex items-center justify-between">
-                <span className="rounded bg-primary/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-primary">
-                  {t(course.badgeKey)}
-                </span>
+            const recursos: Recurso[] = resumen
+              ? [
+                  {
+                    icon: "menu_book",
+                    labelKey: "activeClasses",
+                    valor: resumen.clases,
+                  },
+                  {
+                    icon: "smart_display",
+                    labelKey: "activeVideos",
+                    valor: resumen.videos,
+                  },
+                  {
+                    icon: "folder_open",
+                    labelKey: "activeMaterials",
+                    valor: resumen.materiales,
+                  },
+                  {
+                    icon: "assignment",
+                    labelKey: "activeTasks",
+                    valor: resumen.tareas,
+                  },
+                  {
+                    icon: "quiz",
+                    labelKey: "activeTests",
+                    valor: resumen.tests,
+                  },
+                ]
+              : [];
 
-                <span className="text-xs font-semibold text-on-surface-variant">
-                  {t("activePercent", { percentage: course.percentage })}
-                </span>
-              </div>
+            return (
+              <div
+                key={curso.id}
+                className="flex flex-col justify-between rounded-xl bg-surface-container-lowest p-6 shadow-sm transition-all hover:shadow-md"
+              >
+                <div>
+                  <div className="mb-3 flex items-center justify-between">
+                    <span className="rounded bg-primary/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-primary">
+                      {t("activeLevel", { level: curso.nivel })}
+                    </span>
 
-              <h3 className="font-headline-md text-lg font-semibold text-on-surface">
-                {t(course.titleKey)}
-              </h3>
+                    <span className="text-xs font-semibold text-on-surface-variant">
+                      {t("activeModuli", {
+                        count: curso.numeroModulos ?? 0,
+                      })}
+                    </span>
+                  </div>
 
-              <p className="mt-1 text-xs text-on-surface-variant">
-                {t(course.descriptionKey)}
-              </p>
+                  <h3 className="font-headline-md text-lg font-semibold text-on-surface">
+                    {curso.nombre}
+                  </h3>
 
-              <div className="mt-5 h-1.5 w-full overflow-hidden rounded-full bg-surface-container-high">
-                <div
-                  className="h-full rounded-full bg-primary"
-                  style={{ width: `${course.percentage}%` }}
-                />
-              </div>
+                  <p className="mt-1 line-clamp-2 text-xs text-on-surface-variant">
+                    {curso.descripcion}
+                  </p>
 
-              <div className="mt-1 flex justify-between text-[11px] text-on-surface-variant">
-                <span>{t(course.progressKey)}</span>
-                <span>{t(course.remainingKey)}</span>
-              </div>
+                  <div className="mt-3 flex items-center gap-1.5 text-[11px] text-on-surface-variant">
+                    <span className="material-symbols-outlined text-[16px]">
+                      schedule
+                    </span>
 
-              <div className="mt-5 flex items-start gap-3 rounded-lg bg-surface-container p-3">
-                <span className="material-symbols-outlined text-[20px] text-secondary">
-                  {course.icon}
-                </span>
+                    {curso.horario} ·{" "}
+                    {t("activeHours", { count: curso.duracionHoras })}
+                  </div>
 
-                <div className="min-w-0">
-                  <span className="block text-[11px] font-semibold uppercase tracking-wider text-secondary">
-                    {t(course.labelKey)}
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {recursos.map((recurso) => (
+                      <span
+                        key={recurso.labelKey}
+                        className="flex items-center gap-1 rounded bg-surface-container px-2 py-1 text-[11px] text-on-surface-variant"
+                      >
+                        <span className="material-symbols-outlined text-[14px] text-secondary">
+                          {recurso.icon}
+                        </span>
+
+                        {t(recurso.labelKey, { count: recurso.valor })}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="mt-5 flex items-center justify-between border-t border-outline-variant/30 pt-3">
+                  <span className="flex min-w-0 items-center gap-1 text-xs text-on-surface-variant">
+                    <span className="material-symbols-outlined text-[16px]">
+                      person
+                    </span>
+
+                    <span className="truncate">
+                      {curso.profesor?.nombre ?? t("activeUnassigned")}
+                    </span>
                   </span>
 
-                  <span className="block truncate text-xs font-semibold">
-                    {t(course.taskKey)}
-                  </span>
+                  <Link
+                    href={`/curso/${curso.id}/clases`}
+                    className="flex shrink-0 items-center gap-1 rounded bg-surface-container-high px-3 py-2 text-xs font-semibold text-primary hover:bg-surface-variant"
+                  >
+                    {t("activeView")}
+
+                    <span className="material-symbols-outlined text-[14px]">
+                      arrow_forward
+                    </span>
+                  </Link>
                 </div>
               </div>
-            </div>
-
-            <div className="mt-5 flex items-center justify-between border-t border-outline-variant/30 pt-3">
-              <span className="flex items-center gap-1 text-xs text-on-surface-variant">
-                <span className="material-symbols-outlined text-[16px]">
-                  {course.footerIcon}
-                </span>
-
-                {t(course.footerKey)}
-              </span>
-
-              <button className="flex items-center gap-1 rounded bg-surface-container-high px-3 py-2 text-xs font-semibold text-primary hover:bg-surface-variant">
-                {t(course.actionKey)}
-
-                <span className="material-symbols-outlined text-[14px]">
-                  arrow_forward
-                </span>
-              </button>
-            </div>
-
-          </div>
-        ))}
-
-      </div>
+            );
+          })}
+        </div>
+      )}
     </section>
   );
 }
