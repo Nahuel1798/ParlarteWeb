@@ -17,20 +17,22 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
+    private final CookieService cookieService;
     private final CustomUserDetailsService customUserDetailsService;
 
-    public JwtAuthenticationFilter(JwtService jwtService, CustomUserDetailsService customUserDetailsService) {
+    public JwtAuthenticationFilter(JwtService jwtService,
+                                   CookieService cookieService,
+                                   CustomUserDetailsService customUserDetailsService) {
         this.jwtService = jwtService;
+        this.cookieService = cookieService;
         this.customUserDetailsService = customUserDetailsService;
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        String header = request.getHeader("Authorization");
-        if (header != null && header.startsWith("Bearer ")
-                && SecurityContextHolder.getContext().getAuthentication() == null) {
-            String token = header.substring(7);
+        String token = extraerToken(request);
+        if (token != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             try {
                 String email = jwtService.extraerEmail(token);
                 if (email != null) {
@@ -44,8 +46,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     }
                 }
             } catch (Exception ignored) {
+                // Token inválido o expirado: se continúa sin autenticar.
             }
         }
         filterChain.doFilter(request, response);
+    }
+
+    /**
+     * Prioriza la cookie httpOnly; mantiene el header {@code Authorization}
+     * como respaldo para clientes que no usan navegador (Swagger, tests).
+     */
+    private String extraerToken(HttpServletRequest request) {
+        String token = cookieService.accessToken(request).orElse(null);
+        if (token != null) {
+            return token;
+        }
+        String header = request.getHeader("Authorization");
+        if (header != null && header.startsWith("Bearer ")) {
+            return header.substring(7);
+        }
+        return null;
     }
 }

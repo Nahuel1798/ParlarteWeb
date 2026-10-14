@@ -26,11 +26,7 @@ export default function LoginForm() {
     setError(null);
 
     try {
-      const data = await login(email, password);
-
-      const storage = rememberMe ? localStorage : sessionStorage;
-      storage.setItem("parlarte_token", data.token);
-      storage.setItem("parlarte_user", JSON.stringify(data));
+      const data = await login(email, password, rememberMe);
 
       setSuccess(true);
 

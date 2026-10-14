@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import type { DashboardConfig } from "./config";
+import { logout } from "../../lib/api";
 
 interface SidebarContentProps {
   config: DashboardConfig;
@@ -17,11 +18,8 @@ export default function SidebarContent({
   const router = useRouter();
   const t = useTranslations("dashboard");
 
-  const handleLogout = () => {
-    localStorage.removeItem("parlarte_token");
-    localStorage.removeItem("parlarte_user");
-    sessionStorage.removeItem("parlarte_token");
-    sessionStorage.removeItem("parlarte_user");
+  const handleLogout = async () => {
+    await logout();
     router.replace("/login");
   };
 

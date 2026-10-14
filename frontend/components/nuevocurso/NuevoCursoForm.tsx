@@ -39,21 +39,34 @@ function formatearPesos(value: number) {
   return value.toLocaleString("es-AR");
 }
 
+function calcularHoras(inicio: string, fin: string) {
+  const [horaInicio, minutoInicio] = inicio.split(":").map(Number);
+  const [horaFin, minutoFin] = fin.split(":").map(Number);
+  const minutos =
+    horaFin * 60 + minutoFin - (horaInicio * 60 + minutoInicio);
+  return minutos > 0 ? Math.max(1, Math.round(minutos / 60)) : 0;
+}
+
 export default function NuevoCursoForm() {
   const router = useRouter();
   const t = useTranslations("nuevoCurso");
 
   const [nivel, setNivel] = useState("C1");
   const [nombre, setNombre] = useState("");
-  const [duracion, setDuracion] = useState(60);
   const [descripcion, setDescripcion] = useState("");
-  const [dia, setDia] = useState<(typeof diasSemanaKey)[number]>("lunes");
+  const [dias, setDias] = useState<(typeof diasSemanaKey)[number][]>([
+    "lunes",
+  ]);
   const [horaInicio, setHoraInicio] = useState("09:00");
   const [horaFin, setHoraFin] = useState("10:00");
   const [numeroModulos, setNumeroModulos] = useState(0);
   const [precio, setPrecio] = useState(45000);
 
-  const horario = `${t(`dias.${dia}`)} ${horaInicio} - ${horaFin}`;
+  const diasOrdenados = diasSemanaKey.filter((item) => dias.includes(item));
+  const horario = `${diasOrdenados
+    .map((item) => t(`dias.${item}`))
+    .join(", ")} ${horaInicio} - ${horaFin}`;
+  const duracion = calcularHoras(horaInicio, horaFin);
   const [portadaUrl, setPortadaUrl] = useState("");
   const [profesorId, setProfesorId] = useState<number | null>(null);
 
@@ -90,6 +103,14 @@ export default function NuevoCursoForm() {
     };
   }, [t]);
 
+  const toggleDia = (dia: (typeof diasSemanaKey)[number]) => {
+    setDias((actuales) =>
+      actuales.includes(dia)
+        ? actuales.filter((item) => item !== dia)
+        : [...actuales, dia]
+    );
+  };
+
   const guardar = async (activo: boolean) => {
     setError(null);
 
@@ -103,7 +124,12 @@ export default function NuevoCursoForm() {
       return;
     }
 
-    if (!horario.trim()) {
+    if (dias.length === 0) {
+      setError(t("daysRequired"));
+      return;
+    }
+
+    if (duracion <= 0) {
       setError(t("scheduleRequired"));
       return;
     }
@@ -272,7 +298,7 @@ export default function NuevoCursoForm() {
 
                   <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
 
-                    <div className="flex flex-col gap-1 md:col-span-2">
+                    <div className="flex flex-col gap-1 md:col-span-3">
                       <label className="text-xs font-semibold uppercase tracking-wider text-[#42493e]">
                         {t("nameLabel")}
                       </label>
@@ -282,30 +308,6 @@ export default function NuevoCursoForm() {
                         onChange={(e) => setNombre(e.target.value)}
                         className="rounded-lg bg-[#f6f3ec] px-3 py-3 text-sm font-medium outline-none shadow-inner focus:bg-white"
                       />
-                    </div>
-
-                    <div className="flex flex-col gap-1">
-
-                      <label className="text-xs font-semibold uppercase tracking-wider text-[#42493e]">
-                        {t("durationLabel")}
-                      </label>
-
-                      <div className="flex items-center rounded-lg bg-[#f6f3ec] px-3 shadow-inner">
-                        <input
-                          type="number"
-                          min={1}
-                          value={duracion}
-                          onChange={(e) =>
-                            setDuracion(Number(e.target.value))
-                          }
-                          className="w-full bg-transparent py-3 text-sm font-semibold text-[#154212] outline-none"
-                        />
-
-                        <span className="text-xs text-[#42493e]">
-                          {t("hoursSuffix")}
-                        </span>
-                      </div>
-
                     </div>
 
                   </div>
@@ -433,16 +435,16 @@ export default function NuevoCursoForm() {
 
                     </div>
 
-                    {/* Dia */}
+                    {/* Dias */}
                     <div className="flex flex-wrap gap-1">
 
                       {diasSemanaKey.map((item) => (
                         <button
                           key={item}
                           type="button"
-                          onClick={() => setDia(item)}
+                          onClick={() => toggleDia(item)}
                           className={`rounded-lg px-3 py-2 text-xs font-semibold transition ${
-                            dia === item
+                            dias.includes(item)
                               ? "bg-[#154212] text-white shadow-sm"
                               : "bg-[#f6f3ec] text-[#42493e] hover:bg-[#ebe8e1]"
                           }`}
@@ -452,6 +454,10 @@ export default function NuevoCursoForm() {
                       ))}
 
                     </div>
+
+                    <span className="text-[11px] text-[#42493e]">
+                      {t("daysInfo")}
+                    </span>
 
                     {/* Horas */}
                     <div className="grid grid-cols-2 items-end gap-3">
@@ -499,15 +505,31 @@ export default function NuevoCursoForm() {
                     </div>
 
                     {/* Resumen */}
-                    <div className="flex items-center justify-between gap-2 rounded-lg bg-[#bcf0ae]/50 px-3 py-2">
+                    <div className="flex flex-col gap-1 rounded-lg bg-[#bcf0ae]/50 px-3 py-2">
 
-                      <span className="text-xs font-medium text-[#42493e]">
-                        {t("scheduleSummary")}
-                      </span>
+                      <div className="flex items-center justify-between gap-2">
 
-                      <span className="text-sm font-bold text-[#154212]">
-                        {horario}
-                      </span>
+                        <span className="text-xs font-medium text-[#42493e]">
+                          {t("scheduleSummary")}
+                        </span>
+
+                        <span className="text-sm font-bold text-[#154212]">
+                          {horario}
+                        </span>
+
+                      </div>
+
+                      <div className="flex items-center justify-between gap-2">
+
+                        <span className="text-xs font-medium text-[#42493e]">
+                          {t("durationSummary")}
+                        </span>
+
+                        <span className="text-sm font-bold text-[#154212]">
+                          {t("hours", { count: duracion })}
+                        </span>
+
+                      </div>
 
                     </div>
 

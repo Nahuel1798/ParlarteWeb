@@ -1,6 +1,7 @@
+import { clearSession, notifySessionExpired, saveUser } from "./session";
+
+/** Datos públicos del usuario autenticado (los tokens viven en cookies httpOnly). */
 export interface LoginResponse {
-  token: string;
-  tipo: string;
   email: string;
   nombre: string;
   rol: string;
@@ -178,14 +179,77 @@ export interface TestResponse {
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
 
+const ENDPOINTS_SIN_REINTENTO = [
+  "/api/auth/login",
+  "/api/auth/refresh",
+  "/api/auth/logout",
+];
+
+let refreshEnCurso: Promise<boolean> | null = null;
+
+/**
+ * Renueva el access token usando el refresh token (cookie httpOnly). Deduplica
+ * llamadas concurrentes para no disparar varios refresh a la vez.
+ */
+async function refrescarSesion(): Promise<boolean> {
+  if (!refreshEnCurso) {
+    refreshEnCurso = fetch(`${API_URL}/api/auth/refresh`, {
+      method: "POST",
+      credentials: "include",
+    })
+      .then(async (res) => {
+        if (!res.ok) return false;
+        const user = (await res.json().catch(() => null)) as LoginResponse | null;
+        if (user) saveUser(user);
+        return true;
+      })
+      .catch(() => false)
+      .finally(() => {
+        refreshEnCurso = null;
+      });
+  }
+
+  return refreshEnCurso;
+}
+
+function manejarSesionExpirada(): void {
+  clearSession();
+  notifySessionExpired();
+}
+
+/**
+ * `fetch` con cookies habilitadas y renovación automática del access token.
+ * Si una respuesta es 401, intenta refrescar una vez y reintenta la petición.
+ */
+async function apiFetch(url: string, init: RequestInit = {}): Promise<Response> {
+  const sinReintento = ENDPOINTS_SIN_REINTENTO.some((endpoint) =>
+    url.includes(endpoint)
+  );
+  const opciones: RequestInit = { ...init, credentials: "include" };
+
+  let res = await fetch(url, opciones);
+
+  if (res.status === 401 && !sinReintento) {
+    const refrescado = await refrescarSesion();
+    if (refrescado) {
+      res = await fetch(url, opciones);
+    } else {
+      manejarSesionExpirada();
+    }
+  }
+
+  return res;
+}
+
 export async function login(
   email: string,
-  password: string
+  password: string,
+  recordar = false
 ): Promise<LoginResponse> {
-  const res = await fetch(`${API_URL}/api/auth/login`, {
+  const res = await apiFetch(`${API_URL}/api/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ email, password, recordar }),
   });
 
   const data = await res.json().catch(() => null);
@@ -194,13 +258,38 @@ export async function login(
     throw new Error(data?.error ?? "Error al iniciar sesión");
   }
 
-  return data as LoginResponse;
+  const user = data as LoginResponse;
+  saveUser(user);
+  return user;
+}
+
+export async function obtenerUsuarioActual(): Promise<LoginResponse> {
+  const res = await apiFetch(`${API_URL}/api/auth/me`, { method: "GET" });
+
+  const data = await res.json().catch(() => null);
+
+  if (!res.ok) {
+    throw new Error(data?.error ?? "Error al obtener la sesión");
+  }
+
+  const user = data as LoginResponse;
+  saveUser(user);
+  return user;
+}
+
+export async function logout(): Promise<void> {
+  try {
+    await apiFetch(`${API_URL}/api/auth/logout`, { method: "POST" });
+  } catch {
+    // Aunque falle la revocación en el backend, se limpia la sesión local.
+  }
+  clearSession();
 }
 
 export async function registrar(
   request: RegistrarRequest
 ): Promise<UsuarioResponse> {
-  const res = await fetch(`${API_URL}/api/usuarios`, {
+  const res = await apiFetch(`${API_URL}/api/usuarios`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(request),
@@ -215,23 +304,12 @@ export async function registrar(
   return data as UsuarioResponse;
 }
 
-function getToken(): string | null {
-  if (typeof window === "undefined") return null;
-  return (
-    localStorage.getItem("parlarte_token") ??
-    sessionStorage.getItem("parlarte_token")
-  );
-}
-
 export async function listarUsuariosPorRol(
   rol: string
 ): Promise<UsuarioResponse[]> {
-  const res = await fetch(`${API_URL}/api/usuarios/rol/${rol}`, {
+  const res = await apiFetch(`${API_URL}/api/usuarios/rol/${rol}`, {
     method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${getToken() ?? ""}`,
-    },
+    headers: authHeaders(),
   });
 
   const data = await res.json().catch(() => null);
@@ -247,9 +325,8 @@ export async function subirPortada(file: File): Promise<string> {
   const formData = new FormData();
   formData.append("archivo", file);
 
-  const res = await fetch(`${API_URL}/api/archivos/portada`, {
+  const res = await apiFetch(`${API_URL}/api/archivos/portada`, {
     method: "POST",
-    headers: { Authorization: `Bearer ${getToken() ?? ""}` },
     body: formData,
   });
 
@@ -263,7 +340,7 @@ export async function subirPortada(file: File): Promise<string> {
 }
 
 export async function listarInscripciones(): Promise<InscripcionResponse[]> {
-  const res = await fetch(`${API_URL}/api/inscripciones`, {
+  const res = await apiFetch(`${API_URL}/api/inscripciones`, {
     method: "GET",
     headers: authHeaders(),
   });
@@ -280,7 +357,7 @@ export async function listarInscripciones(): Promise<InscripcionResponse[]> {
 export async function listarInscripcionesPorAlumno(
   alumnoId: number
 ): Promise<InscripcionResponse[]> {
-  const res = await fetch(`${API_URL}/api/inscripciones/alumno/${alumnoId}`, {
+  const res = await apiFetch(`${API_URL}/api/inscripciones/alumno/${alumnoId}`, {
     method: "GET",
     headers: authHeaders(),
   });
@@ -297,7 +374,7 @@ export async function listarInscripcionesPorAlumno(
 export async function crearInscripcion(
   request: CrearInscripcionRequest
 ): Promise<InscripcionResponse> {
-  const res = await fetch(`${API_URL}/api/inscripciones`, {
+  const res = await apiFetch(`${API_URL}/api/inscripciones`, {
     method: "POST",
     headers: authHeaders(),
     body: JSON.stringify(request),
@@ -313,12 +390,9 @@ export async function crearInscripcion(
 }
 
 export async function listarCursos(): Promise<CursoResponse[]> {
-  const res = await fetch(`${API_URL}/api/cursos`, {
+  const res = await apiFetch(`${API_URL}/api/cursos`, {
     method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${getToken() ?? ""}`,
-    },
+    headers: authHeaders(),
   });
 
   const data = await res.json().catch(() => null);
@@ -333,7 +407,7 @@ export async function listarCursos(): Promise<CursoResponse[]> {
 export async function obtenerCurso(
   cursoId: number
 ): Promise<CursoResponse> {
-  const res = await fetch(`${API_URL}/api/cursos/${cursoId}`, {
+  const res = await apiFetch(`${API_URL}/api/cursos/${cursoId}`, {
     method: "GET",
     headers: authHeaders(),
   });
@@ -350,12 +424,9 @@ export async function obtenerCurso(
 export async function crearCurso(
   request: CrearCursoRequest
 ): Promise<CursoResponse> {
-  const res = await fetch(`${API_URL}/api/cursos`, {
+  const res = await apiFetch(`${API_URL}/api/cursos`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${getToken() ?? ""}`,
-    },
+    headers: authHeaders(),
     body: JSON.stringify(request),
   });
 
@@ -369,16 +440,13 @@ export async function crearCurso(
 }
 
 function authHeaders(): Record<string, string> {
-  return {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${getToken() ?? ""}`,
-  };
+  return { "Content-Type": "application/json" };
 }
 
 export async function listarClases(
   cursoId: number
 ): Promise<ClaseResponse[]> {
-  const res = await fetch(`${API_URL}/api/cursos/${cursoId}/clases`, {
+  const res = await apiFetch(`${API_URL}/api/cursos/${cursoId}/clases`, {
     method: "GET",
     headers: authHeaders(),
   });
@@ -396,7 +464,7 @@ export async function crearClase(
   cursoId: number,
   request: ClaseRequest
 ): Promise<ClaseResponse> {
-  const res = await fetch(`${API_URL}/api/cursos/${cursoId}/clases`, {
+  const res = await apiFetch(`${API_URL}/api/cursos/${cursoId}/clases`, {
     method: "POST",
     headers: authHeaders(),
     body: JSON.stringify(request),
@@ -416,7 +484,7 @@ export async function actualizarClase(
   claseId: number,
   request: ClaseRequest
 ): Promise<ClaseResponse> {
-  const res = await fetch(
+  const res = await apiFetch(
     `${API_URL}/api/cursos/${cursoId}/clases/${claseId}`,
     {
       method: "PUT",
@@ -438,7 +506,7 @@ export async function reordenarClases(
   cursoId: number,
   orden: number[]
 ): Promise<void> {
-  const res = await fetch(`${API_URL}/api/cursos/${cursoId}/clases/orden`, {
+  const res = await apiFetch(`${API_URL}/api/cursos/${cursoId}/clases/orden`, {
     method: "PUT",
     headers: authHeaders(),
     body: JSON.stringify({ orden }),
@@ -453,7 +521,7 @@ export async function reordenarClases(
 export async function obtenerResumen(
   cursoId: number
 ): Promise<CursoResumenResponse> {
-  const res = await fetch(`${API_URL}/api/cursos/${cursoId}/resumen`, {
+  const res = await apiFetch(`${API_URL}/api/cursos/${cursoId}/resumen`, {
     method: "GET",
     headers: authHeaders(),
   });
@@ -471,7 +539,7 @@ export async function eliminarClase(
   cursoId: number,
   claseId: number
 ): Promise<void> {
-  const res = await fetch(
+  const res = await apiFetch(
     `${API_URL}/api/cursos/${cursoId}/clases/${claseId}`,
     {
       method: "DELETE",
@@ -489,9 +557,8 @@ export async function subirRecurso(file: File): Promise<string> {
   const formData = new FormData();
   formData.append("archivo", file);
 
-  const res = await fetch(`${API_URL}/api/archivos/recurso`, {
+  const res = await apiFetch(`${API_URL}/api/archivos/recurso`, {
     method: "POST",
-    headers: { Authorization: `Bearer ${getToken() ?? ""}` },
     body: formData,
   });
 
@@ -513,9 +580,8 @@ export async function subirVideo(file: File): Promise<string> {
   const formData = new FormData();
   formData.append("archivo", file);
 
-  const res = await fetch(`${API_URL}/api/archivos/video`, {
+  const res = await apiFetch(`${API_URL}/api/archivos/video`, {
     method: "POST",
-    headers: { Authorization: `Bearer ${getToken() ?? ""}` },
     body: formData,
   });
 
@@ -532,7 +598,7 @@ export async function listarVideos(
   cursoId: number,
   claseId: number
 ): Promise<VideoResponse[]> {
-  const res = await fetch(
+  const res = await apiFetch(
     `${API_URL}/api/cursos/${cursoId}/clases/${claseId}/videos`,
     { method: "GET", headers: authHeaders() }
   );
@@ -551,7 +617,7 @@ export async function crearVideo(
   claseId: number,
   request: VideoRequest
 ): Promise<VideoResponse> {
-  const res = await fetch(
+  const res = await apiFetch(
     `${API_URL}/api/cursos/${cursoId}/clases/${claseId}/videos`,
     {
       method: "POST",
@@ -575,7 +641,7 @@ export async function actualizarVideo(
   videoId: number,
   request: VideoRequest
 ): Promise<VideoResponse> {
-  const res = await fetch(
+  const res = await apiFetch(
     `${API_URL}/api/cursos/${cursoId}/clases/${claseId}/videos/${videoId}`,
     {
       method: "PUT",
@@ -598,7 +664,7 @@ export async function eliminarVideo(
   claseId: number,
   videoId: number
 ): Promise<void> {
-  const res = await fetch(
+  const res = await apiFetch(
     `${API_URL}/api/cursos/${cursoId}/clases/${claseId}/videos/${videoId}`,
     { method: "DELETE", headers: authHeaders() }
   );
@@ -613,7 +679,7 @@ export async function listarMateriales(
   cursoId: number,
   claseId: number
 ): Promise<MaterialResponse[]> {
-  const res = await fetch(
+  const res = await apiFetch(
     `${API_URL}/api/cursos/${cursoId}/clases/${claseId}/materiales`,
     { method: "GET", headers: authHeaders() }
   );
@@ -632,7 +698,7 @@ export async function crearMaterial(
   claseId: number,
   request: MaterialRequest
 ): Promise<MaterialResponse> {
-  const res = await fetch(
+  const res = await apiFetch(
     `${API_URL}/api/cursos/${cursoId}/clases/${claseId}/materiales`,
     {
       method: "POST",
@@ -656,7 +722,7 @@ export async function actualizarMaterial(
   materialId: number,
   request: MaterialRequest
 ): Promise<MaterialResponse> {
-  const res = await fetch(
+  const res = await apiFetch(
     `${API_URL}/api/cursos/${cursoId}/clases/${claseId}/materiales/${materialId}`,
     {
       method: "PUT",
@@ -679,7 +745,7 @@ export async function eliminarMaterial(
   claseId: number,
   materialId: number
 ): Promise<void> {
-  const res = await fetch(
+  const res = await apiFetch(
     `${API_URL}/api/cursos/${cursoId}/clases/${claseId}/materiales/${materialId}`,
     { method: "DELETE", headers: authHeaders() }
   );
@@ -694,7 +760,7 @@ export async function listarTareas(
   cursoId: number,
   claseId: number
 ): Promise<TareaResponse[]> {
-  const res = await fetch(
+  const res = await apiFetch(
     `${API_URL}/api/cursos/${cursoId}/clases/${claseId}/tareas`,
     { method: "GET", headers: authHeaders() }
   );
@@ -713,7 +779,7 @@ export async function crearTarea(
   claseId: number,
   request: TareaRequest
 ): Promise<TareaResponse> {
-  const res = await fetch(
+  const res = await apiFetch(
     `${API_URL}/api/cursos/${cursoId}/clases/${claseId}/tareas`,
     {
       method: "POST",
@@ -737,7 +803,7 @@ export async function actualizarTarea(
   tareaId: number,
   request: TareaRequest
 ): Promise<TareaResponse> {
-  const res = await fetch(
+  const res = await apiFetch(
     `${API_URL}/api/cursos/${cursoId}/clases/${claseId}/tareas/${tareaId}`,
     {
       method: "PUT",
@@ -760,7 +826,7 @@ export async function eliminarTarea(
   claseId: number,
   tareaId: number
 ): Promise<void> {
-  const res = await fetch(
+  const res = await apiFetch(
     `${API_URL}/api/cursos/${cursoId}/clases/${claseId}/tareas/${tareaId}`,
     { method: "DELETE", headers: authHeaders() }
   );
@@ -775,7 +841,7 @@ export async function listarTests(
   cursoId: number,
   claseId: number
 ): Promise<TestResponse[]> {
-  const res = await fetch(
+  const res = await apiFetch(
     `${API_URL}/api/cursos/${cursoId}/clases/${claseId}/tests`,
     { method: "GET", headers: authHeaders() }
   );
@@ -794,7 +860,7 @@ export async function crearTest(
   claseId: number,
   request: TestRequest
 ): Promise<TestResponse> {
-  const res = await fetch(
+  const res = await apiFetch(
     `${API_URL}/api/cursos/${cursoId}/clases/${claseId}/tests`,
     {
       method: "POST",
@@ -817,7 +883,7 @@ export async function eliminarTest(
   claseId: number,
   testId: number
 ): Promise<void> {
-  const res = await fetch(
+  const res = await apiFetch(
     `${API_URL}/api/cursos/${cursoId}/clases/${claseId}/tests/${testId}`,
     { method: "DELETE", headers: authHeaders() }
   );
@@ -858,7 +924,7 @@ export async function listarEventos(
   hasta: string
 ): Promise<EventoResponse[]> {
   const query = new URLSearchParams({ desde, hasta });
-  const res = await fetch(`${API_URL}/api/eventos?${query}`, {
+  const res = await apiFetch(`${API_URL}/api/eventos?${query}`, {
     method: "GET",
     headers: authHeaders(),
   });
@@ -875,7 +941,7 @@ export async function listarEventos(
 export async function crearEvento(
   request: EventoRequest
 ): Promise<EventoResponse> {
-  const res = await fetch(`${API_URL}/api/eventos`, {
+  const res = await apiFetch(`${API_URL}/api/eventos`, {
     method: "POST",
     headers: authHeaders(),
     body: JSON.stringify(request),
@@ -894,7 +960,7 @@ export async function actualizarEvento(
   eventoId: number,
   request: EventoRequest
 ): Promise<EventoResponse> {
-  const res = await fetch(`${API_URL}/api/eventos/${eventoId}`, {
+  const res = await apiFetch(`${API_URL}/api/eventos/${eventoId}`, {
     method: "PUT",
     headers: authHeaders(),
     body: JSON.stringify(request),
@@ -910,7 +976,7 @@ export async function actualizarEvento(
 }
 
 export async function eliminarEvento(eventoId: number): Promise<void> {
-  const res = await fetch(`${API_URL}/api/eventos/${eventoId}`, {
+  const res = await apiFetch(`${API_URL}/api/eventos/${eventoId}`, {
     method: "DELETE",
     headers: authHeaders(),
   });

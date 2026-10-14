@@ -1,16 +1,35 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
 import Card from "@/components/ui/Card";
 import {
   crearInscripcion,
   listarCursos,
+  listarInscripciones,
   listarUsuariosPorRol,
   type CursoResponse,
+  type InscripcionResponse,
   type UsuarioResponse,
 } from "../../lib/api";
+
+function normalizar(texto: string): string {
+  return texto
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
+}
+
+function iniciales(nombre: string, apellidos: string | null): string {
+  return `${nombre} ${apellidos ?? ""}`
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((parte) => parte.charAt(0).toUpperCase())
+    .join("");
+}
 
 export default function NuevaInscripcionForm() {
   const router = useRouter();
@@ -18,9 +37,11 @@ export default function NuevaInscripcionForm() {
 
   const [alumnos, setAlumnos] = useState<UsuarioResponse[]>([]);
   const [cursos, setCursos] = useState<CursoResponse[]>([]);
+  const [inscripciones, setInscripciones] = useState<InscripcionResponse[]>([]);
   const [cargandoAlumnos, setCargandoAlumnos] = useState(true);
   const [cargandoCursos, setCargandoCursos] = useState(true);
 
+  const [busquedaAlumno, setBusquedaAlumno] = useState("");
   const [alumnoId, setAlumnoId] = useState<number | null>(null);
   const [cursoId, setCursoId] = useState<number | null>(null);
 
@@ -47,7 +68,7 @@ export default function NuevaInscripcionForm() {
 
     listarCursos()
       .then((data) => {
-        if (active) setCursos(data.filter((curso) => curso.activo));
+        if (active) setCursos(data);
       })
       .catch((err) => {
         if (active) {
@@ -60,10 +81,55 @@ export default function NuevaInscripcionForm() {
         if (active) setCargandoCursos(false);
       });
 
+    listarInscripciones()
+      .then((data) => {
+        if (active) setInscripciones(data);
+      })
+      .catch(() => {
+        // Si falla, se muestran todos los alumnos sin filtrar disponibilidad.
+      });
+
     return () => {
       active = false;
     };
   }, [t]);
+
+  // Alumnos que todavía no tienen una inscripción en el curso seleccionado.
+  const alumnosElegibles = useMemo(() => {
+    if (cursoId === null) return alumnos;
+    return alumnos.filter(
+      (alumno) =>
+        !inscripciones.some(
+          (inscripcion) =>
+            inscripcion.alumnoId === alumno.id &&
+            inscripcion.cursoId === cursoId
+        )
+    );
+  }, [alumnos, inscripciones, cursoId]);
+
+  const alumnosDisponibles = useMemo(() => {
+    const termino = normalizar(busquedaAlumno);
+    if (!termino) return alumnosElegibles;
+    return alumnosElegibles.filter((alumno) =>
+      normalizar(`${alumno.nombre} ${alumno.apellidos ?? ""}`).includes(termino)
+    );
+  }, [alumnosElegibles, busquedaAlumno]);
+
+  const handleCursoChange = (nuevoCursoId: number | null) => {
+    setCursoId(nuevoCursoId);
+
+    if (
+      alumnoId !== null &&
+      nuevoCursoId !== null &&
+      inscripciones.some(
+        (inscripcion) =>
+          inscripcion.alumnoId === alumnoId &&
+          inscripcion.cursoId === nuevoCursoId
+      )
+    ) {
+      setAlumnoId(null);
+    }
+  };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -108,28 +174,83 @@ export default function NuevaInscripcionForm() {
             </div>
           ) : (
             <div className="flex flex-col gap-3">
-              <select
-                value={alumnoId ?? ""}
-                onChange={(e) =>
-                  setAlumnoId(e.target.value ? Number(e.target.value) : null)
-                }
-                className="w-full rounded-lg bg-surface-container px-3 py-3 text-sm font-medium outline-none ring-1 ring-outline-variant/40 focus:bg-surface-container-low"
-              >
-                <option value="">{t("nuevaInscripcionAlumnoPlaceholder")}</option>
+              <div className="flex items-center gap-2 rounded-lg bg-surface-container px-3 focus-within:bg-surface-container-low focus-within:ring-1 focus-within:ring-primary">
+                <span className="material-symbols-outlined text-[18px] text-on-surface-variant">
+                  search
+                </span>
 
-                {alumnos.map((alumno) => (
-                  <option key={alumno.id} value={alumno.id}>
-                    {alumno.nombre}
-                    {alumno.apellidos ? ` ${alumno.apellidos}` : ""} (
-                    {alumno.email})
-                  </option>
-                ))}
-              </select>
+                <input
+                  value={busquedaAlumno}
+                  onChange={(e) => setBusquedaAlumno(e.target.value)}
+                  placeholder={t("nuevaInscripcionAlumnoSearch")}
+                  className="w-full bg-transparent py-3 text-sm font-medium outline-none"
+                />
 
-              {alumnos.length === 0 && (
+                {busquedaAlumno && (
+                  <button
+                    type="button"
+                    onClick={() => setBusquedaAlumno("")}
+                    className="text-on-surface-variant transition hover:text-primary"
+                  >
+                    <span className="material-symbols-outlined text-[18px]">
+                      close
+                    </span>
+                  </button>
+                )}
+              </div>
+
+              {alumnos.length === 0 ? (
                 <span className="text-xs font-medium text-secondary">
                   {t("nuevaInscripcionAlumnoEmpty")}
                 </span>
+              ) : alumnosDisponibles.length === 0 ? (
+                <span className="text-xs font-medium text-secondary">
+                  {t("nuevaInscripcionAlumnoNoResults")}
+                </span>
+              ) : (
+                <ul className="max-h-64 overflow-y-auto rounded-lg ring-1 ring-outline-variant/30">
+                  {alumnosDisponibles.map((alumno) => {
+                    const seleccionado = alumno.id === alumnoId;
+
+                    return (
+                      <li
+                        key={alumno.id}
+                        className="border-b border-surface-container last:border-b-0"
+                      >
+                        <button
+                          type="button"
+                          onClick={() => setAlumnoId(alumno.id)}
+                          className={`flex w-full items-center gap-3 px-3 py-2 text-left transition ${
+                            seleccionado
+                              ? "bg-primary/10"
+                              : "hover:bg-surface-container-low"
+                          }`}
+                        >
+                          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/15 text-[11px] font-semibold text-primary">
+                            {iniciales(alumno.nombre, alumno.apellidos)}
+                          </span>
+
+                          <span className="min-w-0 flex-1">
+                            <span className="block truncate text-sm font-semibold">
+                              {alumno.nombre}
+                              {alumno.apellidos ? ` ${alumno.apellidos}` : ""}
+                            </span>
+
+                            <span className="block truncate text-xs text-on-surface-variant">
+                              {alumno.email}
+                            </span>
+                          </span>
+
+                          {seleccionado && (
+                            <span className="material-symbols-outlined text-[20px] text-primary">
+                              check_circle
+                            </span>
+                          )}
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
               )}
             </div>
           )}
@@ -150,7 +271,7 @@ export default function NuevaInscripcionForm() {
               <select
                 value={cursoId ?? ""}
                 onChange={(e) =>
-                  setCursoId(e.target.value ? Number(e.target.value) : null)
+                  handleCursoChange(e.target.value ? Number(e.target.value) : null)
                 }
                 className="w-full rounded-lg bg-surface-container px-3 py-3 text-sm font-medium outline-none ring-1 ring-outline-variant/40 focus:bg-surface-container-low"
               >

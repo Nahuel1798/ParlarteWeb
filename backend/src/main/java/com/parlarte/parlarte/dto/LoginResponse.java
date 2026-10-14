@@ -2,10 +2,12 @@ package com.parlarte.parlarte.dto;
 
 import com.parlarte.parlarte.entity.Usuario;
 
+/**
+ * Datos públicos del usuario autenticado. Los tokens ya no viajan en el cuerpo:
+ * se entregan en cookies httpOnly.
+ */
 public class LoginResponse {
 
-    private String token;
-    private String tipo;
     private String email;
     private String nombre;
     private Usuario.Rol rol;
@@ -14,29 +16,15 @@ public class LoginResponse {
     public LoginResponse() {
     }
 
-    public LoginResponse(String token, String tipo, String email, String nombre, Usuario.Rol rol, Long id) {
-        this.token = token;
-        this.tipo = tipo;
+    public LoginResponse(String email, String nombre, Usuario.Rol rol, Long id) {
         this.email = email;
         this.nombre = nombre;
         this.rol = rol;
         this.id = id;
     }
 
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public String getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
+    public static LoginResponse desde(Usuario usuario) {
+        return new LoginResponse(usuario.getEmail(), usuario.getNombre(), usuario.getRol(), usuario.getId());
     }
 
     public String getEmail() {

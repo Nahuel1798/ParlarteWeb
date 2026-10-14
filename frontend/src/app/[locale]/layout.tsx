@@ -4,6 +4,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Montserrat, Playfair_Display } from "next/font/google";
 import { routing } from "@/i18n/routing";
+import AuthWatcher from "@/components/auth/AuthWatcher";
 import "./globals.css";
 
 const montserrat = Montserrat({
@@ -58,7 +59,10 @@ export default async function LocaleLayout({
       </head>
 
       <body className="min-h-full flex flex-col">
-        <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        <NextIntlClientProvider>
+          <AuthWatcher />
+          {children}
+        </NextIntlClientProvider>
       </body>
     </html>
   );
