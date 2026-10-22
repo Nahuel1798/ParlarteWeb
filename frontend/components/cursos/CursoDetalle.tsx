@@ -17,6 +17,7 @@ import {
   type CursoResponse,
 } from "../../lib/api";
 import { useSessionUser } from "../../lib/session";
+import { registrarVisitaCurso } from "../../lib/visitas";
 import ClaseMaterial from "./ClaseMaterial";
 import ClaseRecursos from "../docente/recursos/ClaseRecursos";
 import type { ReactNode } from "react";
@@ -253,7 +254,10 @@ export default function CursoDetalle({ cursoId }: { cursoId: number }) {
 
     obtenerCurso(cursoId)
       .then((data) => {
-        if (active) setCurso(data);
+        if (active) {
+          setCurso(data);
+          registrarVisitaCurso(user.id, cursoId);
+        }
       })
       .catch((err) => {
         if (active) {

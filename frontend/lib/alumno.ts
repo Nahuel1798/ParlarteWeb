@@ -8,6 +8,7 @@ import {
   type LoginResponse,
 } from "./api";
 import { useSessionUser } from "./session";
+import { useCursosVisitados } from "./visitas";
 
 export interface CursosAlumno {
   cursos: CursoResponse[];
@@ -18,6 +19,7 @@ export interface CursosAlumno {
 
 export function useCursosAlumno(): CursosAlumno {
   const user = useSessionUser();
+  const visitados = useCursosVisitados(user?.id ?? null);
   const [cursos, setCursos] = useState<CursoResponse[]>([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -37,7 +39,13 @@ export function useCursosAlumno(): CursosAlumno {
             .map((inscripcion) => inscripcion.cursoId)
         );
 
-        setCursos(todos.filter((curso) => ids.has(curso.id)));
+        const visitadosSet = new Set(visitados);
+
+        setCursos(
+          todos.filter(
+            (curso) => ids.has(curso.id) && visitadosSet.has(curso.id)
+          )
+        );
         setError(null);
       })
       .catch((err) => {
@@ -53,7 +61,7 @@ export function useCursosAlumno(): CursosAlumno {
     return () => {
       active = false;
     };
-  }, [user]);
+  }, [user, visitados]);
 
   return { cursos, cargando, error, user };
 }
